@@ -14,48 +14,45 @@ $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array()
 $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : array();
 ?>
 <div class="sgk-app" data-sgk-app data-sgk-cases="<?php echo esc_attr( wp_json_encode( $cases ) ); ?>" data-sgk-ui-state="<?php echo esc_attr( wp_json_encode( $ui_state ) ); ?>">
-	<div class="sgk-app__hero">
-		<div class="sgk-app__hero-copy">
+	<header class="sgk-app__masthead">
+		<div class="sgk-app__masthead-copy">
 			<p class="sgk-eyebrow"><?php esc_html_e( 'VDS-Gagenrechner', 'sprecher-gagenrechner' ); ?></p>
-			<h2 class="sgk-app__title"><?php esc_html_e( 'Der ruhige Preisrahmen für professionelle Sprechprojekte.', 'sprecher-gagenrechner' ); ?></h2>
-			<p class="sgk-app__intro"><?php esc_html_e( 'Konfiguriere dein Projekt in wenigen klaren Schritten. Rechts bleibt Preisrahmen, Rechteumfang und Angebotsbasis jederzeit kompakt im Blick.', 'sprecher-gagenrechner' ); ?></p>
+			<h2 class="sgk-app__title"><?php esc_html_e( 'Ruhige Preisfindung für professionelle Sprechprojekte.', 'sprecher-gagenrechner' ); ?></h2>
+			<p class="sgk-app__intro"><?php esc_html_e( 'Die neue Oberfläche bündelt Konfiguration, Einordnung und Angebotsvorbereitung in einer klaren 2-Spalten-Architektur – ohne die bestehende Kalkulationslogik zu verändern.', 'sprecher-gagenrechner' ); ?></p>
 		</div>
-
-		<div class="sgk-hero-card">
-			<span class="sgk-hero-card__badge"><?php esc_html_e( 'Sofortüberblick', 'sprecher-gagenrechner' ); ?></span>
-			<strong><?php esc_html_e( 'Empfehlung, Angebotswert und Rechte sauber priorisiert', 'sprecher-gagenrechner' ); ?></strong>
-			<p><?php esc_html_e( 'Die Empfehlung bleibt als Orientierung bestehen. Deinen finalen Angebotswert kannst du später separat festlegen.', 'sprecher-gagenrechner' ); ?></p>
-			<ul class="sgk-hero-card__list">
-				<li><?php esc_html_e( 'klare Preisorientierung', 'sprecher-gagenrechner' ); ?></li>
-				<li><?php esc_html_e( 'kompakte Rechteübersicht', 'sprecher-gagenrechner' ); ?></li>
-				<li><?php esc_html_e( 'direkter Angebots-Export', 'sprecher-gagenrechner' ); ?></li>
-			</ul>
+		<div class="sgk-app__masthead-note">
+			<span class="sgk-inline-badge"><?php esc_html_e( 'Control Tower', 'sprecher-gagenrechner' ); ?></span>
+			<strong><?php esc_html_e( 'Preisrahmen, Rechte und Angebotsbasis bleiben jederzeit sichtbar.', 'sprecher-gagenrechner' ); ?></strong>
+			<p><?php esc_html_e( 'Links steuerst du die Konfiguration. Rechts verdichten wir die Ergebnisdaten in einer kompakten, hochwertigen Sidebar.', 'sprecher-gagenrechner' ); ?></p>
 		</div>
-	</div>
+	</header>
 
-	<div class="sgk-app__grid">
-		<section class="sgk-panel sgk-panel--form" aria-labelledby="sgk-config-title">
-			<header class="sgk-panel__header sgk-panel__header--form">
+	<div class="sgk-layout">
+		<section class="sgk-config-engine" aria-labelledby="sgk-config-title">
+			<header class="sgk-engine-header">
 				<div>
-					<p class="sgk-eyebrow"><?php esc_html_e( 'Projekt konfigurieren', 'sprecher-gagenrechner' ); ?></p>
-					<h3 id="sgk-config-title"><?php esc_html_e( 'In wenigen Schritten zur passenden Kalkulationsbasis', 'sprecher-gagenrechner' ); ?></h3>
-					<p><?php esc_html_e( 'Nur relevante Felder bleiben sichtbar. So entsteht eine ruhige, schnelle und gut lesbare Eingabeführung.', 'sprecher-gagenrechner' ); ?></p>
+					<p class="sgk-eyebrow"><?php esc_html_e( 'Config Engine', 'sprecher-gagenrechner' ); ?></p>
+					<h3 id="sgk-config-title"><?php esc_html_e( 'Projekt schrittweise konfigurieren', 'sprecher-gagenrechner' ); ?></h3>
+					<p><?php esc_html_e( 'Die Eingabe ist in ruhige Panels gegliedert. Relevante Felder werden passend zu deiner Auswahl ein- oder ausgeblendet.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
-				<div class="sgk-panel-note">
-					<span class="sgk-panel-note__label"><?php esc_html_e( 'Ablauf', 'sprecher-gagenrechner' ); ?></span>
-					<strong><?php esc_html_e( 'Projekt wählen, Umfang ergänzen, Ergebnis prüfen', 'sprecher-gagenrechner' ); ?></strong>
+				<div class="sgk-smart-hint">
+					<span class="sgk-smart-hint__icon" aria-hidden="true">ℹ</span>
+					<div>
+						<strong><?php esc_html_e( 'Automatische Einordnung', 'sprecher-gagenrechner' ); ?></strong>
+						<p><?php esc_html_e( 'Wir ordnen deine Auswahl automatisch dem passenden Gagenbereich zu und zeigen dir nur die Felder, die für diesen Fall wichtig sind.', 'sprecher-gagenrechner' ); ?></p>
+					</div>
 				</div>
 			</header>
 
 			<form class="sgk-form" data-sgk-form>
 				<input type="hidden" name="manual_offer_total" value="" />
 
-				<div class="sgk-step-card" data-step="project">
-					<div class="sgk-step-card__header">
-						<span class="sgk-step-card__index">1</span>
+				<section class="sgk-section-card" data-step="project">
+					<div class="sgk-section-card__header">
 						<div>
-							<h4><?php esc_html_e( 'Projektart', 'sprecher-gagenrechner' ); ?></h4>
-							<p><?php esc_html_e( 'Wähle zuerst das Format, das deinem Vorhaben am ehesten entspricht.', 'sprecher-gagenrechner' ); ?></p>
+							<p class="sgk-section-card__kicker"><?php esc_html_e( '1 · Projektart', 'sprecher-gagenrechner' ); ?></p>
+							<h4><?php esc_html_e( 'Format und Ausgangslage festlegen', 'sprecher-gagenrechner' ); ?></h4>
+							<p><?php esc_html_e( 'Wähle zuerst den Projekttyp, der deinem Vorhaben am ehesten entspricht. Danach führen wir dich automatisch durch die passenden Felder.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
 
@@ -110,17 +107,16 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<strong><?php esc_html_e( 'Noch keine Projektart gewählt', 'sprecher-gagenrechner' ); ?></strong>
 						<p><?php esc_html_e( 'Nach deiner Auswahl zeigen wir dir nur die Eingaben, die für diesen Fall wirklich relevant sind.', 'sprecher-gagenrechner' ); ?></p>
 					</div>
-				</div>
+				</section>
 
-				<div class="sgk-step-card is-disabled" data-step="usage" data-sgk-dependent-step>
-					<div class="sgk-step-card__header">
-						<span class="sgk-step-card__index">2</span>
+				<section class="sgk-section-card is-disabled" data-step="usage" data-sgk-dependent-step>
+					<div class="sgk-section-card__header">
 						<div>
-							<h4><?php esc_html_e( 'Nutzung', 'sprecher-gagenrechner' ); ?></h4>
-							<p><?php esc_html_e( 'Ergänze Medium, Ausspielung und Nutzungsart für dein Projekt.', 'sprecher-gagenrechner' ); ?></p>
+							<p class="sgk-section-card__kicker"><?php esc_html_e( '2 · Nutzung & Medium', 'sprecher-gagenrechner' ); ?></p>
+							<h4><?php esc_html_e( 'Ausspielung und Einsatzrahmen ergänzen', 'sprecher-gagenrechner' ); ?></h4>
+							<p><?php esc_html_e( 'Hier definierst du Medium, Nutzungsart und zusätzliche Ausspielungen. Die Ansicht bleibt bewusst kompakt und richtet sich nach der gewählten Projektart.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
-
 					<div class="sgk-field-grid sgk-field-grid--two">
 						<div class="sgk-field" data-sgk-block="variant">
 							<label for="sgk-variant"><?php esc_html_e( 'Variante', 'sprecher-gagenrechner' ); ?></label>
@@ -136,7 +132,6 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 							<p class="sgk-field__hint"><?php esc_html_e( 'Wir ordnen die Nutzung passend zur gewählten Ausspielung ein.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
-
 					<div class="sgk-toggle-grid" data-sgk-block="media_toggles">
 						<label class="sgk-toggle"><input type="checkbox" name="is_paid_media" value="1" /><span><?php esc_html_e( 'Paid Media', 'sprecher-gagenrechner' ); ?></span><small><?php esc_html_e( 'Für bezahlte Ausspielung und Kampagnenreichweite.', 'sprecher-gagenrechner' ); ?></small></label>
 						<label class="sgk-toggle"><input type="checkbox" name="usage_social_media" value="1" /><span><?php esc_html_e( 'Social Media', 'sprecher-gagenrechner' ); ?></span><small><?php esc_html_e( 'Wenn Inhalte zusätzlich in sozialen Netzwerken ausgespielt werden.', 'sprecher-gagenrechner' ); ?></small></label>
@@ -144,64 +139,58 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<label class="sgk-toggle"><input type="checkbox" name="usage_awardfilm" value="1" /><span><?php esc_html_e( 'Awardfilm', 'sprecher-gagenrechner' ); ?></span><small><?php esc_html_e( 'Wird eingeblendet, wenn diese Nutzung in deinem Fall möglich ist.', 'sprecher-gagenrechner' ); ?></small></label>
 						<label class="sgk-toggle"><input type="checkbox" name="usage_mitarbeiterfilm" value="1" /><span><?php esc_html_e( 'Mitarbeiterfilm', 'sprecher-gagenrechner' ); ?></span><small><?php esc_html_e( 'Für interne Filmnutzung innerhalb des Unternehmens.', 'sprecher-gagenrechner' ); ?></small></label>
 					</div>
-
 					<div class="sgk-info-banner" data-sgk-redirect-banner hidden></div>
-				</div>
+				</section>
 
-				<div class="sgk-step-card is-disabled" data-step="scope" data-sgk-dependent-step>
-					<div class="sgk-step-card__header">
-						<span class="sgk-step-card__index">3</span>
+				<section class="sgk-section-card is-disabled" data-step="scope" data-sgk-dependent-step>
+					<div class="sgk-section-card__header">
 						<div>
-							<h4><?php esc_html_e( 'Umfang', 'sprecher-gagenrechner' ); ?></h4>
-							<p><?php esc_html_e( 'Ergänze Dauer, Menge oder Aufnahmeeinheiten – passend zur gewählten Projektart.', 'sprecher-gagenrechner' ); ?></p>
+							<p class="sgk-section-card__kicker"><?php esc_html_e( '3 · Umfang & Parameter', 'sprecher-gagenrechner' ); ?></p>
+							<h4><?php esc_html_e( 'Mengen, Dauer oder Session-Werte angeben', 'sprecher-gagenrechner' ); ?></h4>
+							<p><?php esc_html_e( 'Je nach Projektart kannst du hier Dauer, Netto-Minuten, Module oder Session-Parameter erfassen.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
-
 					<div class="sgk-field-grid sgk-field-grid--three">
 						<div class="sgk-field" data-sgk-block="duration_minutes"><label for="sgk-duration"><?php esc_html_e( 'Dauer in Minuten', 'sprecher-gagenrechner' ); ?></label><input id="sgk-duration" name="duration_minutes" type="number" min="0" step="0.1" /><p class="sgk-field__hint"><?php esc_html_e( 'Für minutengestaffelte Projekte.', 'sprecher-gagenrechner' ); ?></p></div>
 						<div class="sgk-field" data-sgk-block="net_minutes"><label for="sgk-net-minutes"><?php esc_html_e( 'Netto-Sendeminuten', 'sprecher-gagenrechner' ); ?></label><input id="sgk-net-minutes" name="net_minutes" type="number" min="0" step="0.1" /><p class="sgk-field__hint"><?php esc_html_e( 'Relevant für redaktionelle Inhalte und Audiodeskription.', 'sprecher-gagenrechner' ); ?></p></div>
 						<div class="sgk-field" data-sgk-block="module_count"><label for="sgk-modules"><?php esc_html_e( 'Anzahl der Module', 'sprecher-gagenrechner' ); ?></label><input id="sgk-modules" name="module_count" type="number" min="0" step="1" /><p class="sgk-field__hint"><?php esc_html_e( 'Zum Beispiel für IVR- oder Telefonansagen.', 'sprecher-gagenrechner' ); ?></p></div>
 					</div>
-
 					<div class="sgk-field-grid sgk-field-grid--three">
 						<div class="sgk-field" data-sgk-block="fah"><label for="sgk-fah"><?php esc_html_e( 'Final Audio Hours (FAH)', 'sprecher-gagenrechner' ); ?></label><input id="sgk-fah" name="fah" type="number" min="0" step="0.5" /><p class="sgk-field__hint"><?php esc_html_e( 'Für Hörbuch-Projekte auf Basis der fertigen Audiozeit.', 'sprecher-gagenrechner' ); ?></p></div>
 						<div class="sgk-field" data-sgk-block="recording_hours"><label for="sgk-hours"><?php esc_html_e( 'Aufnahmestunden', 'sprecher-gagenrechner' ); ?></label><input id="sgk-hours" name="recording_hours" type="number" min="0" step="0.5" /></div>
 						<div class="sgk-field" data-sgk-block="recording_days"><label for="sgk-days"><?php esc_html_e( 'Aufnahmetage', 'sprecher-gagenrechner' ); ?></label><input id="sgk-days" name="recording_days" type="number" min="1" step="1" value="1" /></div>
 					</div>
-
 					<div class="sgk-field-grid sgk-field-grid--two">
 						<div class="sgk-field" data-sgk-block="same_day_projects"><label for="sgk-projects"><?php esc_html_e( 'Weitere Projekte am selben Tag', 'sprecher-gagenrechner' ); ?></label><input id="sgk-projects" name="same_day_projects" type="number" min="1" step="1" value="1" /></div>
 						<div class="sgk-field" data-sgk-block="scope_note"><div class="sgk-context-card sgk-context-card--soft"><strong><?php esc_html_e( 'Kurzinfo zum Umfang', 'sprecher-gagenrechner' ); ?></strong><p data-sgk-scope-copy><?php esc_html_e( 'Die Hinweise passen sich deiner Projektart automatisch an.', 'sprecher-gagenrechner' ); ?></p></div></div>
 					</div>
-				</div>
+				</section>
 
-				<div class="sgk-step-card is-disabled" data-step="rights" data-sgk-dependent-step>
-					<div class="sgk-step-card__header">
-						<span class="sgk-step-card__index">4</span>
+				<section class="sgk-section-card is-disabled" data-step="rights" data-sgk-dependent-step>
+					<div class="sgk-section-card__header">
 						<div>
-							<h4><?php esc_html_e( 'Rechte & Zusatzoptionen', 'sprecher-gagenrechner' ); ?></h4>
-							<p><?php esc_html_e( 'Ergänze nur die Optionen, die für dein Projekt zusätzlich wichtig sind.', 'sprecher-gagenrechner' ); ?></p>
+							<p class="sgk-section-card__kicker"><?php esc_html_e( '4 · Rechte & Zusatzoptionen', 'sprecher-gagenrechner' ); ?></p>
+							<h4><?php esc_html_e( 'Zusätzliche Rechte und Optionen steuern', 'sprecher-gagenrechner' ); ?></h4>
+							<p><?php esc_html_e( 'Hier ergänzt du nur die Bausteine, die dein Projekt tatsächlich erweitern. So bleibt die Kalkulation präzise und übersichtlich.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
-
 					<div class="sgk-field-grid sgk-field-grid--three" data-sgk-block="addon_counts">
 						<div class="sgk-field"><label for="sgk-add-year"><?php esc_html_e( 'Zusatzjahre', 'sprecher-gagenrechner' ); ?></label><input id="sgk-add-year" name="additional_year" type="number" min="0" step="1" value="0" /></div>
 						<div class="sgk-field"><label for="sgk-add-territory"><?php esc_html_e( 'Zusätzliche Gebiete', 'sprecher-gagenrechner' ); ?></label><input id="sgk-add-territory" name="additional_territory" type="number" min="0" step="1" value="0" /></div>
 						<div class="sgk-field"><label for="sgk-add-motif"><?php esc_html_e( 'Zusatzmotive', 'sprecher-gagenrechner' ); ?></label><input id="sgk-add-motif" name="additional_motif" type="number" min="0" step="1" value="0" /></div>
 					</div>
-
 					<div class="sgk-toggle-grid" data-sgk-block="rights_toggles">
 						<label class="sgk-toggle"><input type="checkbox" name="archivgage" value="1" /><span><?php esc_html_e( 'Archivnutzung', 'sprecher-gagenrechner' ); ?></span><small><?php esc_html_e( 'Für passende Paid-Fälle mit separater Archivnutzung.', 'sprecher-gagenrechner' ); ?></small></label>
 						<label class="sgk-toggle"><input type="checkbox" name="reminder" value="1" /><span><?php esc_html_e( 'Reminder', 'sprecher-gagenrechner' ); ?></span><small><?php esc_html_e( 'Zusätzliche Reminder-Nutzung für passende Werbefälle.', 'sprecher-gagenrechner' ); ?></small></label>
 						<label class="sgk-toggle"><input type="checkbox" name="allongen" value="1" /><span><?php esc_html_e( 'Allongen', 'sprecher-gagenrechner' ); ?></span><small><?php esc_html_e( 'Ergänzend für klassische Audio-Werbung.', 'sprecher-gagenrechner' ); ?></small></label>
 						<label class="sgk-toggle"><input type="checkbox" name="follow_up_usage" value="1" /><span><?php esc_html_e( 'Nachnutzung', 'sprecher-gagenrechner' ); ?></span><small><?php esc_html_e( 'Für spätere weitere Nutzung auf Basis einer bestehenden Kalkulation.', 'sprecher-gagenrechner' ); ?></small></label>
 					</div>
-				</div>
+				</section>
 
 				<details class="sgk-expert-shell is-disabled" data-sgk-expert-shell>
 					<summary>
-						<span><?php esc_html_e( 'Erweiterte Optionen', 'sprecher-gagenrechner' ); ?></span>
-						<small><?php esc_html_e( 'Nur für Sonderfälle, Verhandlung oder spezielle Pakete', 'sprecher-gagenrechner' ); ?></small>
+						<span><?php esc_html_e( 'Expertenmodus', 'sprecher-gagenrechner' ); ?></span>
+						<small><?php esc_html_e( 'Zurückhaltend eingeblendet für Sonderfälle, Verhandlung oder spezielle Pakete', 'sprecher-gagenrechner' ); ?></small>
 					</summary>
 					<div class="sgk-expert-shell__body">
 						<div class="sgk-badge-row" data-sgk-expert-badges>
@@ -229,12 +218,12 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					</div>
 				</details>
 
-				<div class="sgk-step-card is-disabled" data-sgk-dependent-step>
-					<div class="sgk-step-card__header">
-						<span class="sgk-step-card__index">5</span>
+				<section class="sgk-section-card is-disabled" data-sgk-dependent-step>
+					<div class="sgk-section-card__header">
 						<div>
-							<h4><?php esc_html_e( 'Projektangaben', 'sprecher-gagenrechner' ); ?></h4>
-							<p><?php esc_html_e( 'Optionale Angaben für Speicherung, Angebotstext und spätere PDF-Ausgabe.', 'sprecher-gagenrechner' ); ?></p>
+							<p class="sgk-section-card__kicker"><?php esc_html_e( '5 · Projekt- und Kundendaten', 'sprecher-gagenrechner' ); ?></p>
+							<h4><?php esc_html_e( 'Optionale Angaben für Angebot und Ablage', 'sprecher-gagenrechner' ); ?></h4>
+							<p><?php esc_html_e( 'Diese Angaben helfen dir bei Speicherung, Angebotsvorbereitung und späterem PDF-Export.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
 					<div class="sgk-field-grid sgk-field-grid--two">
@@ -242,24 +231,24 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<div class="sgk-field"><label for="sgk-customer-name"><?php esc_html_e( 'Kunde oder Kontakt', 'sprecher-gagenrechner' ); ?></label><input id="sgk-customer-name" name="customer_name" type="text" placeholder="z. B. Muster GmbH" /><p class="sgk-field__hint"><?php esc_html_e( 'Optional für eine sauber vorbereitete Angebotsansicht.', 'sprecher-gagenrechner' ); ?></p></div>
 					</div>
 					<div class="sgk-field"><label for="sgk-internal-notes"><?php esc_html_e( 'Interne Notiz', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-internal-notes" name="internal_notes" rows="4" placeholder="Verhandlung, Timing oder interne Hinweise"></textarea><p class="sgk-field__hint"><?php esc_html_e( 'Bleibt intern und wird nicht automatisch in Kundentexte übernommen.', 'sprecher-gagenrechner' ); ?></p></div>
-				</div>
+				</section>
 
 				<div class="sgk-actions">
 					<button type="submit" class="sgk-button sgk-button--primary"><?php esc_html_e( 'Preisrahmen berechnen', 'sprecher-gagenrechner' ); ?></button>
-					<p class="sgk-actions__hint"><?php esc_html_e( 'Die Ansicht aktualisiert sich auch automatisch, sobald du relevante Angaben änderst.', 'sprecher-gagenrechner' ); ?></p>
+					<p class="sgk-actions__hint"><?php esc_html_e( 'Die Sidebar aktualisiert sich automatisch, sobald du eine relevante Eingabe änderst.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
 			</form>
 		</section>
 
-		<aside class="sgk-panel sgk-panel--result" aria-labelledby="sgk-result-title">
-			<header class="sgk-panel__header sgk-panel__header--result">
+		<aside class="sgk-control-tower" aria-labelledby="sgk-result-title">
+			<header class="sgk-control-tower__header">
 				<div>
-					<p class="sgk-eyebrow"><?php esc_html_e( 'Ergebnisübersicht', 'sprecher-gagenrechner' ); ?></p>
-					<h3 id="sgk-result-title"><?php esc_html_e( 'Preisrahmen und Angebotsbasis kompakt priorisiert', 'sprecher-gagenrechner' ); ?></h3>
-					<p><?php esc_html_e( 'Die Sidebar bündelt Preis, Rechte, Hinweise und nächste Schritte in einer ruhigen, klaren Reihenfolge.', 'sprecher-gagenrechner' ); ?></p>
+					<p class="sgk-control-tower__eyebrow"><?php esc_html_e( 'Control Tower', 'sprecher-gagenrechner' ); ?></p>
+					<h3 id="sgk-result-title"><?php esc_html_e( 'Preisrahmen und Angebotsbasis live im Blick', 'sprecher-gagenrechner' ); ?></h3>
+					<p><?php esc_html_e( 'Die Sidebar verdichtet echte Ergebnisdaten, Rechteumfang und Exportaktionen in einer hochwertigen Live-Ansicht.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
-				<div class="sgk-sidebar-meta">
-					<span><?php esc_html_e( 'live', 'sprecher-gagenrechner' ); ?></span>
+				<div class="sgk-control-tower__status">
+					<span><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></span>
 					<strong><?php esc_html_e( 'aktualisiert bei jeder relevanten Eingabe', 'sprecher-gagenrechner' ); ?></strong>
 				</div>
 			</header>
