@@ -354,6 +354,8 @@
 		var modal = app.querySelector('[data-sgk-offer-modal]');
 		var debounceTimer = null;
 
+		var lastFocusedElement = null;
+
 		function syncUI() {
 			var selectedCase = form.querySelector('[name="case_key"]').value;
 			var effectiveCase = cases[selectedCase] ? selectedCase : (SCENARIO_TO_CASE[selectedCase] || selectedCase);
@@ -363,8 +365,28 @@
 			updateRedirectBanner(app, app.__sgkLastPayload || null);
 		}
 		function currentState() { return { payload: app.__sgkLastPayload, formData: serializeForm(form) }; }
-		function openModal() { modal.hidden = false; document.body.classList.add('sgk-modal-open'); }
-		function closeModal() { modal.hidden = true; document.body.classList.remove('sgk-modal-open'); }
+		function setModalState(isOpen) {
+			var dialog = modal.querySelector('[role="dialog"]');
+			var closeButton = modal.querySelector('[data-sgk-offer-close]');
+			modal.hidden = !isOpen;
+			modal.classList.toggle('is-open', isOpen);
+			modal.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+			document.body.classList.toggle('sgk-modal-open', isOpen);
+			if (isOpen) {
+				lastFocusedElement = document.activeElement;
+				window.requestAnimationFrame(function () {
+					if (dialog) { dialog.focus(); }
+					if (closeButton) { closeButton.focus(); }
+				});
+				return;
+			}
+			if (lastFocusedElement && typeof lastFocusedElement.focus === 'function' && document.contains(lastFocusedElement)) {
+				lastFocusedElement.focus();
+			}
+			lastFocusedElement = null;
+		}
+		function openModal() { setModalState(true); }
+		function closeModal() { setModalState(false); }
 
 		app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) { button.addEventListener('click', function () { form.querySelector('[name="case_key"]').value = button.getAttribute('data-sgk-quick-case'); syncUI(); requestCalculation(app, form, resultContainer); }); });
 		app.querySelectorAll('[data-sgk-demo]').forEach(function (button) { button.addEventListener('click', function () { fillForm(form, JSON.parse(button.getAttribute('data-sgk-demo') || '{}')); syncUI(); requestCalculation(app, form, resultContainer); }); });
@@ -419,6 +441,7 @@
 		});
 		document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && !modal.hidden) { closeModal(); } });
 
+		setModalState(false);
 		syncUI();
 	});
 })();

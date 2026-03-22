@@ -255,9 +255,9 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 		</aside>
 	</div>
 
-	<div class="sgk-offer-modal" data-sgk-offer-modal hidden>
+	<div class="sgk-offer-modal" data-sgk-offer-modal hidden aria-hidden="true">
 		<div class="sgk-offer-modal__backdrop" data-sgk-offer-close></div>
-		<div class="sgk-offer-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="sgk-offer-modal-title">
+		<div class="sgk-offer-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="sgk-offer-modal-title" tabindex="-1">
 			<header class="sgk-offer-modal__header">
 				<div>
 					<p class="sgk-eyebrow"><?php esc_html_e( 'Angebot & PDF', 'sprecher-gagenrechner' ); ?></p>
