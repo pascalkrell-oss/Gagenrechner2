@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprecher-Gagenrechner | Premium Edition 2026</title>
+    
+    <!-- Rubik Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons (Premium & Minimalist) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* ==========================================================================
+           1. DESIGN TOKENS & VARIABLES (2026 Premium SaaS)
+           ========================================================================== */
+        :root {
+            /* Brand & Primary */
+            --src-primary: #1a93ee;
+            --src-primary-hover: #137ecf;
+            --src-primary-subtle: #eff6ff;
+            
+            /* Typography & Colors */
+            --src-text-main: #0f172a;
+            --src-text-secondary: #475569;
+            --src-text-tertiary: #94a3b8;
+            
+            /* Surfaces */
+            --src-bg-app: #f4f4f5; /* Calm, muted technical gray */
+            --src-bg-card: #ffffff;
+            --src-bg-panel: #f8fafc;
+            
+            /* Control Tower (Dark Mode) */
+            --src-tower-bg: #0f141a;
+            --src-tower-panel: #1e2530;
+            --src-tower-text: #ffffff;
+            --src-tower-text-muted: #94a3b8;
+            --src-tower-border: #2d3748;
+            
+            /* Borders & Lines */
+            --src-border-light: #e2e8f0;
+            --src-border-medium: #cbd5e1;
+            
+            /* Radii - Precise, modern, not bubbly */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+            
+            /* Elevation / Shadows */
+            --shadow-subtle: 0 2px 4px -1px rgba(15, 23, 42, 0.04), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+            --shadow-float: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+            --shadow-modal: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
+            --shadow-focus: 0 0 0 3px rgba(26, 147, 238, 0.2);
+            
+            /* Animation */
+            --transition-fast: 0.15s ease-out;
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE
+           ========================================================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Rubik', system-ui, sans-serif;
+            background-color: var(--src-bg-app);
+            color: var(--src-text-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            font-variant-numeric: tabular-nums; /* Critical for pricing tables */
+            padding-bottom: 80px;
+        }
+
+        button, input, textarea, select {
+            font-family: inherit;
+        }
+
+        /* ==========================================================================
+           3. LAYOUT ARCHITECTURE
+           ========================================================================== */
+        .src-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 400px;
+            gap: 48px;
+            align-items: start;
+        }
+
+        /* --- Left Column: Configurator --- */
+        .src-config-engine {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Header */
+        .src-page-header {
+            margin-bottom: 8px;
+        }
+        .src-page-header h1 {
+            font-size: 24px;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            color: var(--src-text-main);
+        }
+        .src-page-header p {
+            color: var(--src-text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* Section Containers */
+        .src-section {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .src-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--src-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ==========================================================================
+           4. UI COMPONENTS (Left Column)
+           ========================================================================== */
+        
+        /* Hint / Smart Match Badge (Replaces "Resolver" text) */
+        .src-smart-hint {
+            background: var(--src-primary-subtle);
+            border: 1px solid rgba(26, 147, 238, 0.2);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 13px;
+            color: #0c4a6e;
+        }
+        .src-smart-hint i-lucide {
+            color: var(--src-primary);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .src-smart-hint strong {
+            display: block;
+            margin-bottom: 2px;
+            color: #082f49;
+        }
+
+        /* Format Cards */
+        .src-grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 12px;
+        }
+        .src-card {
+            background: var(--src-bg-card);
+            border: 1px solid var(--src-border-light);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-subtle);
+        }
+        .src-card:hover {
+            border-color: var(--src-border-medium);
+        }
+        .src-card.is-active {
+            border-color: var(--src-primary);
+            background: var(--src-primary-subtle);
+            box-shadow: inset 0 0 0 1px var(--src-primary);
+        }
+        .src-card i-lucide {
+            color: var(--src-text-tertiary);
+            transition: var(--transition-fast);
+        }
+        .src-card.is-active i-lucide {
+            color: var(--src-primary);
+        }
+        .src-card-label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Segmented Control (Mac Style) */
+        .src-segmented-control {
+            display: inline-flex;
+            flex-wrap: wrap;
+            background: var(--src-border-light);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            gap: 2px;
+        }
+        .src-segment-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--src-text-secondary);
+            cursor: pointer;
+            transition: var(--transition-fast);
+        }
+        .src-segment-btn:hover:not(.is-active) {
+            color: var(--src-text-main);
+        }
+        .src-segment-btn.is-active {
+            background: var(--src-bg-card);
+            color: var(--src-text-main);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        /* Unified Input Panel (Lists, Parameters, Toggles) */
+        .src-panel-group {
+            background: var(--src-bg-card);
+            border: 1px solid var(--src-border-light);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-subtle);
+            overflow: hidden;
+        }
+        .src-panel-row {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .src-panel-row:not(:last-child) {
+            border-bottom: 1px solid var(--src-border-light);
+        }
+        .src-panel-row.is-header {
+            background: var(--src-bg-panel);
+            padding: 12px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--src-text-secondary);
+        }
+        .src-row-content {
+            flex-grow: 1;
+        }
+        .src-row-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--src-text-main);
+        }
+        .src-row-desc {
+            font-size: 12px;
+            color: var(--src-text-secondary);
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+
+        /* High-Precision Stepper */
+        .src-stepper {
+            display: flex;
+            align-items: center;
+            background: var(--src-bg-card);
+            border: 1px solid var(--src-border-medium);
+            border-radius: var(--radius-sm);
+            height: 36px;
+        }
+        .src-stepper button {
+            background: transparent;
+            border: none;
+            width: 36px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--src-text-secondary);
+            transition: var(--transition-fast);
+        }
+        .src-stepper button:hover { background: var(--src-bg-panel); color: var(--src-text-main); }
+        .src-stepper button:first-child { border-right: 1px solid var(--src-border-light); }
+        .src-stepper button:last-child { border-left: 1px solid var(--src-border-light); }
+        .src-stepper input {
+            width: 48px;
+            text-align: center;
+            border: none;
+            background: transparent;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--src-text-main);
+        }
+        .src-stepper input:focus { outline: none; }
+
+        /* Switches / Toggles */
+        .src-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .src-switch input { opacity: 0; width: 0; height: 0; }
+        .src-slider {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--src-border-medium);
+            border-radius: 20px;
+            transition: var(--transition-smooth);
+        }
+        .src-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px; width: 16px;
+            left: 2px; bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: var(--transition-smooth);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .src-switch input:checked + .src-slider { background-color: var(--src-primary); }
+        .src-switch input:checked + .src-slider:before { transform: translateX(16px); }
+
+        /* Foldable Panels (Expert & Notes) */
+        .src-foldable-panel {
+            border: 1px solid var(--src-border-light);
+            border-radius: var(--radius-md);
+            background: var(--src-bg-card);
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+        .src-foldable-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            background: var(--src-bg-panel);
+            user-select: none;
+        }
+        .src-foldable-header:hover { background: #f1f5f9; }
+        .src-foldable-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--src-text-secondary);
+        }
+        .src-foldable-content {
+            display: none;
+            padding: 20px;
+            border-top: 1px solid var(--src-border-light);
+        }
+        .src-foldable-panel.is-open .src-foldable-content { display: block; }
+        .src-foldable-panel.is-open .src-foldable-icon { transform: rotate(180deg); }
+
+        /* Input Fields (Text/Textarea) */
+        .src-input-text {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--src-border-medium);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            transition: var(--transition-fast);
+            background: var(--src-bg-card);
+        }
+        .src-input-text:focus {
+            outline: none;
+            border-color: var(--src-primary);
+            box-shadow: var(--shadow-focus);
+        }
+        .src-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+
+        /* ==========================================================================
+           5. RIGHT COLUMN: CONTROL TOWER (Premium Sidebar)
+           ========================================================================== */
+        .src-control-tower-wrapper {
+            position: sticky;
+            top: 40px;
+        }
+        
+        /* Dark Premium Receipt */
+        .src-tower-main {
+            background-color: var(--src-tower-bg);
+            color: var(--src-tower-text);
+            border-radius: var(--radius-md);
+            padding: 32px;
+            box-shadow: var(--shadow-float);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .src-tower-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .src-tower-label {
+            font-size: 12px;
+            color: var(--src-tower-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .src-live-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #10b981;
+            font-weight: 600;
+        }
+        .src-live-dot {
+            width: 6px; height: 6px;
+            background-color: #10b981;
+            border-radius: 50%;
+            animation: srcPulse 2s infinite;
+        }
+        @keyframes srcPulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Price Display */
+        .src-price-huge {
+            font-size: 42px;
+            font-weight: 300;
+            line-height: 1;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+        .src-price-huge span {
+            font-size: 16px;
+            color: var(--src-tower-text-muted);
+            letter-spacing: 0;
+            font-weight: 400;
+        }
+        .src-price-range {
+            font-size: 13px;
+            color: var(--src-tower-text-muted);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Receipt Breakdown */
+        .src-receipt-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        .src-receipt-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            color: var(--src-tower-text-muted);
+        }
+        .src-receipt-dots {
+            flex-grow: 1;
+            border-bottom: 1px dotted var(--src-tower-border);
+            margin: 0 12px;
+            position: relative;
+            top: -4px;
+            opacity: 0.5;
+        }
+        .src-receipt-item span:first-child { flex-shrink: 0; }
+        .src-receipt-item span:last-child {
+            flex-shrink: 0;
+            color: var(--src-tower-text);
+            font-weight: 500;
+            text-align: right;
+            min-width: 70px;
+        }
+        .src-receipt-total {
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1px solid var(--src-tower-border);
+            display: flex;
+            justify-content: space-between;
+            color: var(--src-tower-text);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* Rights Summary Box */
+        .src-rights-box {
+            background: var(--src-tower-panel);
+            border: 1px solid var(--src-tower-border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--src-tower-text-muted);
+        }
+        .src-rights-box strong {
+            color: var(--src-tower-text);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* Primary Button */
+        .src-btn-primary {
+            background-color: var(--src-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: var(--transition-fast);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .src-btn-primary:hover {
+            background-color: var(--src-primary-hover);
+            box-shadow: 0 4px 12px rgba(26, 147, 238, 0.3);
+        }
+
+        /* Light Info Boxes below Tower */
+        .src-tower-info {
+            background: var(--src-bg-card);
+            border: 1px solid var(--src-border-light);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-top: 16px;
+            box-shadow: var(--shadow-subtle);
+        }
+        .src-tower-info-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--src-text-main);
+            margin-bottom: 12px;
+        }
+        .src-tower-info-header i-lucide { color: var(--src-primary); }
+        
+        /* Accordion for Sidebar */
+        .src-accordion-item { border-bottom: 1px solid var(--src-border-light); }
+        .src-accordion-item:last-child { border-bottom: none; }
+        .src-accordion-btn {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            background: none; border: none;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--src-text-secondary);
+            cursor: pointer;
+            text-align: left;
+        }
+        .src-accordion-btn:hover { color: var(--src-text-main); }
+        .src-accordion-content {
+            font-size: 12px;
+            color: var(--src-text-secondary);
+            line-height: 1.5;
+            padding-bottom: 12px;
+            display: none;
+        }
+        .src-accordion-item.is-open .src-accordion-content { display: block; }
+        .src-accordion-item.is-open i-lucide { transform: rotate(180deg); }
+
+
+        /* ==========================================================================
+           6. MODALS (Offer Preparation)
+           ========================================================================== */
+        .src-modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+        .src-modal-backdrop.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .src-modal-content {
+            background: var(--src-bg-card);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow-modal);
+            transform: translateY(20px) scale(0.98);
+            transition: var(--transition-smooth);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .src-modal-backdrop.is-open .src-modal-content {
+            transform: translateY(0) scale(1);
+        }
+        .src-modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--src-border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .src-modal-header h2 { font-size: 18px; font-weight: 500; }
+        .src-modal-header p { font-size: 13px; color: var(--src-text-secondary); margin-top: 4px; }
+        .src-modal-close {
+            background: none; border: none;
+            color: var(--src-text-tertiary);
+            cursor: pointer;
+        }
+        .src-modal-close:hover { color: var(--src-text-main); }
+        .src-modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .src-modal-footer {
+            padding: 20px 24px;
+            background: var(--src-bg-panel);
+            border-top: 1px solid var(--src-border-light);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .src-btn-secondary {
+            background: var(--src-bg-card);
+            border: 1px solid var(--src-border-medium);
+            border-radius: var(--radius-sm);
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--src-text-main);
+            cursor: pointer;
+        }
+        .src-btn-secondary:hover { background: var(--src-bg-panel); }
+
+
+        /* ==========================================================================
+           7. RESPONSIVE DESIGN
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .src-layout {
+                grid-template-columns: 1fr;
+                padding: 24px 16px;
+                gap: 32px;
+            }
+            .src-control-tower-wrapper {
+                position: static;
+                order: -1; /* Bringe Tower auf Mobile nach oben (optional, je nach Prio) */
+            }
+            .src-form-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="src-layout">
+        
+        <!-- LEFT COLUMN: INPUT ENGINE -->
+        <main class="src-config-engine">
+            
+            <header class="src-page-header">
+                <h1>Projekt konfigurieren</h1>
+                <p>Kalkulation gemäß VDS Gagenkompass 2025.</p>
+            </header>
+
+            <!-- Section 1: Format -->
+            <section class="src-section">
+                <div class="src-section-title">1. Projektart</div>
+                <div class="src-grid-cards">
+                    <div class="src-card is-active" onclick="srcSelectCard(this)">
+                        <i data-lucide="monitor-play" width="20" height="20"></i>
+                        <span class="src-card-label">Werbung (Bild)</span>
+                    </div>
+                    <div class="src-card" onclick="srcSelectCard(this)">
+                        <i data-lucide="radio" width="20" height="20"></i>
+                        <span class="src-card-label">Werbung (Audio)</span>
+                    </div>
+                    <div class="src-card" onclick="srcSelectCard(this)">
+                        <i data-lucide="building-2" width="20" height="20"></i>
+                        <span class="src-card-label">Imagefilm / PR</span>
+                    </div>
+                    <div class="src-card" onclick="srcSelectCard(this)">
+                        <i data-lucide="graduation-cap" width="20" height="20"></i>
+                        <span class="src-card-label">E-Learning</span>
+                    </div>
+                    <div class="src-card" onclick="srcSelectCard(this)">
+                        <i data-lucide="phone-call" width="20" height="20"></i>
+                        <span class="src-card-label">Telefonie</span>
+                    </div>
+                    <div class="src-card" onclick="srcSelectCard(this)">
+                        <i data-lucide="mic-vocal" width="20" height="20"></i>
+                        <span class="src-card-label">Synchron</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Medium -->
+            <section class="src-section">
+                <div class="src-section-title">2. Nutzungsmedium</div>
+                <div class="src-segmented-control">
+                    <button class="src-segment-btn is-active" onclick="srcSelectSegment(this)">Online / Web</button>
+                    <button class="src-segment-btn" onclick="srcSelectSegment(this)">Social Media (Paid)</button>
+                    <button class="src-segment-btn" onclick="srcSelectSegment(this)">TV</button>
+                    <button class="src-segment-btn" onclick="srcSelectSegment(this)">Kino</button>
+                    <button class="src-segment-btn" onclick="srcSelectSegment(this)">Internes Event</button>
+                </div>
+            </section>
+
+            <!-- Hint Component (Replaces "Resolver Redirect Text") -->
+            <div class="src-smart-hint">
+                <i data-lucide="sparkles" width="18" height="18"></i>
+                <div>
+                    <strong>Smart Match: Online Video</strong>
+                    Wir haben Ihre Auswahl automatisch der Kategorie "Online Video Spot" zugeordnet. Die Basisgage wird nach Minuten berechnet.
+                </div>
+            </div>
+
+            <!-- Section 3: Parameters & Scope (Grouped in Panel) -->
+            <section class="src-section">
+                <div class="src-section-title">3. Umfang & Zusatzrechte</div>
+                
+                <div class="src-panel-group">
+                    <div class="src-panel-row is-header">Basisparameter</div>
+                    
+                    <!-- Stepper -->
+                    <div class="src-panel-row">
+                        <div class="src-row-content">
+                            <div class="src-row-label">Aufnahmedauer (Minuten)</div>
+                            <div class="src-row-desc">Geschätzte reine Textlänge im finalen Schnitt.</div>
+                        </div>
+                        <div class="src-stepper">
+                            <button type="button"><i data-lucide="minus" width="14" height="14"></i></button>
+                            <input type="text" value="1" readonly>
+                            <button type="button"><i data-lucide="plus" width="14" height="14"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Layout Toggle -->
+                    <label class="src-panel-row" style="cursor:pointer;">
+                        <div class="src-row-content">
+                            <div class="src-row-label">Layout-Aufnahme (Scribble)</div>
+                            <div class="src-row-desc">Reines Arbeitslayout für interne Präsentationen vor der finalen Freigabe.</div>
+                        </div>
+                        <div class="src-switch">
+                            <input type="checkbox">
+                            <span class="src-slider"></span>
+                        </div>
+                    </label>
+
+                    <div class="src-panel-row is-header">Rechteerweiterung</div>
+
+                    <!-- Territory Toggle -->
+                    <label class="src-panel-row" style="cursor:pointer;">
+                        <div class="src-row-content">
+                            <div class="src-row-label">Weltweite Nutzung</div>
+                            <div class="src-row-desc">Erweitert die Senderechte global (außerhalb des DACH-Raums).</div>
+                        </div>
+                        <div class="src-switch">
+                            <input type="checkbox">
+                            <span class="src-slider"></span>
+                        </div>
+                    </label>
+
+                    <!-- Archive Toggle -->
+                    <label class="src-panel-row" style="cursor:pointer;">
+                        <div class="src-row-content">
+                            <div class="src-row-label">Archivierung (Nachnutzung)</div>
+                            <div class="src-row-desc">Dauerhafte Sichtbarkeit ohne Werbedruck nach Ablauf der Lizenzzeit.</div>
+                        </div>
+                        <div class="src-switch">
+                            <input type="checkbox">
+                            <span class="src-slider"></span>
+                        </div>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Section 4: Project Details (Foldable) -->
+            <section class="src-section">
+                <div class="src-foldable-panel" id="panel-notes">
+                    <div class="src-foldable-header" onclick="srcTogglePanel('panel-notes')">
+                        <div class="src-foldable-title">
+                            <i data-lucide="folder-pen" width="16" height="16"></i>
+                            Projekt- & Kundendaten (Optional)
+                        </div>
+                        <i data-lucide="chevron-down" class="src-foldable-icon" width="16" height="16" style="transition:0.3s; color:var(--src-text-tertiary);"></i>
+                    </div>
+                    <div class="src-foldable-content">
+                        <div class="src-form-grid">
+                            <div>
+                                <label class="src-row-desc" style="display:block; margin-bottom:4px;">Projektname</label>
+                                <input type="text" class="src-input-text" placeholder="z.B. Sommerkampagne 2026">
+                            </div>
+                            <div>
+                                <label class="src-row-desc" style="display:block; margin-bottom:4px;">Kunde / Agentur</label>
+                                <input type="text" class="src-input-text" placeholder="Firmenname">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="src-row-desc" style="display:block; margin-bottom:4px;">Interne Notizen</label>
+                            <textarea class="src-input-text" rows="3" placeholder="Sonderabsprachen oder Regieanweisungen..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 5: Expert Mode (Foldable, Subdued) -->
+            <section class="src-section">
+                <div class="src-foldable-panel" id="panel-expert" style="background: transparent; border: 1px dashed var(--src-border-medium);">
+                    <div class="src-foldable-header" onclick="srcTogglePanel('panel-expert')" style="background: transparent;">
+                        <div class="src-foldable-title">
+                            <i data-lucide="settings-2" width="16" height="16"></i>
+                            Expertenmodus: VDS-Sonderfälle
+                        </div>
+                        <i data-lucide="chevron-down" class="src-foldable-icon" width="16" height="16" style="transition:0.3s; color:var(--src-text-tertiary);"></i>
+                    </div>
+                    <div class="src-foldable-content" style="background: var(--src-bg-card);">
+                        <!-- Expert Toggles -->
+                        <div class="src-panel-group" style="box-shadow:none; border:none;">
+                            <label class="src-panel-row" style="padding:12px 0; border-bottom: 1px solid var(--src-border-light); cursor:pointer;">
+                                <div class="src-row-content">
+                                    <div class="src-row-label" style="font-size:13px;">Session Fee anwenden</div>
+                                </div>
+                                <div class="src-switch"><input type="checkbox"><span class="src-slider"></span></div>
+                            </label>
+                            <label class="src-panel-row" style="padding:12px 0; cursor:pointer;">
+                                <div class="src-row-content">
+                                    <div class="src-row-label" style="font-size:13px;">Zeitliche unbegrenzte Nutzung (Total Buyout)</div>
+                                    <div class="src-row-desc">Dies überschreibt reguläre Laufzeiten nach individueller Absprache.</div>
+                                </div>
+                                <div class="src-switch"><input type="checkbox"><span class="src-slider"></span></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+
+        <!-- RIGHT COLUMN: CONTROL TOWER -->
+        <aside class="src-control-tower-wrapper">
+            
+            <!-- Main Dark Tower Box -->
+            <div class="src-tower-main">
+                
+                <div class="src-tower-header">
+                    <div class="src-tower-label">Netto-Gage (Empfehlung)</div>
+                    <div class="src-live-badge">
+                        <span class="src-live-dot"></span> Live
+                    </div>
+                </div>
+
+                <div>
+                    <div class="src-price-huge">
+                        550,00 <span>EUR</span>
+                    </div>
+                    <div class="src-price-range">
+                        <i data-lucide="arrow-left-right" width="12" height="12"></i>
+                        Spanne laut VDS: 450 € – 650 €
+                    </div>
+                </div>
+
+                <div class="src-receipt-list">
+                    <div class="src-receipt-item">
+                        <span>Basisgage (1 Min)</span>
+                        <div class="src-receipt-dots"></div>
+                        <span>150,00 €</span>
+                    </div>
+                    <div class="src-receipt-item">
+                        <span>Verwertung (Online)</span>
+                        <div class="src-receipt-dots"></div>
+                        <span>300,00 €</span>
+                    </div>
+                    <div class="src-receipt-item">
+                        <span>Weltweite Nutzung</span>
+                        <div class="src-receipt-dots"></div>
+                        <span>100,00 €</span>
+                    </div>
+                    
+                    <div class="src-receipt-total">
+                        <span>Kalkulationsbasis</span>
+                        <span>550,00 €</span>
+                    </div>
+                </div>
+
+                <div class="src-rights-box">
+                    <strong>Lizenzumfang:</strong>
+                    1 Jahr Nutzungsrecht, DACH-Region + Weltweit. Exklusivität nicht vereinbart. Es gelten die VDS-Rahmenbedingungen 2025.
+                </div>
+
+                <button class="src-btn-primary" onclick="srcOpenModal()">
+                    Angebot vorbereiten
+                    <i data-lucide="arrow-right" width="16" height="16"></i>
+                </button>
+
+            </div>
+
+            <!-- Light Info Box (Tips/Knowledge) -->
+            <div class="src-tower-info">
+                <div class="src-tower-info-header">
+                    <i data-lucide="lightbulb" width="16" height="16"></i>
+                    Wissenswertes
+                </div>
+                
+                <div class="src-accordion-item">
+                    <button class="src-accordion-btn" onclick="srcToggleAccordion(this)">
+                        Was genau ist ein Buyout?
+                        <i data-lucide="chevron-down" width="14" height="14" style="transition:0.2s;"></i>
+                    </button>
+                    <div class="src-accordion-content">
+                        Ein Buyout ist die zeitliche, räumliche und mediale Nutzungsrechteabgeltung. Die Basisgage deckt nur die reine Sprachaufnahme ab.
+                    </div>
+                </div>
+                
+                <div class="src-accordion-item">
+                    <button class="src-accordion-btn" onclick="srcToggleAccordion(this)">
+                        Gilt die Gage pro Motiv?
+                        <i data-lucide="chevron-down" width="14" height="14" style="transition:0.2s;"></i>
+                    </button>
+                    <div class="src-accordion-content">
+                        Ja, jede eigenständige Variation (z.B. Längenanpassungen für Social Media) gilt laut VDS als eigenes Motiv.
+                    </div>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- ==========================================================================
+         8. MODAL (Offer / PDF Export)
+         ========================================================================== -->
+    <div class="src-modal-backdrop" id="src-export-modal">
+        <div class="src-modal-content">
+            <div class="src-modal-header">
+                <div>
+                    <h2>Angebot / PDF erstellen</h2>
+                    <p>Überprüfen Sie die Werte vor dem Export.</p>
+                </div>
+                <button class="src-modal-close" onclick="srcCloseModal()"><i data-lucide="x" width="20" height="20"></i></button>
+            </div>
+            
+            <div class="src-modal-body">
+                <div class="src-panel-row is-header" style="border-radius: var(--radius-sm); border: 1px solid var(--src-border-light);">
+                    Zusammenfassung: Online Video (550,00 €)
+                </div>
+                
+                <div>
+                    <label class="src-row-label" style="font-size: 13px; margin-bottom: 6px; display:block;">Manuelle Angebotssumme überschreiben (optional)</label>
+                    <input type="text" class="src-input-text" value="550,00 €" style="font-weight: 500; max-width: 150px;">
+                </div>
+                
+                <div>
+                    <label class="src-row-label" style="font-size: 13px; margin-bottom: 6px; display:block;">Angebots-Optionen</label>
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--src-text-secondary); cursor:pointer;">
+                            <input type="checkbox" checked> VDS-Hinweistexte auf PDF andrucken
+                        </label>
+                        <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:var(--src-text-secondary); cursor:pointer;">
+                            <input type="checkbox"> Eigene Logo-Datei verwenden
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="src-modal-footer">
+                <button class="src-btn-secondary" onclick="srcCloseModal()">Abbrechen</button>
+                <button class="src-btn-primary" style="width: auto; padding: 10px 20px;">
+                    <i data-lucide="download" width="16" height="16"></i>
+                    PDF Herunterladen
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==========================================================================
+         9. INTERACTION SCRIPTS (UI Only Demonstration)
+         ========================================================================== -->
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // Radio-behavior for Format Cards
+        function srcSelectCard(clicked) {
+            clicked.parentElement.querySelectorAll('.src-card').forEach(c => c.classList.remove('is-active'));
+            clicked.classList.add('is-active');
+        }
+
+        // Radio-behavior for Segmented Buttons
+        function srcSelectSegment(clicked) {
+            clicked.parentElement.querySelectorAll('.src-segment-btn').forEach(b => b.classList.remove('is-active'));
+            clicked.classList.add('is-active');
+        }
+
+        // Toggle Expandable Panels (Notes, Expert Mode)
+        function srcTogglePanel(id) {
+            document.getElementById(id).classList.toggle('is-open');
+        }
+
+        // Accordion in Sidebar
+        function srcToggleAccordion(btn) {
+            const item = btn.closest('.src-accordion-item');
+            const isOpen = item.classList.contains('is-open');
+            // Close siblings
+            btn.closest('.src-tower-info').querySelectorAll('.src-accordion-item').forEach(i => i.classList.remove('is-open'));
+            if(!isOpen) item.classList.add('is-open');
+        }
+
+        // Modal Logic
+        function srcOpenModal() {
+            document.getElementById('src-export-modal').classList.add('is-open');
+        }
+        function srcCloseModal() {
+            document.getElementById('src-export-modal').classList.remove('is-open');
+        }
+    </script>
+
+</body>
+</html>
