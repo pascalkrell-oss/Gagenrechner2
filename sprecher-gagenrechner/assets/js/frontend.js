@@ -140,20 +140,20 @@
 		var uiState = (payload && payload.ui_state) || {};
 		var result = (payload && payload.result) || {};
 		var warnings = Array.isArray(result.warnings) ? result.warnings : [];
-		var parts = [];
+		var message = '';
 		if (uiState.selected_case && uiState.resolved_case && uiState.selected_case !== uiState.resolved_case) {
-			parts.push('Diese Auswahl wird als „' + labelFromKey(uiState.resolved_case) + '“ kalkuliert.');
+			message = 'Smart Match: Automatisch zugeordnet – ' + labelFromKey(uiState.resolved_case) + '.';
+		} else if (warnings.length) {
+			message = 'Smart Match: ' + warnings.join(' · ');
 		}
-		if (warnings.length) {
-			parts.push('Hinweise & Wissenswertes: ' + warnings.join(' · '));
-		}
-		if (!parts.length) {
+		if (!message) {
 			banner.hidden = true;
-			banner.textContent = '';
+			banner.innerHTML = '';
 			return;
 		}
 		banner.hidden = false;
-		banner.textContent = parts.join(' ');
+		banner.innerHTML = '<i data-lucide="sparkles" width="18" height="18"></i><div><strong>Smart Match: Automatisch zugeordnet</strong><p>' + htmlEscape(message) + '</p></div>';
+		if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); }
 	}
 
 	function buildCopyBlocks(result, formData, offerMeta) {
@@ -277,9 +277,16 @@
 		var options = config.variantOptions || [];
 		var current = select.value;
 		select.innerHTML = '';
-		if (!options.length) { select.innerHTML = '<option value="">Automatisch passend auswählen</option>'; hint.textContent = 'Für diese Projektart ist keine zusätzliche Auswahl nötig.'; return; }
+		if (!options.length) {
+			select.innerHTML = '<option value="">Automatisch passend auswählen</option>';
+			buildVariantButtons(form, []);
+			hint.textContent = 'Für diese Projektart ist keine zusätzliche Auswahl nötig.';
+			return;
+		}
 		select.innerHTML = '<option value="">Bitte Variante wählen</option>' + options.map(function (item) { return '<option value="' + htmlEscape(item[0]) + '">' + htmlEscape(item[1]) + '</option>'; }).join('');
 		if (current) { select.value = current; }
+		buildVariantButtons(form, options);
+		syncSegmentedControl(form.querySelector('[data-sgk-variant-control]'), select.value);
 		hint.textContent = 'Die Varianten passen sich automatisch deinem Projekt an.';
 	}
 
@@ -293,6 +300,21 @@
 		if (scopeCopy) { scopeCopy.textContent = hasSelection ? ((CASE_UI[effectiveCase] && CASE_UI[effectiveCase].scopeCopy) || 'Die Angaben werden passend zu deiner Auswahl geführt.') : 'Wähle zuerst eine Projektart, damit wir dir die passenden Umfangsangaben zeigen können.'; }
 	}
 
+	function syncSegmentedControl(control, value) {
+		if (!control) { return; }
+		control.querySelectorAll('[data-sgk-segment-value]').forEach(function (button) {
+			button.classList.toggle('is-active', button.getAttribute('data-sgk-segment-value') === value);
+		});
+	}
+
+	function buildVariantButtons(form, options) {
+		var control = form.querySelector('[data-sgk-variant-control]');
+		if (!control) { return; }
+		control.innerHTML = options.map(function (item, index) {
+			return '<button type="button" class="src-segment-btn" data-sgk-segment-value="' + htmlEscape(item[0]) + '">' + htmlEscape(item[1] || ('Variante ' + (index + 1))) + '</button>';
+		}).join('');
+	}
+
 	function updateCaseContext(app, selectedCase, cases) {
 		var node = app.querySelector('[data-sgk-case-context]');
 		app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) { button.classList.toggle('is-active', button.getAttribute('data-sgk-quick-case') === selectedCase); });
@@ -302,11 +324,11 @@
 		node.innerHTML = '<strong>' + htmlEscape(caseData.label || labelFromKey(selectedCase)) + '</strong><p>' + htmlEscape(caseData.description || 'Die Eingaben wurden passend zu deiner Auswahl zusammengestellt.') + '</p>';
 	}
 
-	function updateExpertBadges(app, uiState) {
+function updateExpertBadges(app, uiState) {
 		var container = app.querySelector('[data-sgk-expert-badges]');
 		var flags = (uiState && uiState.available_expert_options) || [];
 		if (!container) { return; }
-		container.innerHTML = !flags.length ? '<span class="sgk-badge is-muted">Noch keine zusätzlichen Optionen aktiv</span>' : flags.map(function (flag) { return '<span class="sgk-badge">' + htmlEscape(labelFromKey(flag)) + '</span>'; }).join('');
+		container.innerHTML = !flags.length ? '<span class="src-inline-badge is-muted">Noch keine zusätzlichen Optionen aktiv</span>' : flags.map(function (flag) { return '<span class="src-inline-badge">' + htmlEscape(labelFromKey(flag)) + '</span>'; }).join('');
 	}
 
 	function refreshSavedList(container) {
@@ -318,41 +340,40 @@
 
 	function renderResult(container, payload, formData) {
 		var result = payload.result || {};
-		var uiState = payload.ui_state || {};
 		var totals = result.formatted_totals || {};
-		var notes = Array.isArray(result.offer_notes) ? result.offer_notes : [];
-		var alternatives = Array.isArray(result.alternatives) ? result.alternatives : [];
-		var routeTrace = Array.isArray(result.route_summary_offer) ? result.route_summary_offer : [];
 		var rights = Array.isArray(result.rights_overview) ? result.rights_overview : [];
 		var positions = Array.isArray(result.offer_positions) ? result.offer_positions : [];
+		var warnings = Array.isArray(result.warnings) ? result.warnings : [];
+		var notes = Array.isArray(result.offer_notes) ? result.offer_notes : [];
+		var routeTrace = Array.isArray(result.route_summary_offer) ? result.route_summary_offer : [];
 		var manualOffer = result.formatted_manual_offer_total || 'Noch nicht festgelegt';
 		var manualValidation = validateManualOffer(result.manual_offer_total, result);
 		var copyBlocks = buildCopyBlocks(result, formData, {});
-		var warnings = Array.isArray(result.warnings) ? result.warnings : [];
-		var redirectCopy = '';
-		if (uiState.selected_case && uiState.resolved_case && uiState.selected_case !== uiState.resolved_case) {
-			redirectCopy = 'Diese Auswahl wird als „' + labelFromKey(uiState.resolved_case) + '“ kalkuliert.';
-		}
+		var receiptItems = positions.length ? positions.map(function (item) {
+			var price = item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : ((item.formatted_prices && item.formatted_prices.mid) || '0,00 €');
+			return '<div class="src-receipt-item"><span>' + htmlEscape(item.titel) + '</span><div class="src-receipt-dots"></div><span>' + htmlEscape(price) + '</span></div>';
+		}).join('') : '<div class="src-receipt-item"><span>Basis</span><div class="src-receipt-dots"></div><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div>';
 
 		container.innerHTML = '' +
-			'<section class="sgk-result-card sgk-result-card--hero">' +
-				'<div class="sgk-result-card__head"><div><span class="sgk-result-pill">' + icon('amount') + ' Preisrahmen</span><h4 class="sgk-result-title">' + htmlEscape(result.display_title || 'Dein Ergebnis erscheint hier') + '</h4><p>' + htmlEscape(redirectCopy || 'Du siehst hier die empfohlene Spanne, den Mittelwert und die aktuelle Basis für dein Angebot.') + '</p></div><span class="sgk-result-icon">' + icon('project') + '</span></div>' +
-				'<div class="sgk-totals"><div class="sgk-total-card"><span>Spanne ab</span><strong>' + htmlEscape(totals.lower || '0,00 €') + '</strong><small>untere Orientierung</small></div><div class="sgk-total-card sgk-total-card--featured"><span>Mittelwert</span><strong>' + htmlEscape(totals.mid || '0,00 €') + '</strong><small>empfohlene Mitte</small></div><div class="sgk-total-card"><span>Spanne bis</span><strong>' + htmlEscape(totals.upper || '0,00 €') + '</strong><small>obere Orientierung</small></div></div>' +
-				'<div class="sgk-insight-list"><div class="sgk-insight-card"><h4>Angebotssumme</h4><strong>' + htmlEscape(manualOffer) + '</strong><p>Separat für Angebot und PDF.</p></div><div class="sgk-insight-card"><h4>Kalkulationsbasis</h4><strong>' + htmlEscape(String(positions.length)) + '</strong><p>Positionen für Angebot und Abstimmung.</p></div><div class="sgk-insight-card"><h4>Rechteumfang</h4><strong>' + htmlEscape(String(rights.length)) + '</strong><p>Relevante Nutzungsangaben.</p></div></div>' +
-			'</section>' +
-			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('amount') + ' Angebot</span><h4 class="sgk-result-title">Finalen Angebotswert festlegen</h4><p>Die Empfehlung bleibt unverändert. Hier hinterlegst du bei Bedarf den finalen Angebotswert.</p></div><span class="sgk-result-icon">' + icon('amount') + '</span></div><div class="sgk-manual-offer"><label for="sgk-manual-offer-input">Finaler Angebotswert</label><div class="sgk-inline-input"><input id="sgk-manual-offer-input" type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="sgk-button sgk-button--secondary" data-sgk-sync-manual-offer>Übernehmen</button></div><div class="sgk-manual-offer__status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="sgk-manual-offer__current"><strong>Aktuell hinterlegt:</strong> <span>' + htmlEscape(manualOffer) + '</span></div></div></section>' +
-			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('project') + ' Positionen</span><h4 class="sgk-result-title">Angebotspositionen</h4><p>Diese Positionen kannst du direkt für Angebot oder Abstimmung übernehmen.</p></div><span class="sgk-result-icon">' + icon('project') + '</span></div>' + renderList(positions, function (item) { return '<li><div><strong>' + htmlEscape(item.position_number + '. ' + item.titel) + '</strong><span>' + htmlEscape(item.beschreibung) + '</span><small>' + htmlEscape((item.kategorie || '') + ' · ' + (item.lizenzbezug || '')) + '</small></div><em>' + htmlEscape(item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : (item.formatted_prices ? item.formatted_prices.mid : '0,00 €')) + '</em></li>'; }, 'Nach der Berechnung erscheinen hier deine Angebotspositionen.', 'sgk-breakdown-list') + '</section>' +
-			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('rights') + ' Rechte</span><h4 class="sgk-result-title">Rechteübersicht</h4><p>Hier findest du die wichtigsten Angaben zu Laufzeit, Gebiet und Medien.</p></div><span class="sgk-result-icon">' + icon('rights') + '</span></div>' + renderList(rights, function (item) { return '<li><div><strong>' + htmlEscape(item.title + (item.variant ? ' · ' + item.variant : '')) + '</strong><span>' + htmlEscape('Laufzeit: ' + item.duration + ' · Gebiet: ' + item.territory + ' · Medien: ' + item.media) + '</span></div></li>'; }, 'Sobald Rechte relevant sind, erscheint hier die Übersicht.', 'sgk-license-list') + '</section>' +
-			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('info') + ' Einordnung</span><h4 class="sgk-result-title">So wurde deine Auswahl eingeordnet</h4><p>So wurde deine Auswahl für die Kalkulation eingeordnet.</p></div><span class="sgk-result-icon">' + icon('info') + '</span></div>' + renderList(routeTrace, function (item) { return '<li><strong>' + htmlEscape(routeLabel(item.step, item.label)) + '</strong><span>' + htmlEscape(prettifyRouteMessage(item.message)) + '</span></li>'; }, 'Sobald Angaben vorliegen, ergänzen wir hier die kurze Einordnung.', 'sgk-note-list') + '</section>' +
-			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('notes') + ' Hinweise</span><h4 class="sgk-result-title">Wichtige Hinweise</h4><p>Besonderheiten zu deinem Projekt werden hier kompakt gesammelt.</p></div><span class="sgk-result-icon">' + icon('notes') + '</span></div>' + renderList(warnings, function (note) { return '<li>' + htmlEscape(note) + '</li>'; }, 'Aktuell gibt es keine zusätzlichen Hinweise zu deiner Auswahl.', 'sgk-note-list') + renderList(notes, function (note) { return '<li>' + htmlEscape(note) + '</li>'; }, 'Noch keine weiteren Anmerkungen vorhanden.', 'sgk-note-list') + '</section>' +
-			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('actions') + ' Weiterarbeiten</span><h4 class="sgk-result-title">Angebot & Export</h4><p>Die wichtigsten nächsten Schritte direkt aus der Übersicht.</p></div><span class="sgk-result-icon">' + icon('actions') + '</span></div><div class="sgk-action-grid sgk-action-grid--actions"><button type="button" class="sgk-button sgk-button--primary" data-label="Angebot öffnen" data-sgk-action="open-pdf">Angebot öffnen</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Zusammenfassung kopieren" data-sgk-action="copy-summary">Zusammenfassung kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Positionen kopieren" data-sgk-action="copy-positions">Positionen kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Rechte kopieren" data-sgk-action="copy-rights">Rechte kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Berechnung speichern" data-sgk-action="save">Lokal speichern</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Exportdaten kopieren" data-sgk-action="copy-json">Exportdaten kopieren</button></div><div class="sgk-storage-panel"><div class="sgk-storage-panel__row"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select></div><div class="sgk-action-grid sgk-action-grid--storage"><button type="button" class="sgk-button sgk-button--secondary" data-label="Berechnung laden" data-sgk-action="load">Laden</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Berechnung löschen" data-sgk-action="delete">Löschen</button></div><p class="sgk-storage-panel__meta" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Deine Kalkulationen werden lokal im Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</p></div><div class="sgk-copy-preview"><h5>Zusammenfassung</h5><pre>' + htmlEscape(copyBlocks.summary) + '</pre><h5>Positionen</h5><pre>' + htmlEscape(copyBlocks.positions) + '</pre><h5>Rechte</h5><pre>' + htmlEscape(copyBlocks.rights) + '</pre></div></section>' +
-			(alternatives.length ? '<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('info') + ' Alternativen</span><h4 class="sgk-result-title">Weitere Preisoptionen</h4><p>Wenn Alternativen vorliegen, erscheinen sie hier im direkten Vergleich.</p></div><span class="sgk-result-icon">' + icon('info') + '</span></div>' + renderList(alternatives, function (item) { return '<li><div><strong>' + htmlEscape(item.label || 'Alternative') + '</strong><span>' + htmlEscape('Empfohlene Mitte: ' + ((item.formatted_totals && item.formatted_totals.mid) || '0,00 €')) + '</span></div></li>'; }, 'Für diese Auswahl sind aktuell keine Alternativen hinterlegt.', 'sgk-license-list') + '</section>' : '');
+			'<div class="src-price-block"><div class="src-price-huge">' + htmlEscape(totals.mid || '0,00 €') + '<span>EUR</span></div><div class="src-price-range"><i data-lucide="arrow-left-right" width="12" height="12"></i>Spanne laut VDS: ' + htmlEscape((totals.lower || '0,00 €') + ' – ' + (totals.upper || '0,00 €')) + '</div></div>' +
+			'<div class="src-receipt-list">' + receiptItems + '<div class="src-receipt-total"><span>Kalkulationsbasis</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div></div>' +
+			'<div class="src-rights-box"><strong>Lizenzumfang</strong>' + htmlEscape(rights.length ? rights.map(function (item) { return item.title + ' · ' + item.duration + ' · ' + item.territory; }).join(' | ') : 'Die Rechteübersicht wird nach der ersten Berechnung ergänzt.') + '</div>' +
+			'<div class="src-inline-dark-panel src-manual-offer"><strong>Finale Angebotssumme</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div></div>' +
+			'<div class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot vorbereiten</button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-sgk-action="copy-summary">Zusammenfassung</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-sgk-action="copy-positions">Positionen</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-sgk-action="copy-rights">Rechte</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-sgk-action="copy-json">Exportdaten</button></div></div>' +
+			'<div class="src-storage-panel"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select><div class="src-storage-actions"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung speichern" data-sgk-action="save">Speichern</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung laden" data-sgk-action="load">Laden</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung löschen" data-sgk-action="delete">Löschen</button></div><div class="src-storage-status" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Deine Kalkulationen werden lokal im Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</div></div>' +
+			'<div class="src-result-accordion">' +
+			'<div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Aufschlüsselung & Hinweise</span><i data-lucide="chevron-down" width="14" height="14"></i></button><div class="src-accordion-content"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div>' +
+			'<div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Wichtige Hinweise</span><i data-lucide="chevron-down" width="14" height="14"></i></button><div class="src-accordion-content"><p>' + htmlEscape((warnings.concat(notes).join(' · ')) || 'Aktuell liegen keine zusätzlichen Hinweise vor.') + '</p></div></div>' +
+			'<div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Einordnung</span><i data-lucide="chevron-down" width="14" height="14"></i></button><div class="src-accordion-content"><p>' + htmlEscape(routeTrace.length ? routeTrace.map(function (item) { return routeLabel(item.step, item.label) + ': ' + prettifyRouteMessage(item.message); }).join(' · ') : 'Die Einordnung erscheint nach der Berechnung.') + '</p></div></div>' +
+			'</div>';
+
+		if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); }
 	}
 
 	function requestCalculation(app, form, resultContainer) {
 		var payload = serializeForm(form);
 		if (!payload.case_key) { return; }
-		resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Deine Kalkulation wird aktualisiert</strong><p>Preisrahmen, Rechte und Zusammenfassung werden gerade neu aufgebaut.</p></div>';
+		resultContainer.innerHTML = '<div class="src-result-empty"><strong>Deine Kalkulation wird aktualisiert</strong><p>Preisrahmen, Rechte und Zusammenfassung werden gerade neu aufgebaut.</p></div>'; 
 		fetch(sgkFrontend.restUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': sgkFrontend.nonce }, body: JSON.stringify(payload) })
 			.then(function (response) {
 				if (!response.ok) { throw new Error('request-failed'); }
@@ -368,7 +389,7 @@
 			})
 			.catch(function () {
 				updateRedirectBanner(app, null);
-				resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Die Kalkulation ist gerade nicht verfügbar</strong><p>Bitte versuche es in einem Moment noch einmal.</p></div>';
+				resultContainer.innerHTML = '<div class="src-result-empty"><strong>Die Kalkulation ist gerade nicht verfügbar</strong><p>Bitte versuche es in einem Moment noch einmal.</p></div>'; 
 			});
 	}
 
@@ -382,7 +403,7 @@
 		var offerPreview = renderOfferPreview(result, formData, meta);
 		preview.innerHTML = offerPreview.html;
 		status.textContent = offerPreview.validation.message;
-		status.className = 'sgk-field__hint ' + (offerPreview.validation.valid ? 'is-valid' : 'is-invalid');
+		status.className = 'src-field-hint src-manual-offer-status ' + (offerPreview.validation.valid ? 'is-valid' : 'is-invalid');
 		app.__sgkOfferPreview = offerPreview;
 	}
 
@@ -402,7 +423,10 @@
 			updateCaseContext(app, selectedCase, cases);
 			populateVariants(form, effectiveCase);
 			toggleBlocks(form, effectiveCase, !!selectedCase);
+			syncSegmentedControl(form.querySelector('[data-sgk-usage-type-control]'), form.querySelector('[name="usage_type"]').value);
+			syncSegmentedControl(form.querySelector('[data-sgk-variant-control]'), form.querySelector('[name="case_variant"]').value);
 			updateRedirectBanner(app, app.__sgkLastPayload || null);
+			if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); }
 		}
 		function currentState() { return { payload: app.__sgkLastPayload, formData: serializeForm(form) }; }
 		function setModalState(isOpen) {
@@ -430,6 +454,39 @@
 
 		app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) { button.addEventListener('click', function () { form.querySelector('[name="case_key"]').value = button.getAttribute('data-sgk-quick-case'); syncUI(); requestCalculation(app, form, resultContainer); }); });
 		app.querySelectorAll('[data-sgk-demo]').forEach(function (button) { button.addEventListener('click', function () { fillForm(form, JSON.parse(button.getAttribute('data-sgk-demo') || '{}')); syncUI(); requestCalculation(app, form, resultContainer); }); });
+		app.addEventListener('click', function (event) {
+			var segment = event.target.closest('[data-sgk-segment-value]');
+			var accordion = event.target.closest('[data-sgk-accordion-trigger]');
+			var foldable = event.target.closest('[data-sgk-foldable-trigger]');
+			var stepButton = event.target.closest('[data-sgk-step]');
+			if (segment) {
+				var control = segment.parentElement;
+				var select = control.hasAttribute('data-sgk-variant-control') ? form.querySelector('[name="case_variant"]') : form.querySelector('[name="usage_type"]');
+				if (select) { select.value = segment.getAttribute('data-sgk-segment-value'); syncSegmentedControl(control, select.value); syncUI(); requestCalculation(app, form, resultContainer); }
+				return;
+			}
+			if (accordion) {
+				var item = accordion.closest('.src-accordion-item');
+				var parent = item.parentElement;
+				if (parent) { parent.querySelectorAll('.src-accordion-item').forEach(function (node) { if (node !== item) { node.classList.remove('is-open'); } }); }
+				item.classList.toggle('is-open');
+				return;
+			}
+			if (foldable) { foldable.closest('.src-foldable-panel').classList.toggle('is-open'); return; }
+			if (stepButton) {
+				var stepper = stepButton.closest('[data-sgk-stepper]');
+				var input = stepper && stepper.querySelector('input');
+				if (!input) { return; }
+				var step = parseFloat(input.getAttribute('step') || '1');
+				var min = parseFloat(input.getAttribute('min') || '0');
+				var current = parseFloat(input.value || '0');
+				if (isNaN(current)) { current = min || 0; }
+				current += stepButton.getAttribute('data-sgk-step') === 'up' ? step : -step;
+				if (!isNaN(min)) { current = Math.max(min, current); }
+				input.value = String(Math.round(current * 100) / 100);
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+			}
+		});
 		form.addEventListener('change', function () { syncUI(); clearTimeout(debounceTimer); debounceTimer = setTimeout(function () { requestCalculation(app, form, resultContainer); }, 180); });
 		form.addEventListener('input', function () { clearTimeout(debounceTimer); debounceTimer = setTimeout(function () { requestCalculation(app, form, resultContainer); }, 260); });
 		form.addEventListener('submit', function (event) { event.preventDefault(); syncUI(); requestCalculation(app, form, resultContainer); });
@@ -474,6 +531,7 @@
 		});
 
 		modal.querySelectorAll('[data-sgk-offer-close]').forEach(function (button) { button.addEventListener('click', closeModal); });
+		if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); }
 		modal.addEventListener('input', function () { var state = currentState(); if (state.payload && state.payload.result && !modal.hidden) { hydrateOfferModal(app, state.payload.result, state.formData); } });
 		modal.addEventListener('click', function (event) {
 			var action = event.target.getAttribute('data-sgk-offer-action');
