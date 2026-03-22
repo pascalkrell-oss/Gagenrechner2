@@ -18,9 +18,8 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 	<div class="src-layout">
 		<main class="src-config-engine" aria-labelledby="sgk-config-title">
 			<header class="src-page-header">
-				<p class="src-page-eyebrow"><?php esc_html_e( 'Premium Configuration Engine', 'sprecher-gagenrechner' ); ?></p>
 				<h2 id="sgk-config-title"><?php esc_html_e( 'Projekt konfigurieren', 'sprecher-gagenrechner' ); ?></h2>
-				<p><?php esc_html_e( 'Kalkulation gemäß VDS Gagenkompass 2025 – neu organisiert als hochwertige SaaS-Konfiguration mit Live-Auswertung.', 'sprecher-gagenrechner' ); ?></p>
+				<p><?php esc_html_e( 'Kalkulation gemäß VDS Gagenkompass 2025.', 'sprecher-gagenrechner' ); ?></p>
 			</header>
 
 			<form class="sgk-form" data-sgk-form>
@@ -35,39 +34,36 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					<div class="src-grid-cards" data-sgk-quick-case-grid>
 						<button type="button" class="src-card" data-sgk-quick-case="werbung_mit_bild">
 							<i data-lucide="monitor-play" width="20" height="20"></i>
-							<span class="src-card-copy"><strong><?php esc_html_e( 'Werbung mit Bild', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'TV, CTV, Online-Video, Kino oder POS', 'sprecher-gagenrechner' ); ?></small></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Werbung (Bild)', 'sprecher-gagenrechner' ); ?></strong></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="werbung_ohne_bild">
 							<i data-lucide="radio" width="20" height="20"></i>
-							<span class="src-card-copy"><strong><?php esc_html_e( 'Werbung ohne Bild', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Funk, Online-Audio, Ladenfunk oder Telefonspot', 'sprecher-gagenrechner' ); ?></small></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Werbung (Audio)', 'sprecher-gagenrechner' ); ?></strong></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="webvideo_imagefilm_praesentation_unpaid">
 							<i data-lucide="clapperboard" width="20" height="20"></i>
-							<span class="src-card-copy"><strong><?php esc_html_e( 'Webvideo & Imagefilm', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Corporate, Social Clips, Präsentation oder unpaid', 'sprecher-gagenrechner' ); ?></small></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Imagefilm / PR', 'sprecher-gagenrechner' ); ?></strong></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="telefonansage">
 							<i data-lucide="phone-call" width="20" height="20"></i>
-							<span class="src-card-copy"><strong><?php esc_html_e( 'Telefonansage', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'IVR, Hotline oder modulare Ansagesysteme', 'sprecher-gagenrechner' ); ?></small></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Telefonie', 'sprecher-gagenrechner' ); ?></strong></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="elearning_audioguide">
 							<i data-lucide="graduation-cap" width="20" height="20"></i>
-							<span class="src-card-copy"><strong><?php esc_html_e( 'E-Learning & Audioguide', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Minutenbasierte Wissens- und Lernformate', 'sprecher-gagenrechner' ); ?></small></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'E-Learning', 'sprecher-gagenrechner' ); ?></strong></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="podcast">
 							<i data-lucide="podcast" width="20" height="20"></i>
-							<span class="src-card-copy"><strong><?php esc_html_e( 'Podcast', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Inhalte, Verpackung und Sponsoring', 'sprecher-gagenrechner' ); ?></small></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Synchron', 'sprecher-gagenrechner' ); ?></strong></span>
 						</button>
 					</div>
-					<div class="src-context-card" data-sgk-case-context>
-						<strong><?php esc_html_e( 'Noch keine Projektart gewählt', 'sprecher-gagenrechner' ); ?></strong>
-						<p><?php esc_html_e( 'Nach deiner Auswahl zeigen wir dir nur die Eingaben, die für diesen Fall wirklich relevant sind.', 'sprecher-gagenrechner' ); ?></p>
-					</div>
+					<div class="src-context-card" data-sgk-case-context hidden></div>
 				</section>
 
 				<section class="src-section is-disabled" data-step="usage" data-sgk-dependent-step>
 					<div class="src-section-title-wrap">
 						<p class="src-section-title">2. Nutzungsmedium</p>
-						<p class="src-section-copy"><?php esc_html_e( 'Medium, Einsatz und Varianten werden im passenden Nutzungskontext geführt.', 'sprecher-gagenrechner' ); ?></p>
+						<p class="src-section-copy"><?php esc_html_e( 'Online / Web, Social Media, TV, Kino und Event werden projektabhängig eingeblendet.', 'sprecher-gagenrechner' ); ?></p>
 					</div>
 					<div class="src-panel-group" data-sgk-block="variant">
 						<div class="src-panel-row src-panel-row--stack">
@@ -129,7 +125,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				<section class="src-section is-disabled" data-step="scope" data-sgk-dependent-step>
 					<div class="src-section-title-wrap">
 						<p class="src-section-title">3. Umfang & Optionen</p>
-						<p class="src-section-copy"><?php esc_html_e( 'Mengen, Dauer und Session-Werte werden strukturiert in kompakten Panels gepflegt.', 'sprecher-gagenrechner' ); ?></p>
+						<p class="src-section-copy"><?php esc_html_e( 'Basisparameter, Mengen und Zusatzrechte erscheinen kompakt in einer gemeinsamen Eingabefläche.', 'sprecher-gagenrechner' ); ?></p>
 					</div>
 					<div class="src-panel-group">
 						<div class="src-panel-row src-panel-row--header"><?php esc_html_e( 'Basisparameter', 'sprecher-gagenrechner' ); ?></div>
@@ -145,7 +141,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				</section>
 
 				<section class="src-section is-disabled" data-step="rights" data-sgk-dependent-step>
-					<div class="src-section-title-wrap"><p class="src-section-title">4. Zusatzrechte</p><p class="src-section-copy"><?php esc_html_e( 'Zusätzliche Rechte und Optionen bleiben als klare Toggle- und Stepper-Elemente verfügbar.', 'sprecher-gagenrechner' ); ?></p></div>
+					<div class="src-section-title-wrap"><p class="src-section-title">4. Zusatzrechte</p><p class="src-section-copy"><?php esc_html_e( 'Erweiterte Rechte und Sonderfälle lassen sich optional ergänzen.', 'sprecher-gagenrechner' ); ?></p></div>
 					<div class="src-panel-group" data-sgk-block="addon_counts">
 						<div class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Zusatzjahre', 'sprecher-gagenrechner' ); ?></div></div><div class="src-stepper" data-sgk-stepper><button type="button" data-sgk-step="down"><i data-lucide="minus" width="14" height="14"></i></button><input id="sgk-add-year" name="additional_year" type="number" min="0" step="1" value="0" /><button type="button" data-sgk-step="up"><i data-lucide="plus" width="14" height="14"></i></button></div></div>
 						<div class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Zusätzliche Gebiete', 'sprecher-gagenrechner' ); ?></div></div><div class="src-stepper" data-sgk-stepper><button type="button" data-sgk-step="down"><i data-lucide="minus" width="14" height="14"></i></button><input id="sgk-add-territory" name="additional_territory" type="number" min="0" step="1" value="0" /><button type="button" data-sgk-step="up"><i data-lucide="plus" width="14" height="14"></i></button></div></div>
@@ -161,7 +157,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 
 				<section class="src-section">
 					<div class="src-foldable-panel is-disabled" id="sgk-foldable-notes" data-sgk-dependent-step>
-						<button type="button" class="src-foldable-header" data-sgk-foldable-trigger><span class="src-foldable-title"><i data-lucide="folder-pen" width="16" height="16"></i><?php esc_html_e( 'Projekt- & Kundendaten', 'sprecher-gagenrechner' ); ?></span><i data-lucide="chevron-down" class="src-foldable-icon" width="16" height="16"></i></button>
+						<button type="button" class="src-foldable-header" data-sgk-foldable-trigger><span class="src-foldable-title"><i data-lucide="folder-pen" width="16" height="16"></i><?php esc_html_e( 'Projekt- & Kundendaten (Optional)', 'sprecher-gagenrechner' ); ?></span><i data-lucide="chevron-down" class="src-foldable-icon" width="16" height="16"></i></button>
 						<div class="src-foldable-content">
 							<div class="src-form-grid"><div class="src-form-field"><label for="sgk-project-title"><?php esc_html_e( 'Projektname', 'sprecher-gagenrechner' ); ?></label><input id="sgk-project-title" name="project_title" type="text" class="src-input-text" placeholder="z. B. Imagefilm Frühjahrskampagne" /></div><div class="src-form-field"><label for="sgk-customer-name"><?php esc_html_e( 'Kunde oder Kontakt', 'sprecher-gagenrechner' ); ?></label><input id="sgk-customer-name" name="customer_name" type="text" class="src-input-text" placeholder="z. B. Muster GmbH" /></div></div>
 							<div class="src-form-field"><label for="sgk-internal-notes"><?php esc_html_e( 'Interne Notiz', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-internal-notes" name="internal_notes" rows="4" class="src-input-text" placeholder="Verhandlung, Timing oder interne Hinweise"></textarea></div>
@@ -171,7 +167,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 
 				<section class="src-section">
 					<div class="src-foldable-panel src-foldable-panel--expert is-disabled" id="sgk-foldable-expert" data-sgk-expert-shell>
-						<button type="button" class="src-foldable-header" data-sgk-foldable-trigger><span class="src-foldable-title"><i data-lucide="settings-2" width="16" height="16"></i><?php esc_html_e( 'Expertenmodus', 'sprecher-gagenrechner' ); ?></span><i data-lucide="chevron-down" class="src-foldable-icon" width="16" height="16"></i></button>
+						<button type="button" class="src-foldable-header" data-sgk-foldable-trigger><span class="src-foldable-title"><i data-lucide="settings-2" width="16" height="16"></i><?php esc_html_e( 'Expertenmodus: VDS-Sonderfälle', 'sprecher-gagenrechner' ); ?></span><i data-lucide="chevron-down" class="src-foldable-icon" width="16" height="16"></i></button>
 						<div class="src-foldable-content">
 							<div class="src-badge-row" data-sgk-expert-badges><span class="src-inline-badge is-muted"><?php esc_html_e( 'Noch keine zusätzlichen Optionen aktiv', 'sprecher-gagenrechner' ); ?></span></div>
 							<div class="src-panel-group">
@@ -204,9 +200,9 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 
 		<aside class="src-control-tower-wrapper" aria-labelledby="sgk-result-title">
 			<div class="src-tower-main">
-				<div class="src-tower-header"><div><p class="src-tower-label"><?php esc_html_e( 'Control Tower', 'sprecher-gagenrechner' ); ?></p><h3 id="sgk-result-title"><?php esc_html_e( 'Live-Kalkulation', 'sprecher-gagenrechner' ); ?></h3></div><div class="src-live-badge"><span class="src-live-dot"></span><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></div></div>
+				<div class="src-tower-header"><div><p class="src-tower-label"><?php esc_html_e( 'Netto-Gage (Empfehlung)', 'sprecher-gagenrechner' ); ?></p></div><div class="src-live-badge"><span class="src-live-dot"></span><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></div></div>
 				<div class="src-tower-result" data-sgk-result>
-					<div class="src-result-empty"><strong><?php esc_html_e( 'Bereit für deine erste Kalkulation', 'sprecher-gagenrechner' ); ?></strong><p><?php esc_html_e( 'Sobald du links ein Projekt auswählst und erste Angaben ergänzt, erscheint hier deine Ergebnisübersicht.', 'sprecher-gagenrechner' ); ?></p></div>
+					<div class="src-result-empty"><strong><?php esc_html_e( 'Projekt auswählen', 'sprecher-gagenrechner' ); ?></strong><p><?php esc_html_e( 'Sobald links eine Projektart aktiv ist, erscheint hier die empfohlene Netto-Gage mit Aufschlüsselung.', 'sprecher-gagenrechner' ); ?></p></div>
 				</div>
 			</div>
 			<div class="src-tower-info">
