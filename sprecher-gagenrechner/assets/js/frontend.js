@@ -6,9 +6,9 @@
 		werbung_ohne_bild: { variantOptions: [['online_audio_paid_media', 'Online Audio Paid Media'], ['funk_spot_national', 'Funkspot national'], ['funk_spot_regional', 'Funkspot regional'], ['funk_reminder', 'Funk Reminder'], ['funk_allongen', 'Funk Allongen'], ['ladenfunk_national', 'Ladenfunk national'], ['ladenfunk_regional', 'Ladenfunk regional'], ['telefon_werbespot', 'Telefon-Werbespot'], ['layout', 'Layout']], show: ['variant', 'usage_type', 'addon_counts', 'rights_toggles'], scopeCopy: 'Audio-Werbung arbeitet überwiegend mit Varianten, Reminder-/Allongen-Logik und passenden Zusatzrechten.' },
 		webvideo_imagefilm_praesentation_unpaid: { show: ['usage_type', 'media_toggles', 'duration_minutes'], scopeCopy: 'Für unpaid Bildfälle wird hauptsächlich die Minutenstaffel inklusive optionaler Zusatzlizenzen geführt.' },
 		app: { show: ['duration_minutes'], scopeCopy: 'Apps werden in der Regel über eine minutenbasierte Standardnutzung mit unbegrenzter Laufzeit kalkuliert.' },
-		telefonansage: { show: ['module_count'], scopeCopy: 'Telefonansagen rechnen modulbasiert. TV-, Paid- oder Social-Logiken sind hier fachlich nicht relevant.' },
+		telefonansage: { show: ['module_count'], scopeCopy: 'Telefonansagen werden über die Anzahl der Module erfasst. Andere Medienoptionen spielen hier in der Regel keine Rolle.' },
 		elearning_audioguide: { variantOptions: [['elearning_intern', 'E-Learning intern'], ['audioguide', 'Audioguide']], show: ['variant', 'duration_minutes'], scopeCopy: 'E-Learning und Audioguides basieren auf Minutenstaffeln und der passenden Inhaltsart.' },
-		podcast: { variantOptions: [['podcast_inhalte', 'Podcast-Inhalte'], ['non_commercial_3', 'Verpackung nicht-kommerziell 3 Jahre'], ['non_commercial_unlim', 'Verpackung nicht-kommerziell unbegrenzt'], ['marketing_3', 'Verpackung Marketing 3 Jahre'], ['marketing_unlim', 'Verpackung Marketing unbegrenzt']], show: ['variant', 'usage_type', 'duration_minutes'], scopeCopy: 'Bei Podcasts trennt der Rechner zwischen Inhalten und Verpackung – inklusive Redirects für Video- oder Werbefälle.' },
+		podcast: { variantOptions: [['podcast_inhalte', 'Podcast-Inhalte'], ['non_commercial_3', 'Verpackung nicht-kommerziell 3 Jahre'], ['non_commercial_unlim', 'Verpackung nicht-kommerziell unbegrenzt'], ['marketing_3', 'Verpackung Marketing 3 Jahre'], ['marketing_unlim', 'Verpackung Marketing unbegrenzt']], show: ['variant', 'usage_type', 'duration_minutes'], scopeCopy: 'Bei Podcasts unterscheiden wir zwischen Inhalt und Verpackung, damit dein Projekt passend eingeordnet wird.' },
 		hoerbuch: { show: ['fah'], scopeCopy: 'Hörbücher bleiben bewusst als Vorschlagskalkulation mit Expertenergänzungen und Hinweisen aufgebaut.' },
 		games: { show: ['recording_hours', 'recording_days', 'same_day_projects', 'usage_type'], scopeCopy: 'Games berücksichtigen Session-Logik, Wiederholungen an Folgetagen und parallele Projekte.' },
 		redaktionell_doku_tv_reportage: { variantOptions: [['kommentarstimme', 'Kommentarstimme'], ['overvoice', 'Overvoice']], show: ['variant', 'net_minutes'], scopeCopy: 'Redaktionelle Inhalte kombinieren Minutensatz und Mindestgage transparent.' },
@@ -37,6 +37,17 @@
 	function htmlEscape(value) { return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 	function parseJsonAttribute(node, attribute) { try { return JSON.parse(node.getAttribute(attribute) || '{}'); } catch (error) { return {}; } }
 	function labelFromKey(value) { return String(value || '').replace(/_/g, ' ').replace(/\b\w/g, function (m) { return m.toUpperCase(); }); }
+	function icon(name) {
+		var icons = {
+			project: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v11a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Zm2.5-1a1 1 0 0 0-1 1v2.25h13V6.5a1 1 0 0 0-1-1h-11Zm12 4.75h-13v7.25a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-7.25Z"/></svg>',
+			amount: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v1.09a4.75 4.75 0 0 1 3.68 2.2 1 1 0 1 1-1.7 1.06A2.74 2.74 0 0 0 12.6 7h-1.05c-1.19 0-2.05.75-2.05 1.7 0 1 .77 1.52 2.76 1.98 2.53.58 4.74 1.27 4.74 4.05A4.2 4.2 0 0 1 13 18.85V20a1 1 0 1 1-2 0v-1.08a4.83 4.83 0 0 1-4.08-2.72 1 1 0 0 1 1.8-.88A2.95 2.95 0 0 0 11.4 17H12c1.68 0 3-.96 3-2.27 0-1.07-.7-1.66-3.18-2.24-2.2-.5-4.32-1.2-4.32-3.8A3.75 3.75 0 0 1 11 5.09V4a1 1 0 0 1 1-1Z"/></svg>',
+			rights: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2 4 5v6c0 5 3.4 9.53 8 11 4.6-1.47 8-6 8-11V5l-8-3Zm0 2.1 6 2.25V11c0 4.06-2.56 7.8-6 9.14C8.56 18.8 6 15.06 6 11V6.35L12 4.1Zm-1.08 9.9L8.8 11.88a1 1 0 1 0-1.42 1.41l2.83 2.83a1 1 0 0 0 1.42 0l5.66-5.66a1 1 0 0 0-1.41-1.41l-4.96 4.95Z"/></svg>',
+			notes: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M6 4h12a2 2 0 0 1 2 2v14l-4-3H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v9h10.67L18 16.25V6H6Zm2 2h8v2H8V8Zm0 4h6v2H8v-2Z"/></svg>',
+			actions: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v7.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 3.99a1 1 0 0 1-1.4 0l-4-4a1 1 0 0 1 1.4-1.4l2.3 2.29V4a1 1 0 0 1 1-1Zm-7 14a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"/></svg>',
+			info: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 8a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0v-5a1 1 0 0 1 1-1Zm0-4a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 12 6Z"/></svg>'
+		};
+		return icons[name] || icons.info;
+	}
 	function renderList(items, renderer, emptyText, className) { return !items || !items.length ? '<p>' + htmlEscape(emptyText) + '</p>' : '<ul class="' + className + '">' + items.map(renderer).join('') + '</ul>'; }
 	function clone(obj) { return JSON.parse(JSON.stringify(obj || {})); }
 	function storageAvailable() { try { localStorage.setItem('__sgk_test__', '1'); localStorage.removeItem('__sgk_test__'); return true; } catch (error) { return false; } }
@@ -66,13 +77,13 @@
 		try { var entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); return Array.isArray(entries) ? entries : []; } catch (error) { return []; }
 	}
 	function setSavedCalculations(entries) { if (!storageAvailable()) { return false; } localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); return true; }
-	function buildSavedLabel(entry) { return (entry.projectTitle || 'Gespeicherte Kalkulation') + ' · ' + new Date(entry.savedAt).toLocaleString('de-DE'); }
+	function buildSavedLabel(entry) { return (entry.projectTitle || 'Gespeicherte Berechnung') + ' · ' + new Date(entry.savedAt).toLocaleString('de-DE'); }
 
 	function validateManualOffer(value, result) {
-		if (value == null || value === '') { return { valid: false, message: 'Für ein endgültiges Angebotsdokument sollte eine finale Angebotssumme gesetzt werden.' }; }
-		if (value <= 0) { return { valid: false, message: 'Bitte eine positive finale Angebotssumme eintragen.' }; }
-		if (result && result.totals && value < result.totals.lower * 0.25) { return { valid: false, message: 'Die manuelle Angebotssumme liegt ungewöhnlich weit unter der Empfehlung.' }; }
-		return { valid: true, message: 'Die finale Angebotssumme wird separat zur Empfehlung übernommen.' };
+		if (value == null || value === '') { return { valid: false, message: 'Für ein fertiges Angebot solltest du eine finale Angebotssumme festlegen.' }; }
+		if (value <= 0) { return { valid: false, message: 'Bitte trage eine positive Angebotssumme ein.' }; }
+		if (result && result.totals && value < result.totals.lower * 0.25) { return { valid: false, message: 'Die eingetragene Angebotssumme liegt deutlich unter der empfohlenen Spanne.' }; }
+		return { valid: true, message: 'Die manuelle Angebotssumme wird separat als Angebotswert übernommen.' };
 	}
 
 	function copyText(text, trigger) {
@@ -103,10 +114,10 @@
 		var warnings = Array.isArray(result.warnings) ? result.warnings : [];
 		var parts = [];
 		if (uiState.selected_case && uiState.resolved_case && uiState.selected_case !== uiState.resolved_case) {
-			parts.push('Redirect aktiv: „' + labelFromKey(uiState.selected_case) + '“ wird fachlich als „' + labelFromKey(uiState.resolved_case) + '“ berechnet.');
+			parts.push('Deine Auswahl wird in diesem Fall als „' + labelFromKey(uiState.resolved_case) + '“ kalkuliert.');
 		}
 		if (warnings.length) {
-			parts.push('Hinweise: ' + warnings.join(' · '));
+			parts.push('Wichtige Hinweise: ' + warnings.join(' · '));
 		}
 		if (!parts.length) {
 			banner.hidden = true;
@@ -126,7 +137,7 @@
 			positions: texts.positions_block || '',
 			rights: texts.rights_block || '',
 			json: JSON.stringify(exportPayload, null, 2),
-			mail: [offerMeta && offerMeta.intro_text ? offerMeta.intro_text : 'Vielen Dank für Ihre Anfrage. Nachfolgend erhalten Sie unser Angebot.', '', texts.offer_headline || '', texts.copy_summary || '', texts.positions_block || '', '', texts.rights_block || '', '', texts.notes_block || '', '', texts.legal_notice_block || ''].filter(Boolean).join('\n')
+			mail: [offerMeta && offerMeta.intro_text ? offerMeta.intro_text : 'Vielen Dank für deine Anfrage. Nachfolgend erhältst du dein Angebot.', '', texts.offer_headline || '', texts.copy_summary || '', texts.positions_block || '', '', texts.rights_block || '', '', texts.notes_block || '', '', texts.legal_notice_block || ''].filter(Boolean).join('\n')
 		};
 	}
 
@@ -198,13 +209,13 @@
 						'</div>' +
 						'<div class="meta-grid">' +
 							'<div class="meta-card"><div class="section-title">Kunde</div><strong>' + htmlEscape(formData.customer_name || 'Nicht angegeben') + '</strong><small class="muted">' + htmlEscape(offerMeta.contact_name || 'Ansprechpartner optional') + '</small></div>' +
-							'<div class="meta-card"><div class="section-title">Projekt</div><strong>' + htmlEscape(formData.project_title || summary.display_title || summary.title || 'Kalkulation') + '</strong><small class="muted">Fachfall: ' + htmlEscape(summary.display_title || summary.title || 'Projekt') + '</small></div>' +
+							'<div class="meta-card"><div class="section-title">Projekt</div><strong>' + htmlEscape(formData.project_title || summary.display_title || summary.title || 'Berechnung') + '</strong><small class="muted">Projektart: ' + htmlEscape(summary.display_title || summary.title || 'Projekt') + '</small></div>' +
 							'<div class="meta-card"><div class="section-title">Absender</div><strong>' + htmlEscape(offerMeta.sender_company || 'Studio / Absender') + '</strong><small class="muted">' + htmlEscape([offerMeta.sender_email, offerMeta.sender_phone].filter(Boolean).join(' · ')) + '</small></div>' +
 							'<div class="meta-card"><div class="section-title">Dokument</div><strong>' + htmlEscape(offerMeta.offer_number || 'Ohne Nummer') + '</strong><small class="muted">Stand ' + htmlEscape(formatDate(offerMeta.offer_date)) + '</small></div>' +
 						'</div>' +
 					'</div>' +
 					'<div class="summary-grid">' +
-						'<div class="summary-card"><div class="section-title">Angebotsbasis</div><p>' + htmlEscape(offerMeta.intro_text || 'Vielen Dank für Ihre Anfrage. Nachfolgend erhalten Sie unser Angebot auf Basis der abgestimmten Nutzung und der aktuellen Kalkulation.') + '</p></div>' +
+						'<div class="summary-card"><div class="section-title">Angebotsbasis</div><p>' + htmlEscape(offerMeta.intro_text || 'Vielen Dank für deine Anfrage. Nachfolgend erhältst du dein Angebot auf Basis der abgestimmten Nutzung und der aktuellen Preisermittlung.') + '</p></div>' +
 						'<div class="summary-card"><div class="section-title">Errechnete Spanne</div><strong>' + htmlEscape(rangeText) + '</strong><small class="muted">Mittelwert ' + htmlEscape(midText) + '</small></div>' +
 						'<div class="summary-card summary-card--total"><div class="section-title" style="color:rgba(255,255,255,.72)">Finale Angebotssumme</div><strong style="font-size:28px;display:block;">' + htmlEscape(totalText) + '</strong><small>' + htmlEscape(exportPayload.manual_offer_total != null ? 'Manuell gesetzt und als Angebotswert übernommen.' : 'Bitte vor PDF-Ausgabe final festlegen.') + '</small></div>' +
 					'</div>' +
@@ -213,7 +224,7 @@
 					'<div class="section notes"><div class="section-title">Hinweise & Anmerkungen</div>' + (notes.length ? notes.map(function (item) { return '<p style="padding:10px 0;border-top:1px solid #dbe6f1;">' + htmlEscape(item) + '</p>'; }).join('') : '<p class="muted">Keine zusätzlichen Hinweise.</p>') + '</div>' +
 					(legal.length ? '<div class="section"><div class="section-title">Rechtlicher Hinweis</div>' + legal.map(function (item) { return '<p>' + htmlEscape(item) + '</p>'; }).join('') + '</div>' : '') +
 					(alternatives.length ? '<div class="section"><div class="section-title">Optionale Paket-Alternativen</div>' + alternatives.map(function (item) { return '<div class="position-row"><div><strong>' + htmlEscape(item.label || 'Alternative') + '</strong></div><div><strong>' + htmlEscape(item.formatted_totals ? item.formatted_totals.mid : '') + '</strong></div></div>'; }).join('') + '</div>' : '') +
-					'<div class="footer"><div>' + htmlEscape(offerMeta.footer_text || [offerMeta.sender_company, offerMeta.sender_email, offerMeta.sender_phone].filter(Boolean).join(' · ')) + '</div><div>Dieses Dokument basiert auf der fachlichen Kalkulation des Sprecher-Gagenrechners. Interne Metadaten werden im Kundendokument nicht ausgegeben.</div></div>' +
+					'<div class="footer"><div>' + htmlEscape(offerMeta.footer_text || [offerMeta.sender_company, offerMeta.sender_email, offerMeta.sender_phone].filter(Boolean).join(' · ')) + '</div><div>Dieses Dokument basiert auf der aktuellen Preisermittlung im Sprecher-Gagenrechner. Interne Angaben werden im Kundendokument nicht ausgegeben.</div></div>' +
 				'</div></div>',
 				text: buildCopyBlocks(result, formData, offerMeta).mail,
 				validation: validateManualOffer(exportPayload.manual_offer_total, result)
@@ -238,10 +249,10 @@
 		var options = config.variantOptions || [];
 		var current = select.value;
 		select.innerHTML = '';
-		if (!options.length) { select.innerHTML = '<option value="">Automatisch aus der Fachlogik ableiten</option>'; hint.textContent = 'Für diesen Fall ist keine separate Unterauswahl erforderlich.'; return; }
-		select.innerHTML = '<option value="">Bitte Ausprägung wählen</option>' + options.map(function (item) { return '<option value="' + htmlEscape(item[0]) + '">' + htmlEscape(item[1]) + '</option>'; }).join('');
+		if (!options.length) { select.innerHTML = '<option value="">Automatisch passend auswählen</option>'; hint.textContent = 'Für diese Projektart ist keine zusätzliche Auswahl nötig.'; return; }
+		select.innerHTML = '<option value="">Bitte Variante wählen</option>' + options.map(function (item) { return '<option value="' + htmlEscape(item[0]) + '">' + htmlEscape(item[1]) + '</option>'; }).join('');
 		if (current) { select.value = current; }
-		hint.textContent = 'Der Unterfall wird passend zum gewählten Projekt angeboten.';
+		hint.textContent = 'Die Varianten passen sich automatisch deiner Projektart an.';
 	}
 
 	function toggleBlocks(form, effectiveCase, hasSelection) {
@@ -251,30 +262,30 @@
 		var expertShell = form.querySelector('[data-sgk-expert-shell]');
 		if (expertShell) { expertShell.classList.toggle('is-disabled', !hasSelection); }
 		var scopeCopy = form.querySelector('[data-sgk-scope-copy]');
-		if (scopeCopy) { scopeCopy.textContent = hasSelection ? ((CASE_UI[effectiveCase] && CASE_UI[effectiveCase].scopeCopy) || 'Die Angaben werden an den gewählten Fachfall angepasst.') : 'Wählen Sie zunächst ein Projekt, damit der Umfang fachlich passend eingeordnet wird.'; }
+		if (scopeCopy) { scopeCopy.textContent = hasSelection ? ((CASE_UI[effectiveCase] && CASE_UI[effectiveCase].scopeCopy) || 'Die Angaben werden passend zu deiner Auswahl geführt.') : 'Wähle zuerst eine Projektart, damit wir dir die passenden Umfangsangaben zeigen können.'; }
 	}
 
 	function updateCaseContext(app, selectedCase, cases) {
 		var node = app.querySelector('[data-sgk-case-context]');
 		app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) { button.classList.toggle('is-active', button.getAttribute('data-sgk-quick-case') === selectedCase); });
-		if (!selectedCase) { node.innerHTML = '<strong>Noch kein Fall ausgewählt</strong><p>Sobald ein Projektfall gewählt ist, zeigt der Rechner die passende Eingabeführung und blendet irrelevante Felder aus.</p>'; return; }
+		if (!selectedCase) { node.innerHTML = '<strong>Noch keine Projektart gewählt</strong><p>Sobald du eine Projektart auswählst, zeigen wir dir nur die dazu passenden Eingaben an.</p>'; return; }
 		var effectiveCase = cases[selectedCase] ? selectedCase : (SCENARIO_TO_CASE[selectedCase] || selectedCase);
 		var caseData = cases[effectiveCase] || {};
-		node.innerHTML = '<strong>' + htmlEscape(caseData.label || labelFromKey(selectedCase)) + '</strong><p>' + htmlEscape(caseData.description || 'Die Eingabeführung wurde auf den gewählten Fachfall umgestellt.') + '</p>';
+		node.innerHTML = '<strong>' + htmlEscape(caseData.label || labelFromKey(selectedCase)) + '</strong><p>' + htmlEscape(caseData.description || 'Die Eingaben wurden passend zu deiner Auswahl zusammengestellt.') + '</p>';
 	}
 
 	function updateExpertBadges(app, uiState) {
 		var container = app.querySelector('[data-sgk-expert-badges]');
 		var flags = (uiState && uiState.available_expert_options) || [];
 		if (!container) { return; }
-		container.innerHTML = !flags.length ? '<span class="sgk-badge is-muted">Noch keine Expertenoptionen aktiv</span>' : flags.map(function (flag) { return '<span class="sgk-badge">' + htmlEscape(labelFromKey(flag)) + '</span>'; }).join('');
+		container.innerHTML = !flags.length ? '<span class="sgk-badge is-muted">Noch keine zusätzlichen Optionen aktiv</span>' : flags.map(function (flag) { return '<span class="sgk-badge">' + htmlEscape(labelFromKey(flag)) + '</span>'; }).join('');
 	}
 
 	function refreshSavedList(container) {
 		var select = container.querySelector('[data-sgk-saved-list]');
 		if (!select) { return; }
 		var entries = getSavedCalculations();
-		select.innerHTML = '<option value="">Bitte wählen</option>' + entries.map(function (entry) { return '<option value="' + htmlEscape(entry.id) + '">' + htmlEscape(buildSavedLabel(entry)) + '</option>'; }).join('');
+		select.innerHTML = '<option value="">Bitte auswählen</option>' + entries.map(function (entry) { return '<option value="' + htmlEscape(entry.id) + '">' + htmlEscape(buildSavedLabel(entry)) + '</option>'; }).join('');
 	}
 
 	function renderResult(container, payload, formData) {
@@ -286,32 +297,34 @@
 		var routeTrace = Array.isArray(result.route_summary_offer) ? result.route_summary_offer : [];
 		var rights = Array.isArray(result.rights_overview) ? result.rights_overview : [];
 		var positions = Array.isArray(result.offer_positions) ? result.offer_positions : [];
-		var manualOffer = result.formatted_manual_offer_total || 'Noch nicht gesetzt';
+		var manualOffer = result.formatted_manual_offer_total || 'Noch nicht festgelegt';
 		var manualValidation = validateManualOffer(result.manual_offer_total, result);
 		var copyBlocks = buildCopyBlocks(result, formData, {});
 		var warnings = Array.isArray(result.warnings) ? result.warnings : [];
 		var redirectCopy = '';
-		if (uiState.selected_case && uiState.resolved_case && uiState.selected_case !== uiState.resolved_case) { redirectCopy = 'Dieser Fall wird fachlich als „' + labelFromKey(uiState.resolved_case) + '“ berechnet.'; }
+		if (uiState.selected_case && uiState.resolved_case && uiState.selected_case !== uiState.resolved_case) {
+			redirectCopy = 'Deine Auswahl wird für die Preisermittlung als „' + labelFromKey(uiState.resolved_case) + '“ eingeordnet.';
+		}
 
 		container.innerHTML = '' +
-			'<section class="sgk-result-card sgk-result-card--dark">' +
-				'<span class="sgk-result-kicker">Errechnete Spanne</span><h4>' + htmlEscape(result.display_title || 'Noch kein Fall aufgelöst') + '</h4><p>' + htmlEscape(redirectCopy || 'Die Empfehlung zeigt Preisrahmen und fachlich passenden Mittelwert. Die endgültige Angebotssumme setzen Sie später bewusst manuell.') + '</p>' +
-				'<div class="sgk-totals"><div class="sgk-total-card"><span>Von</span><strong>' + htmlEscape(totals.lower || '0,00 €') + '</strong><small>untere Orientierung</small></div><div class="sgk-total-card sgk-total-card--featured"><span>Mittelwert</span><strong>' + htmlEscape(totals.mid || '0,00 €') + '</strong><small>Empfehlung für die Angebotsverhandlung</small></div><div class="sgk-total-card"><span>Bis</span><strong>' + htmlEscape(totals.upper || '0,00 €') + '</strong><small>obere Orientierung</small></div></div>' +
+			'<section class="sgk-result-card sgk-result-card--hero">' +
+				'<div class="sgk-result-card__head"><div><span class="sgk-result-pill">' + icon('amount') + ' Preisrahmen</span><h4 class="sgk-result-title">' + htmlEscape(result.display_title || 'Dein Ergebnis erscheint hier') + '</h4><p>' + htmlEscape(redirectCopy || 'Du siehst hier die empfohlene Spanne, den Mittelwert und die passende Basis für dein Angebot.') + '</p></div><span class="sgk-result-icon">' + icon('project') + '</span></div>' +
+				'<div class="sgk-totals"><div class="sgk-total-card"><span>Von</span><strong>' + htmlEscape(totals.lower || '0,00 €') + '</strong><small>untere Orientierung</small></div><div class="sgk-total-card sgk-total-card--featured"><span>Mittelwert</span><strong>' + htmlEscape(totals.mid || '0,00 €') + '</strong><small>empfohlene Mitte</small></div><div class="sgk-total-card"><span>Bis</span><strong>' + htmlEscape(totals.upper || '0,00 €') + '</strong><small>obere Orientierung</small></div></div>' +
+				'<div class="sgk-insight-list"><div class="sgk-insight-card"><h4>Aktueller Angebotswert</h4><strong>' + htmlEscape(manualOffer) + '</strong><p>Wird separat für Angebot und PDF übernommen.</p></div><div class="sgk-insight-card"><h4>Positionen</h4><strong>' + htmlEscape(String(positions.length)) + '</strong><p>Übertragbare Angebotspositionen.</p></div><div class="sgk-insight-card"><h4>Rechte</h4><strong>' + htmlEscape(String(rights.length)) + '</strong><p>Relevante Nutzungs- und Lizenzangaben.</p></div></div>' +
 			'</section>' +
-			'<section class="sgk-result-card"><span class="sgk-result-kicker">Finale Angebotssumme</span><h4>Manuell gesetzter Angebotswert</h4><div class="sgk-manual-offer"><label for="sgk-manual-offer-input">Finale Angebotssumme</label><div class="sgk-inline-input"><input id="sgk-manual-offer-input" type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="sgk-button sgk-button--secondary" data-sgk-sync-manual-offer>Übernehmen</button></div><p class="sgk-field__hint">Berechnete Spanne und Mittelwert bleiben unverändert. Dieser Wert wird separat für Angebot, Export und PDF geführt.</p><div class="sgk-manual-offer__status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="sgk-manual-offer__current"><strong>Aktuell:</strong> <span>' + htmlEscape(manualOffer) + '</span></div></div></section>' +
-			'<section class="sgk-result-card"><span class="sgk-result-kicker">Angebotspositionen</span><h4>Exportierbare Positionen</h4>' + renderList(positions, function (item) { return '<li><div><strong>' + htmlEscape(item.position_number + '. ' + item.titel) + '</strong><span>' + htmlEscape(item.beschreibung) + '</span><small>' + htmlEscape((item.kategorie || '') + ' · ' + (item.lizenzbezug || '')) + '</small></div><em>' + htmlEscape(item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : (item.formatted_prices ? item.formatted_prices.mid : '0,00 €')) + '</em></li>'; }, 'Nach der Berechnung erscheinen hier übertragbare Angebotspositionen.', 'sgk-breakdown-list') + '</section>' +
-			'<section class="sgk-result-card"><span class="sgk-result-kicker">Nutzungsrechte & Lizenzen</span><h4>Rechteübersicht</h4>' + renderList(rights, function (item) { return '<li><strong>' + htmlEscape(item.title + (item.variant ? ' · ' + item.variant : '')) + '</strong><span>' + htmlEscape('Laufzeit: ' + item.duration + ' · Territorium: ' + item.territory + ' · Medien: ' + item.media) + '</span></li>'; }, 'Die Lizenzübersicht wird nach der Berechnung ergänzt.', 'sgk-license-list') + '</section>' +
-			'<section class="sgk-result-card"><span class="sgk-result-kicker">Validierung & Warnungen</span><h4>Fachliche Hinweise</h4>' + renderList(warnings, function (note) { return '<li>' + htmlEscape(note) + '</li>'; }, 'Aktuell keine zusätzlichen Warnungen oder Guard-Hinweise.', 'sgk-note-list') + '</section>' +
-			'<section class="sgk-result-card"><span class="sgk-result-kicker">Angebotslogik</span><h4>Rechenweg in Angebotssprache</h4>' + renderList(routeTrace, function (item) { return '<li><strong>' + htmlEscape(item.label || labelFromKey(item.step || 'Schritt')) + '</strong><span>' + htmlEscape(item.message || '') + '</span></li>'; }, 'Noch keine Resolver-Hinweise.', 'sgk-note-list') + '</section>' +
-			'<section class="sgk-result-card"><span class="sgk-result-kicker">Hinweise</span><h4>Anmerkungen, Expertenhinweise und Angebotsnotizen</h4>' + renderList(notes, function (note) { return '<li>' + htmlEscape(note) + '</li>'; }, 'Noch keine zusätzlichen Hinweise.', 'sgk-note-list') + '</section>' +
-			'<section class="sgk-result-card"><span class="sgk-result-kicker">Paket-Alternativen</span><h4>Vergleichsoptionen</h4>' + renderList(alternatives, function (item) { return '<li><strong>' + htmlEscape(item.label || 'Alternative') + '</strong><span>' + htmlEscape((item.formatted_totals && item.formatted_totals.mid) || '0,00 €') + '</span></li>'; }, 'Für diesen Fall sind aktuell keine Paket-Alternativen hinterlegt.', 'sgk-license-list') + '</section>' +
-			'<section class="sgk-result-card"><span class="sgk-result-kicker">Aktionen</span><h4>Speichern, laden, kopieren, exportieren</h4><div class="sgk-action-grid sgk-action-grid--actions"><button type="button" class="sgk-button sgk-button--primary" data-label="Angebot / PDF öffnen" data-sgk-action="open-pdf">Angebot / PDF öffnen</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Zusammenfassung kopieren" data-sgk-action="copy-summary">Zusammenfassung kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Angebotspositionen kopieren" data-sgk-action="copy-positions">Angebotspositionen kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Rechteübersicht kopieren" data-sgk-action="copy-rights">Rechteübersicht kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Exportdaten kopieren" data-sgk-action="copy-json">Exportdaten kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Kalkulation speichern" data-sgk-action="save">Kalkulation speichern</button></div><div class="sgk-storage-panel"><div class="sgk-storage-panel__row"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte wählen</option></select></div><div class="sgk-action-grid sgk-action-grid--storage"><button type="button" class="sgk-button sgk-button--secondary" data-label="Kalkulation laden" data-sgk-action="load">Kalkulation laden</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Kalkulation löschen" data-sgk-action="delete">Kalkulation löschen</button></div><p class="sgk-field__hint" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Speicherung lokal im Browser aktiv. Exportstruktur bleibt versionsfähig und PDF-ready.' : 'localStorage ist in dieser Umgebung nicht verfügbar.') + '</p></div><div class="sgk-copy-preview"><h5>Copy Summary</h5><pre>' + htmlEscape(copyBlocks.summary) + '</pre><h5>Copy Angebotspositionen</h5><pre>' + htmlEscape(copyBlocks.positions) + '</pre><h5>Copy Rechteübersicht</h5><pre>' + htmlEscape(copyBlocks.rights) + '</pre></div></section>';
+			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('amount') + ' Angebot</span><h4 class="sgk-result-title">Finale Angebotssumme festlegen</h4><p>Die berechnete Spanne bleibt unverändert. Hier kannst du den finalen Angebotswert separat eintragen.</p></div><span class="sgk-result-icon">' + icon('amount') + '</span></div><div class="sgk-manual-offer"><label for="sgk-manual-offer-input">Finale Angebotssumme</label><div class="sgk-inline-input"><input id="sgk-manual-offer-input" type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="sgk-button sgk-button--secondary" data-sgk-sync-manual-offer>Übernehmen</button></div><div class="sgk-manual-offer__status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="sgk-manual-offer__current"><strong>Aktuell hinterlegt:</strong> <span>' + htmlEscape(manualOffer) + '</span></div></div></section>' +
+			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('project') + ' Positionen</span><h4 class="sgk-result-title">Deine Angebotspositionen</h4><p>Diese Positionen kannst du direkt für Angebot oder Abstimmung übernehmen.</p></div><span class="sgk-result-icon">' + icon('project') + '</span></div>' + renderList(positions, function (item) { return '<li><div><strong>' + htmlEscape(item.position_number + '. ' + item.titel) + '</strong><span>' + htmlEscape(item.beschreibung) + '</span><small>' + htmlEscape((item.kategorie || '') + ' · ' + (item.lizenzbezug || '')) + '</small></div><em>' + htmlEscape(item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : (item.formatted_prices ? item.formatted_prices.mid : '0,00 €')) + '</em></li>'; }, 'Nach der Berechnung erscheinen hier deine Angebotspositionen.', 'sgk-breakdown-list') + '</section>' +
+			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('rights') + ' Rechte</span><h4 class="sgk-result-title">Nutzung und Rechte</h4><p>Hier findest du die wichtigsten Angaben zu Laufzeit, Gebieten und Medien.</p></div><span class="sgk-result-icon">' + icon('rights') + '</span></div>' + renderList(rights, function (item) { return '<li><strong>' + htmlEscape(item.title + (item.variant ? ' · ' + item.variant : '')) + '</strong><span>' + htmlEscape('Laufzeit: ' + item.duration + ' · Gebiet: ' + item.territory + ' · Medien: ' + item.media) + '</span></li>'; }, 'Sobald Rechte relevant sind, siehst du hier die Übersicht.', 'sgk-license-list') + '</section>' +
+			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('info') + ' Einordnung</span><h4 class="sgk-result-title">So wurde deine Auswahl eingeordnet</h4><p>Diese Zusammenfassung erklärt die Preisermittlung in verständlicher Angebotssprache.</p></div><span class="sgk-result-icon">' + icon('info') + '</span></div>' + renderList(routeTrace, function (item) { return '<li><strong>' + htmlEscape(item.label || labelFromKey(item.step || 'Schritt')) + '</strong><span>' + htmlEscape(item.message || '') + '</span></li>'; }, 'Sobald Angaben vorliegen, ergänzen wir hier die Einordnung deiner Auswahl.', 'sgk-note-list') + '</section>' +
+			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('notes') + ' Hinweise</span><h4 class="sgk-result-title">Wichtige Hinweise für dein Projekt</h4><p>Zusätzliche Hinweise und Besonderheiten werden hier kompakt gesammelt.</p></div><span class="sgk-result-icon">' + icon('notes') + '</span></div>' + renderList(warnings, function (note) { return '<li>' + htmlEscape(note) + '</li>'; }, 'Aktuell gibt es keine zusätzlichen Hinweise zu deiner Auswahl.', 'sgk-note-list') + renderList(notes, function (note) { return '<li>' + htmlEscape(note) + '</li>'; }, 'Noch keine weiteren Anmerkungen vorhanden.', 'sgk-note-list') + '</section>' +
+			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('info') + ' Alternativen</span><h4 class="sgk-result-title">Weitere Preisoptionen</h4><p>Falls für deinen Fall Alternativen vorliegen, werden sie hier vergleichbar dargestellt.</p></div><span class="sgk-result-icon">' + icon('info') + '</span></div>' + renderList(alternatives, function (item) { return '<li><strong>' + htmlEscape(item.label || 'Alternative') + '</strong><span>' + htmlEscape((item.formatted_totals && item.formatted_totals.mid) || '0,00 €') + '</span></li>'; }, 'Für diese Auswahl sind aktuell keine Alternativen hinterlegt.', 'sgk-license-list') + '</section>' +
+			'<section class="sgk-result-card"><div class="sgk-result-card__head"><div><span class="sgk-result-kicker">' + icon('actions') + ' Weiterarbeiten</span><h4 class="sgk-result-title">Speichern, kopieren und exportieren</h4><p>Nutze die wichtigsten nächsten Schritte direkt aus der Übersicht heraus.</p></div><span class="sgk-result-icon">' + icon('actions') + '</span></div><div class="sgk-action-grid sgk-action-grid--actions"><button type="button" class="sgk-button sgk-button--primary" data-label="Angebot öffnen" data-sgk-action="open-pdf">Angebot öffnen</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Zusammenfassung kopieren" data-sgk-action="copy-summary">Zusammenfassung kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Positionen kopieren" data-sgk-action="copy-positions">Positionen kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Rechte kopieren" data-sgk-action="copy-rights">Rechte kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Exportdaten kopieren" data-sgk-action="copy-json">Exportdaten kopieren</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Berechnung speichern" data-sgk-action="save">Berechnung speichern</button></div><div class="sgk-storage-panel"><div class="sgk-storage-panel__row"><label for="sgk-saved-calculations">Gespeicherte Berechnungen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select></div><div class="sgk-action-grid sgk-action-grid--storage"><button type="button" class="sgk-button sgk-button--secondary" data-label="Berechnung laden" data-sgk-action="load">Laden</button><button type="button" class="sgk-button sgk-button--secondary" data-label="Berechnung löschen" data-sgk-action="delete">Löschen</button></div><p class="sgk-storage-panel__meta" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Deine Berechnungen werden lokal im Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</p></div><div class="sgk-copy-preview"><h5>Zusammenfassung</h5><pre>' + htmlEscape(copyBlocks.summary) + '</pre><h5>Positionen</h5><pre>' + htmlEscape(copyBlocks.positions) + '</pre><h5>Rechte</h5><pre>' + htmlEscape(copyBlocks.rights) + '</pre></div></section>';
 	}
 
 	function requestCalculation(app, form, resultContainer) {
 		var payload = serializeForm(form);
 		if (!payload.case_key) { return; }
-		resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Berechnung läuft</strong><p>Resolver, Rechte-Logik und Kalkulationsspanne werden gerade aktualisiert.</p></div>';
+		resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Deine Kalkulation wird aktualisiert</strong><p>Preisrahmen, Rechte und Zusammenfassung werden gerade neu aufgebaut.</p></div>';
 		fetch(sgkFrontend.restUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': sgkFrontend.nonce }, body: JSON.stringify(payload) })
 			.then(function (response) {
 				if (!response.ok) { throw new Error('request-failed'); }
@@ -327,7 +340,7 @@
 			})
 			.catch(function () {
 				updateRedirectBanner(app, null);
-				resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Berechnung momentan nicht verfügbar</strong><p>Die REST-Berechnung konnte nicht geladen werden.</p></div>';
+				resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Die Kalkulation ist gerade nicht verfügbar</strong><p>Bitte versuche es in einem Moment noch einmal.</p></div>';
 			});
 	}
 
@@ -409,14 +422,14 @@
 			if (action === 'copy-json') { copyText(copyBlocks.json, event.target); return; }
 			if (action === 'save') {
 				entries = getSavedCalculations();
-				entry = { id: 'sgk-' + Date.now(), version: 2, savedAt: new Date().toISOString(), projectTitle: state.formData.project_title || state.payload.result.display_title || 'Kalkulation', formData: state.formData, result: state.payload.result, exportPayload: buildExportPayload(state.payload.result, state.formData, getOfferMeta(app, state.formData)) };
-				setSavedCalculations([entry].concat(entries).slice(0, 15)); refreshSavedList(resultContainer); if (statusNode) { statusNode.textContent = 'Kalkulation lokal gespeichert: ' + buildSavedLabel(entry); } return;
+				entry = { id: 'sgk-' + Date.now(), version: 2, savedAt: new Date().toISOString(), projectTitle: state.formData.project_title || state.payload.result.display_title || 'Berechnung', formData: state.formData, result: state.payload.result, exportPayload: buildExportPayload(state.payload.result, state.formData, getOfferMeta(app, state.formData)) };
+				setSavedCalculations([entry].concat(entries).slice(0, 15)); refreshSavedList(resultContainer); if (statusNode) { statusNode.textContent = 'Berechnung lokal gespeichert: ' + buildSavedLabel(entry); } return;
 			}
 			selectedId = (resultContainer.querySelector('[data-sgk-saved-list]') || {}).value;
-			if (!selectedId) { if (statusNode) { statusNode.textContent = 'Bitte zuerst eine gespeicherte Kalkulation auswählen.'; } return; }
-			entries = getSavedCalculations(); entry = entries.find(function (item) { return item.id === selectedId; }); if (!entry) { if (statusNode) { statusNode.textContent = 'Gespeicherte Kalkulation konnte nicht geladen werden.'; } return; }
-			if (action === 'load') { fillForm(form, entry.formData || {}); syncUI(); requestCalculation(app, form, resultContainer); if (statusNode) { statusNode.textContent = 'Kalkulation geladen: ' + buildSavedLabel(entry); } return; }
-			if (action === 'delete') { setSavedCalculations(entries.filter(function (item) { return item.id !== selectedId; })); refreshSavedList(resultContainer); if (statusNode) { statusNode.textContent = 'Kalkulation gelöscht.'; } }
+			if (!selectedId) { if (statusNode) { statusNode.textContent = 'Bitte wähle zuerst eine gespeicherte Berechnung aus.'; } return; }
+			entries = getSavedCalculations(); entry = entries.find(function (item) { return item.id === selectedId; }); if (!entry) { if (statusNode) { statusNode.textContent = 'Die gespeicherte Berechnung konnte nicht geladen werden.'; } return; }
+			if (action === 'load') { fillForm(form, entry.formData || {}); syncUI(); requestCalculation(app, form, resultContainer); if (statusNode) { statusNode.textContent = 'Berechnung geladen: ' + buildSavedLabel(entry); } return; }
+			if (action === 'delete') { setSavedCalculations(entries.filter(function (item) { return item.id !== selectedId; })); refreshSavedList(resultContainer); if (statusNode) { statusNode.textContent = 'Berechnung gelöscht.'; } }
 		});
 
 		resultContainer.addEventListener('click', function (event) {
