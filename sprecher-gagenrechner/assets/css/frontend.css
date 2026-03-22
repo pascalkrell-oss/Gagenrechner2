@@ -795,6 +795,10 @@
 	padding: 24px;
 }
 
+.sgk-offer-modal[hidden] {
+	display: none !important;
+}
+
 .sgk-offer-modal__backdrop {
 	position: absolute;
 	inset: 0;
