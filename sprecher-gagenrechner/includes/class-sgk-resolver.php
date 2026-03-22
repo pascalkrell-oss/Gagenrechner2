@@ -177,6 +177,12 @@ class SGK_Resolver {
 			$trace[]    = array( 'step' => 'activated_rule', 'case' => $resolved, 'message' => 'Paid-Media-Guard: Routing in Werbung mit Bild.' );
 		}
 
+		if ( 'marketing_elearning' === $resolved && '1' === $normalized['is_paid_media'] ) {
+			$warnings[] = 'Marketing-E-Learning mit Paid Media wird als Werbung mit Bild behandelt.';
+			$resolved   = 'werbung_mit_bild';
+			$trace[]    = array( 'step' => 'activated_rule', 'case' => $resolved, 'message' => 'Paid-Media-Guard für Marketing-E-Learning aktiviert.' );
+		}
+
 		if ( 'app' === $resolved && 'in_app_ads' === $normalized['case_key'] ) {
 			$warnings[] = 'In-App-Ads gehören nicht in den App-Block, sondern in Werbung mit Bild.';
 			$resolved   = 'werbung_mit_bild';

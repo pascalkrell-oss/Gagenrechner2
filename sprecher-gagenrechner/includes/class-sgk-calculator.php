@@ -73,6 +73,7 @@ class SGK_Calculator {
 		$this->apply_unlimited_multipliers( $result, $normalized );
 		$this->apply_follow_up_credit_logic( $result, $normalized );
 		$this->build_package_alternatives( $result, $case, $normalized );
+		$this->ensure_consistent_totals( $result );
 		if ( isset( $normalized['manual_offer_total'] ) && '' !== (string) $normalized['manual_offer_total'] && (float) $normalized['manual_offer_total'] > 0 ) {
 			$result['manual_offer_total'] = (float) $normalized['manual_offer_total'];
 		}
@@ -479,8 +480,32 @@ class SGK_Calculator {
 			'alternative_packages'    => $result['alternatives'],
 			'credit_information'      => $result['credits'],
 			'manual_total_placeholder'=> null,
-			'calculation_meta'        => array( 'export_schema' => $case['export_schema'], 'result_meta' => $result['result_meta'] ),
+			'calculation_meta'        => array(
+				'export_schema' => $case['export_schema'],
+				'result_meta'   => $result['result_meta'],
+				'input_snapshot'=> $result['input_snapshot'],
+				'line_item_count' => count( $result['line_items'] ),
+			),
 		);
+	}
+
+	protected function ensure_consistent_totals( array &$result ) {
+		$lower = (float) $result['totals']['lower'];
+		$mid   = (float) $result['totals']['mid'];
+		$upper = (float) $result['totals']['upper'];
+
+		if ( $lower <= $mid && $mid <= $upper ) {
+			return;
+		}
+
+		$ordered = array( $lower, $mid, $upper );
+		sort( $ordered, SORT_NUMERIC );
+		$result['totals'] = array(
+			'lower' => $ordered[0],
+			'mid'   => $ordered[1],
+			'upper' => $ordered[2],
+		);
+		$result['warnings'][] = __( 'Die Ergebniswerte wurden intern auf eine konsistente Von/Mittel/Bis-Reihenfolge normalisiert.', 'sprecher-gagenrechner' );
 	}
 
 	protected function resolve_variant_key( array $case, array $input, $fallback ) {

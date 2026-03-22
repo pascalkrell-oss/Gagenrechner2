@@ -72,13 +72,6 @@ class SGK_Result_Formatter {
 		$sort_key  = 10;
 
 		foreach ( $result['line_items'] as $index => $item ) {
-			$recommended = $item['mid'];
-			$manual      = null;
-
-			if ( 0 === $index && null !== $result['manual_offer_total'] ) {
-				$manual = $result['manual_offer_total'];
-			}
-
 			$positions[] = array(
 				'position_number'             => sprintf( '%02d', $index + 1 ),
 				'sort_key'                    => $sort_key,
@@ -89,8 +82,8 @@ class SGK_Result_Formatter {
 				'einzelpreis_lower'           => $item['lower'],
 				'einzelpreis_mid'             => $item['mid'],
 				'einzelpreis_upper'           => $item['upper'],
-				'empfohlener_preis'           => $recommended,
-				'manuell_uebernommener_preis' => $manual,
+				'empfohlener_preis'           => $item['mid'],
+				'manuell_uebernommener_preis' => null,
 				'kategorie'                   => $this->position_category_label( $item['category'] ),
 				'lizenzbezug'                 => $this->license_reference_for_item( $item, $result['licenses'] ),
 				'hinweistext'                 => $item['calculation_note'],
@@ -99,7 +92,7 @@ class SGK_Result_Formatter {
 					'lower'     => $this->format_currency( $item['lower'] ),
 					'mid'       => $this->format_currency( $item['mid'] ),
 					'upper'     => $this->format_currency( $item['upper'] ),
-					'manual'    => null !== $manual ? $this->format_currency( $manual ) : null,
+					'manual'    => null,
 				),
 			);
 			$sort_key += 10;
@@ -137,9 +130,12 @@ class SGK_Result_Formatter {
 	protected function build_rights_overview( array $result ) {
 		$overview = array();
 		foreach ( $result['licenses'] as $license ) {
-			$territory = isset( $license['territory_rules']['default_scope'] ) ? $license['territory_rules']['default_scope'] : 'projektbezogen';
-			$media     = isset( $license['media_rules']['default_scope'] ) ? $license['media_rules']['default_scope'] : 'gemäß Fallkonfiguration';
+			$territory = isset( $license['territory_rules']['default_scope'] ) ? $license['territory_rules']['default_scope'] : ( isset( $license['territory_rules']['default'] ) ? $license['territory_rules']['default'] : 'projektbezogen' );
+			$media     = isset( $license['media_rules']['default_scope'] ) ? $license['media_rules']['default_scope'] : ( isset( $license['media_rules']['default_scope'] ) ? $license['media_rules']['default_scope'] : ( isset( $license['media_rules']['default'] ) ? $license['media_rules']['default'] : 'gemäß Fallkonfiguration' ) );
 			$duration  = isset( $license['duration_rules']['default_term'] ) ? $license['duration_rules']['default_term'] : 'projektbezogen';
+			if ( is_array( $media ) ) {
+				$media = implode( ', ', array_map( 'strval', $media ) );
+			}
 			$overview[] = array(
 				'title'       => $this->humanize_key( $license['case_key'] ),
 				'variant'     => ! empty( $license['variant'] ) ? $this->humanize_key( $license['variant'] ) : '',
@@ -198,6 +194,7 @@ class SGK_Result_Formatter {
 			'credit_count'       => count( $result['credits'] ),
 			'manual_offer_total' => $result['manual_offer_total'],
 			'input_snapshot'     => $result['input_snapshot'],
+			'route_trace'        => $result['route_trace'],
 		);
 	}
 

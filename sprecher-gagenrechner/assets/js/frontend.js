@@ -95,6 +95,28 @@
 		return payload;
 	}
 
+	function updateRedirectBanner(app, payload) {
+		var banner = app.querySelector('[data-sgk-redirect-banner]');
+		if (!banner) { return; }
+		var uiState = (payload && payload.ui_state) || {};
+		var result = (payload && payload.result) || {};
+		var warnings = Array.isArray(result.warnings) ? result.warnings : [];
+		var parts = [];
+		if (uiState.selected_case && uiState.resolved_case && uiState.selected_case !== uiState.resolved_case) {
+			parts.push('Redirect aktiv: „' + labelFromKey(uiState.selected_case) + '“ wird fachlich als „' + labelFromKey(uiState.resolved_case) + '“ berechnet.');
+		}
+		if (warnings.length) {
+			parts.push('Hinweise: ' + warnings.join(' · '));
+		}
+		if (!parts.length) {
+			banner.hidden = true;
+			banner.textContent = '';
+			return;
+		}
+		banner.hidden = false;
+		banner.textContent = parts.join(' ');
+	}
+
 	function buildCopyBlocks(result, formData, offerMeta) {
 		var exportPayload = buildExportPayload(result, formData, offerMeta);
 		var texts = exportPayload.export_text_blocks || {};
@@ -267,6 +289,7 @@
 		var manualOffer = result.formatted_manual_offer_total || 'Noch nicht gesetzt';
 		var manualValidation = validateManualOffer(result.manual_offer_total, result);
 		var copyBlocks = buildCopyBlocks(result, formData, {});
+		var warnings = Array.isArray(result.warnings) ? result.warnings : [];
 		var redirectCopy = '';
 		if (uiState.selected_case && uiState.resolved_case && uiState.selected_case !== uiState.resolved_case) { redirectCopy = 'Dieser Fall wird fachlich als „' + labelFromKey(uiState.resolved_case) + '“ berechnet.'; }
 
@@ -278,6 +301,7 @@
 			'<section class="sgk-result-card"><span class="sgk-result-kicker">Finale Angebotssumme</span><h4>Manuell gesetzter Angebotswert</h4><div class="sgk-manual-offer"><label for="sgk-manual-offer-input">Finale Angebotssumme</label><div class="sgk-inline-input"><input id="sgk-manual-offer-input" type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="sgk-button sgk-button--secondary" data-sgk-sync-manual-offer>Übernehmen</button></div><p class="sgk-field__hint">Berechnete Spanne und Mittelwert bleiben unverändert. Dieser Wert wird separat für Angebot, Export und PDF geführt.</p><div class="sgk-manual-offer__status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="sgk-manual-offer__current"><strong>Aktuell:</strong> <span>' + htmlEscape(manualOffer) + '</span></div></div></section>' +
 			'<section class="sgk-result-card"><span class="sgk-result-kicker">Angebotspositionen</span><h4>Exportierbare Positionen</h4>' + renderList(positions, function (item) { return '<li><div><strong>' + htmlEscape(item.position_number + '. ' + item.titel) + '</strong><span>' + htmlEscape(item.beschreibung) + '</span><small>' + htmlEscape((item.kategorie || '') + ' · ' + (item.lizenzbezug || '')) + '</small></div><em>' + htmlEscape(item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : (item.formatted_prices ? item.formatted_prices.mid : '0,00 €')) + '</em></li>'; }, 'Nach der Berechnung erscheinen hier übertragbare Angebotspositionen.', 'sgk-breakdown-list') + '</section>' +
 			'<section class="sgk-result-card"><span class="sgk-result-kicker">Nutzungsrechte & Lizenzen</span><h4>Rechteübersicht</h4>' + renderList(rights, function (item) { return '<li><strong>' + htmlEscape(item.title + (item.variant ? ' · ' + item.variant : '')) + '</strong><span>' + htmlEscape('Laufzeit: ' + item.duration + ' · Territorium: ' + item.territory + ' · Medien: ' + item.media) + '</span></li>'; }, 'Die Lizenzübersicht wird nach der Berechnung ergänzt.', 'sgk-license-list') + '</section>' +
+			'<section class="sgk-result-card"><span class="sgk-result-kicker">Validierung & Warnungen</span><h4>Fachliche Hinweise</h4>' + renderList(warnings, function (note) { return '<li>' + htmlEscape(note) + '</li>'; }, 'Aktuell keine zusätzlichen Warnungen oder Guard-Hinweise.', 'sgk-note-list') + '</section>' +
 			'<section class="sgk-result-card"><span class="sgk-result-kicker">Angebotslogik</span><h4>Rechenweg in Angebotssprache</h4>' + renderList(routeTrace, function (item) { return '<li><strong>' + htmlEscape(item.label || labelFromKey(item.step || 'Schritt')) + '</strong><span>' + htmlEscape(item.message || '') + '</span></li>'; }, 'Noch keine Resolver-Hinweise.', 'sgk-note-list') + '</section>' +
 			'<section class="sgk-result-card"><span class="sgk-result-kicker">Hinweise</span><h4>Anmerkungen, Expertenhinweise und Angebotsnotizen</h4>' + renderList(notes, function (note) { return '<li>' + htmlEscape(note) + '</li>'; }, 'Noch keine zusätzlichen Hinweise.', 'sgk-note-list') + '</section>' +
 			'<section class="sgk-result-card"><span class="sgk-result-kicker">Paket-Alternativen</span><h4>Vergleichsoptionen</h4>' + renderList(alternatives, function (item) { return '<li><strong>' + htmlEscape(item.label || 'Alternative') + '</strong><span>' + htmlEscape((item.formatted_totals && item.formatted_totals.mid) || '0,00 €') + '</span></li>'; }, 'Für diesen Fall sind aktuell keine Paket-Alternativen hinterlegt.', 'sgk-license-list') + '</section>' +
@@ -289,9 +313,22 @@
 		if (!payload.case_key) { return; }
 		resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Berechnung läuft</strong><p>Resolver, Rechte-Logik und Kalkulationsspanne werden gerade aktualisiert.</p></div>';
 		fetch(sgkFrontend.restUrl, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': sgkFrontend.nonce }, body: JSON.stringify(payload) })
-			.then(function (response) { return response.json(); })
-			.then(function (json) { app.__sgkLastPayload = json; renderResult(resultContainer, json, payload); updateExpertBadges(app, json.ui_state || {}); refreshSavedList(resultContainer); })
-			.catch(function () { resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Berechnung momentan nicht verfügbar</strong><p>Die REST-Berechnung konnte nicht geladen werden.</p></div>'; });
+			.then(function (response) {
+				if (!response.ok) { throw new Error('request-failed'); }
+				return response.json();
+			})
+			.then(function (json) {
+				if (!json || !json.result) { throw new Error('invalid-payload'); }
+				app.__sgkLastPayload = json;
+				renderResult(resultContainer, json, payload);
+				updateExpertBadges(app, json.ui_state || {});
+				updateRedirectBanner(app, json);
+				refreshSavedList(resultContainer);
+			})
+			.catch(function () {
+				updateRedirectBanner(app, null);
+				resultContainer.innerHTML = '<div class="sgk-result-empty"><strong>Berechnung momentan nicht verfügbar</strong><p>Die REST-Berechnung konnte nicht geladen werden.</p></div>';
+			});
 	}
 
 	function hydrateOfferModal(app, result, formData) {
@@ -323,6 +360,7 @@
 			updateCaseContext(app, selectedCase, cases);
 			populateVariants(form, effectiveCase);
 			toggleBlocks(form, effectiveCase, !!selectedCase);
+			updateRedirectBanner(app, app.__sgkLastPayload || null);
 		}
 		function currentState() { return { payload: app.__sgkLastPayload, formData: serializeForm(form) }; }
 		function openModal() { modal.hidden = false; document.body.classList.add('sgk-modal-open'); }
