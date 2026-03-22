@@ -36,6 +36,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 			</header>
 
 			<form class="sgk-form" data-sgk-form>
+				<input type="hidden" name="manual_offer_total" value="" />
 				<div class="sgk-step-card" data-step="project">
 					<div class="sgk-step-card__header">
 						<span class="sgk-step-card__index">1</span>
@@ -214,6 +215,21 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<?php endif; ?>
 					</div>
 				</details>
+
+				<div class="sgk-step-card is-disabled" data-sgk-dependent-step>
+					<div class="sgk-step-card__header">
+						<span class="sgk-step-card__index">5</span>
+						<div>
+							<h4><?php esc_html_e( 'Projektbezug & Angebotsnotizen', 'sprecher-gagenrechner' ); ?></h4>
+							<p><?php esc_html_e( 'Diese Angaben fließen in Speicherstände, Copy-Texte und die spätere PDF-Basis ein.', 'sprecher-gagenrechner' ); ?></p>
+						</div>
+					</div>
+					<div class="sgk-field-grid sgk-field-grid--two">
+						<div class="sgk-field"><label for="sgk-project-title"><?php esc_html_e( 'Projektbezug / Angebotsüberschrift', 'sprecher-gagenrechner' ); ?></label><input id="sgk-project-title" name="project_title" type="text" placeholder="z. B. Imagefilm Frühjahrskampagne" /><p class="sgk-field__hint"><?php esc_html_e( 'Wird für Exporttexte und Speicherstände genutzt.', 'sprecher-gagenrechner' ); ?></p></div>
+						<div class="sgk-field"><label for="sgk-customer-name"><?php esc_html_e( 'Kunde / Ansprechpartner', 'sprecher-gagenrechner' ); ?></label><input id="sgk-customer-name" name="customer_name" type="text" placeholder="z. B. Muster GmbH" /><p class="sgk-field__hint"><?php esc_html_e( 'Optional für eine saubere Angebotsvorbereitung.', 'sprecher-gagenrechner' ); ?></p></div>
+					</div>
+					<div class="sgk-field"><label for="sgk-internal-notes"><?php esc_html_e( 'Interne Notizen / technische Metadaten', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-internal-notes" name="internal_notes" rows="4" placeholder="Interne Verhandlungsnotizen, Timing, technische Hinweise"></textarea><p class="sgk-field__hint"><?php esc_html_e( 'Bleibt getrennt von den kundenfähigen Copy-Blöcken und dient nur der internen Weiterverarbeitung.', 'sprecher-gagenrechner' ); ?></p></div>
+				</div>
 
 				<div class="sgk-actions">
 					<button type="submit" class="sgk-button sgk-button--primary"><?php esc_html_e( 'Jetzt live berechnen', 'sprecher-gagenrechner' ); ?></button>
