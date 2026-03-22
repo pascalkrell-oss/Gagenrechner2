@@ -18,28 +18,6 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 	<div class="src-app-backdrop"></div>
 	<div class="src-layout">
 		<main class="src-config-engine" aria-labelledby="sgk-config-title">
-			<header class="src-hero-panel">
-				<div class="src-hero-copy">
-					<p class="src-page-eyebrow"><?php esc_html_e( 'Sprecher Gagenrechner 2026', 'sprecher-gagenrechner' ); ?></p>
-					<h2 id="sgk-config-title"><?php esc_html_e( 'Neues, klares Produktdesign für schnellere und bessere Angebotsentscheidungen.', 'sprecher-gagenrechner' ); ?></h2>
-					<p class="src-hero-lead"><?php esc_html_e( 'Der Rechner führt dich in wenigen Schritten von der Projektart zur belastbaren Preisempfehlung – mit klarer Struktur, Live-Feedback und sauber vorbereiteter Angebotsübergabe.', 'sprecher-gagenrechner' ); ?></p>
-				</div>
-				<div class="src-hero-highlights" aria-label="Produktvorteile">
-					<div class="src-hero-stat">
-						<strong><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></strong>
-						<span><?php esc_html_e( 'Aktualisierung ohne Umwege', 'sprecher-gagenrechner' ); ?></span>
-					</div>
-					<div class="src-hero-stat">
-						<strong><?php esc_html_e( 'Smart Match', 'sprecher-gagenrechner' ); ?></strong>
-						<span><?php esc_html_e( 'Projekt wird passend eingeordnet', 'sprecher-gagenrechner' ); ?></span>
-					</div>
-					<div class="src-hero-stat">
-						<strong><?php esc_html_e( 'Export-ready', 'sprecher-gagenrechner' ); ?></strong>
-						<span><?php esc_html_e( 'Angebot direkt vorbereiten', 'sprecher-gagenrechner' ); ?></span>
-					</div>
-				</div>
-			</header>
-
 			<form class="sgk-form" data-sgk-form>
 				<input type="hidden" name="manual_offer_total" value="" />
 				<input type="hidden" id="sgk-case-key" name="case_key" data-sgk-primary-field value="" />
@@ -48,7 +26,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					<div class="src-section-header">
 						<div class="src-step-badge">01</div>
 						<div class="src-section-title-wrap">
-							<p class="src-section-title"><?php esc_html_e( 'Projektart wählen', 'sprecher-gagenrechner' ); ?></p>
+							<p class="src-section-title" id="sgk-config-title"><?php esc_html_e( 'Projektart wählen', 'sprecher-gagenrechner' ); ?></p>
 							<p class="src-section-copy"><?php esc_html_e( 'Starte mit dem Use Case. Darauf basieren die sichtbaren Eingaben, Rechteoptionen und die Kalkulationslogik.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
