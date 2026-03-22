@@ -20,6 +20,8 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 			<h2 class="sgk-app__title"><?php esc_html_e( 'Sprecherhonorare sicher konfigurieren – geführt, nachvollziehbar und angebotsreif.', 'sprecher-gagenrechner' ); ?></h2>
 			<p class="sgk-app__intro"><?php esc_html_e( 'Wählen Sie Projekt, Nutzung und Umfang Schritt für Schritt. Die Kalkulationsspanne, Lizenzlogik und fachlichen Hinweise werden rechts fortlaufend eingeordnet.', 'sprecher-gagenrechner' ); ?></p>
 		</div>
+
+
 		<div class="sgk-hero-card">
 			<span class="sgk-hero-card__badge"><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></span>
 			<strong><?php esc_html_e( 'Von-Bis-Spanne + Mittelwert', 'sprecher-gagenrechner' ); ?></strong>
@@ -251,5 +253,46 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				</div>
 			</div>
 		</aside>
+	</div>
+
+	<div class="sgk-offer-modal" data-sgk-offer-modal hidden>
+		<div class="sgk-offer-modal__backdrop" data-sgk-offer-close></div>
+		<div class="sgk-offer-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="sgk-offer-modal-title">
+			<header class="sgk-offer-modal__header">
+				<div>
+					<p class="sgk-eyebrow"><?php esc_html_e( 'Angebot & PDF', 'sprecher-gagenrechner' ); ?></p>
+					<h3 id="sgk-offer-modal-title"><?php esc_html_e( 'Professionelles Angebotsdokument vorbereiten', 'sprecher-gagenrechner' ); ?></h3>
+					<p><?php esc_html_e( 'Überprüfen Sie Angebotskopf, Projektdaten und Vorschau, bevor Sie das Dokument als PDF ausgeben.', 'sprecher-gagenrechner' ); ?></p>
+				</div>
+				<button type="button" class="sgk-button sgk-button--ghost" data-sgk-offer-close><?php esc_html_e( 'Schließen', 'sprecher-gagenrechner' ); ?></button>
+			</header>
+			<div class="sgk-offer-modal__grid">
+				<section class="sgk-offer-modal__panel">
+					<div class="sgk-field-grid sgk-field-grid--two">
+						<div class="sgk-field"><label for="sgk-offer-number"><?php esc_html_e( 'Angebotsnummer', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-number" type="text" data-sgk-offer-meta="offer_number" placeholder="z. B. ANG-2026-001" /></div>
+						<div class="sgk-field"><label for="sgk-offer-date"><?php esc_html_e( 'Angebotsdatum', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-date" type="date" data-sgk-offer-meta="offer_date" /></div>
+					</div>
+					<div class="sgk-field-grid sgk-field-grid--two">
+						<div class="sgk-field"><label for="sgk-offer-contact"><?php esc_html_e( 'Ansprechpartner', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-contact" type="text" data-sgk-offer-meta="contact_name" placeholder="z. B. Julia Muster" /></div>
+						<div class="sgk-field"><label for="sgk-offer-company"><?php esc_html_e( 'Absender / Studio', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-company" type="text" data-sgk-offer-meta="sender_company" placeholder="z. B. Sprecherstudio Mustermann" /></div>
+					</div>
+					<div class="sgk-field-grid sgk-field-grid--two">
+						<div class="sgk-field"><label for="sgk-offer-email"><?php esc_html_e( 'Kontakt E-Mail', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-email" type="email" data-sgk-offer-meta="sender_email" placeholder="kontakt@studio.de" /></div>
+						<div class="sgk-field"><label for="sgk-offer-phone"><?php esc_html_e( 'Telefon / Kontakt', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-phone" type="text" data-sgk-offer-meta="sender_phone" placeholder="+49 ..." /></div>
+					</div>
+					<div class="sgk-field"><label for="sgk-offer-intro"><?php esc_html_e( 'Einleitung / Begleittext', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-offer-intro" rows="4" data-sgk-offer-meta="intro_text" placeholder="Vielen Dank für die Anfrage. Nachfolgend erhalten Sie unser Angebot auf Basis der abgestimmten Nutzung."></textarea></div>
+					<div class="sgk-field"><label for="sgk-offer-footer"><?php esc_html_e( 'Footer / Kontaktdaten', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-offer-footer" rows="3" data-sgk-offer-meta="footer_text" placeholder="Sprecherstudio Mustermann · kontakt@studio.de · www.studio.de"></textarea></div>
+					<div class="sgk-field"><label for="sgk-offer-internal"><?php esc_html_e( 'Interne Notiz (nicht im PDF)', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-offer-internal" rows="3" data-sgk-offer-meta="internal_note" placeholder="Nur intern sichtbar, nicht im Kundendokument."></textarea><p class="sgk-field__hint"><?php esc_html_e( 'Diese Notiz bleibt getrennt vom finalen PDF und dient nur der internen Angebotsvorbereitung.', 'sprecher-gagenrechner' ); ?></p></div>
+					<div class="sgk-action-grid sgk-action-grid--actions">
+						<button type="button" class="sgk-button sgk-button--primary" data-sgk-offer-action="print"><?php esc_html_e( 'Als PDF drucken / speichern', 'sprecher-gagenrechner' ); ?></button>
+						<button type="button" class="sgk-button sgk-button--secondary" data-sgk-offer-action="copy-mail"><?php esc_html_e( 'Angebotstext kopieren', 'sprecher-gagenrechner' ); ?></button>
+					</div>
+					<p class="sgk-field__hint" data-sgk-offer-status><?php esc_html_e( 'Setzen Sie möglichst eine finale Angebotssumme, bevor das Dokument als PDF ausgegeben wird.', 'sprecher-gagenrechner' ); ?></p>
+				</section>
+				<section class="sgk-offer-modal__preview">
+					<div class="sgk-offer-preview-shell" data-sgk-offer-preview></div>
+				</section>
+			</div>
+		</div>
 	</div>
 </div>

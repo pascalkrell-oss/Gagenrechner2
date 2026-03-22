@@ -46,6 +46,8 @@ class SGK_Result_Formatter {
 		$result['export_text_blocks']  = $this->build_export_text_blocks( $result );
 		$result['summary']             = $this->build_summary( $result );
 		$result['export_payload']      = $this->build_export_payload( $result );
+		$result['document_payload']    = $this->build_document_payload( $result['export_payload'] );
+		$result['export_payload']['document_payload'] = $result['document_payload'];
 
 		return $result;
 	}
@@ -259,6 +261,16 @@ class SGK_Result_Formatter {
 			'calculation_meta'     => $result['internal_meta'],
 			'export_text_blocks'   => $result['export_text_blocks'],
 		);
+	}
+
+
+	protected function build_document_payload( array $export_payload ) {
+		if ( class_exists( 'SGK_Offer_Document' ) ) {
+			$builder = new SGK_Offer_Document();
+			return $builder->build_from_export_payload( $export_payload );
+		}
+
+		return array();
 	}
 
 	protected function position_title( array $item ) {
