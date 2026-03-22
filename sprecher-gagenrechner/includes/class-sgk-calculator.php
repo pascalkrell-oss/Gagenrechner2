@@ -73,6 +73,10 @@ class SGK_Calculator {
 		$this->apply_unlimited_multipliers( $result, $normalized );
 		$this->apply_follow_up_credit_logic( $result, $normalized );
 		$this->build_package_alternatives( $result, $case, $normalized );
+		if ( isset( $normalized['manual_offer_total'] ) && '' !== (string) $normalized['manual_offer_total'] && (float) $normalized['manual_offer_total'] > 0 ) {
+			$result['manual_offer_total'] = (float) $normalized['manual_offer_total'];
+		}
+
 		$result['export_payload'] = $this->build_export_payload( $result, $case );
 
 		return $result;

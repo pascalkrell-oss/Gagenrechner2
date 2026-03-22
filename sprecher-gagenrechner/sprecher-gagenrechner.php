@@ -33,6 +33,7 @@ require_once SGK_PLUGIN_DIR . 'includes/class-sgk-config.php';
 require_once SGK_PLUGIN_DIR . 'includes/class-sgk-resolver.php';
 require_once SGK_PLUGIN_DIR . 'includes/class-sgk-calculator.php';
 require_once SGK_PLUGIN_DIR . 'includes/class-sgk-result-formatter.php';
+require_once SGK_PLUGIN_DIR . 'includes/class-sgk-offer-document.php';
 require_once SGK_PLUGIN_DIR . 'includes/class-sgk-api.php';
 require_once SGK_PLUGIN_DIR . 'includes/class-sgk-shortcode.php';
 require_once SGK_PLUGIN_DIR . 'includes/class-sgk-ui-state.php';
