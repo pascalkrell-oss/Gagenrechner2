@@ -55,7 +55,8 @@ class SGK_UI_State {
 		$bool_keys = array(
 			'needs_cutdown', 'archivgage', 'layout_fee', 'follow_up_usage', 'is_paid_media', 'usage_social_media', 'usage_praesentation', 'usage_awardfilm', 'usage_casefilm', 'usage_mitarbeiterfilm', 'unlimited_time', 'unlimited_territory', 'unlimited_media', 'reminder', 'allongen',
 		);
-		$float_keys = array( 'manual_offer_total' );
+		$float_keys = array( 'manual_offer_total', 'duration_minutes', 'net_minutes', 'fah', 'recording_hours', 'prior_layout_fee', 'session_hours' );
+		$int_keys   = array( 'module_count', 'recording_days', 'same_day_projects', 'additional_year', 'additional_territory', 'additional_motif' );
 		foreach ( $payload as $key => $value ) {
 			$key = sanitize_key( (string) $key );
 			if ( is_array( $value ) ) {
@@ -68,6 +69,10 @@ class SGK_UI_State {
 			}
 			if ( in_array( $key, $float_keys, true ) ) {
 				$sanitized[ $key ] = (string) (float) str_replace( ',', '.', (string) $value );
+				continue;
+			}
+			if ( in_array( $key, $int_keys, true ) ) {
+				$sanitized[ $key ] = (string) (int) $value;
 				continue;
 			}
 			$sanitized[ $key ] = sanitize_text_field( (string) $value );
