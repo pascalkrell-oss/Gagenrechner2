@@ -106,6 +106,7 @@ class SGK_Calculator {
 	protected function validate_input( array $input, array $case, $selected_case ) {
 		$errors = array();
 		$rules  = isset( $case['validation_rules'] ) ? $case['validation_rules'] : array();
+		$variant = $this->resolve_variant( $case, $input );
 
 		if ( ! empty( $rules['required'] ) ) {
 			foreach ( $rules['required'] as $field ) {
@@ -148,6 +149,28 @@ class SGK_Calculator {
 
 		if ( 'telefonansage' === $selected_case && '1' === $input['is_paid_media'] ) {
 			$errors[] = __( 'Telefonansagen sind kein Paid-Media-Werbefall.', 'sprecher-gagenrechner' );
+		}
+
+		foreach ( array( 'reminder', 'allongen', 'archivgage' ) as $field ) {
+			if ( '1' === $input[ $field ] && ! $this->is_field_allowed_for_variant( $case, $field, $variant ) ) {
+				$errors[] = sprintf( __( 'Die Zusatzlogik %s ist für diese Variante nicht zulässig.', 'sprecher-gagenrechner' ), $field );
+			}
+		}
+
+		if ( '1' === $input['follow_up_usage'] && ! $this->is_follow_up_credit_allowed( $case, $variant ) ) {
+			$errors[] = __( 'Layout-Credits bzw. Nachnutzung sind für diese Variante nicht zulässig.', 'sprecher-gagenrechner' );
+		}
+
+		if ( '1' === $input['follow_up_usage'] && $input['prior_layout_fee'] <= 0 ) {
+			$errors[] = __( 'Für Layout-Credits muss ein vorheriges Layout-Honorar größer als 0 angegeben werden.', 'sprecher-gagenrechner' );
+		}
+
+		if ( $this->has_any_unlimited_flag( $input ) && ! $this->is_unlimited_usage_allowed( $case, $variant ) ) {
+			$errors[] = __( 'Unlimited-Optionen sind für diese Auswahl fachlich nicht zulässig.', 'sprecher-gagenrechner' );
+		}
+
+		if ( 'session_fee' === $case['case_key'] && $this->has_session_fee_conflicts( $input ) ) {
+			$errors[] = __( 'Session Fee darf nicht mit Lizenz-, Rechte- oder Unlimited-Optionen kombiniert werden.', 'sprecher-gagenrechner' );
 		}
 
 		return $errors;
@@ -360,6 +383,7 @@ class SGK_Calculator {
 
 	protected function apply_standard_additives( array &$result, array $case, array $input, array $base_amounts ) {
 		$rules = isset( $case['additive_rules'] ) ? $case['additive_rules'] : array();
+		$variant = $this->resolve_variant( $case, $input );
 		$map   = array(
 			'additional_year'      => isset( $input['additional_year'] ) ? (int) $input['additional_year'] : 0,
 			'additional_territory' => isset( $input['additional_territory'] ) ? (int) $input['additional_territory'] : 0,
@@ -371,6 +395,9 @@ class SGK_Calculator {
 
 		foreach ( $map as $key => $quantity ) {
 			if ( empty( $rules[ $key ] ) || $quantity <= 0 ) {
+				continue;
+			}
+			if ( ! $this->is_field_allowed_for_variant( $case, $key, $variant ) ) {
 				continue;
 			}
 			$rule   = $rules[ $key ];
@@ -385,7 +412,8 @@ class SGK_Calculator {
 	}
 
 	protected function apply_follow_up_credit_logic( array &$result, array $input, array $case ) {
-		if ( '1' !== $input['follow_up_usage'] || $input['prior_layout_fee'] <= 0 ) {
+		$variant = $this->resolve_variant( $case, $input );
+		if ( '1' !== $input['follow_up_usage'] || $input['prior_layout_fee'] <= 0 || ! $this->is_follow_up_credit_allowed( $case, $variant ) ) {
 			return;
 		}
 
@@ -399,7 +427,8 @@ class SGK_Calculator {
 
 	protected function apply_unlimited_usage_rules( array &$result, array $input, array $case ) {
 		$rules = isset( $case['unlimited_usage_rules'] ) ? $case['unlimited_usage_rules'] : array();
-		if ( empty( $rules['allowed'] ) ) {
+		$variant = $this->resolve_variant( $case, $input );
+		if ( empty( $rules['allowed'] ) || ! $this->is_unlimited_usage_allowed( $case, $variant ) ) {
 			return;
 		}
 
@@ -615,4 +644,74 @@ class SGK_Calculator {
 	protected function humanize_key( $key ) {
 		return ucwords( str_replace( '_', ' ', $key ) );
 	}
+
+	protected function is_field_allowed_for_variant( array $case, $field, $variant ) {
+		if ( empty( $case['additive_rules'][ $field ]['allowed_variants'] ) ) {
+			return true;
+		}
+
+		return in_array( $variant, $case['additive_rules'][ $field ]['allowed_variants'], true );
+	}
+
+	protected function is_follow_up_credit_allowed( array $case, $variant ) {
+		$rules = isset( $case['follow_up_credit_rules'] ) ? $case['follow_up_credit_rules'] : array();
+		if ( empty( $rules['allowed'] ) ) {
+			return false;
+		}
+		if ( empty( $rules['allowed_variants'] ) ) {
+			return true;
+		}
+
+		return in_array( $variant, $rules['allowed_variants'], true );
+	}
+
+	protected function is_unlimited_usage_allowed( array $case, $variant ) {
+		$rules = isset( $case['unlimited_usage_rules'] ) ? $case['unlimited_usage_rules'] : array();
+		if ( empty( $rules['allowed'] ) ) {
+			return false;
+		}
+		if ( empty( $rules['allowed_variants'] ) ) {
+			return true;
+		}
+
+		return in_array( $variant, $rules['allowed_variants'], true );
+	}
+
+	protected function has_any_unlimited_flag( array $input ) {
+		return '1' === $input['unlimited_time'] || '1' === $input['unlimited_territory'] || '1' === $input['unlimited_media'];
+	}
+
+	protected function has_session_fee_conflicts( array $input ) {
+		$conflict_fields = array(
+			'case_variant',
+			'duration_term',
+			'territory',
+			'medium',
+			'additional_year',
+			'additional_territory',
+			'additional_motif',
+			'prior_layout_fee',
+			'reminder',
+			'allongen',
+			'archivgage',
+			'follow_up_usage',
+			'unlimited_time',
+			'unlimited_territory',
+			'unlimited_media',
+		);
+
+		foreach ( $conflict_fields as $field ) {
+			if ( empty( $input[ $field ] ) ) {
+				continue;
+			}
+			if ( in_array( $field, array( 'additional_year', 'additional_territory', 'additional_motif', 'prior_layout_fee' ), true ) && (float) $input[ $field ] <= 0 ) {
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
 }

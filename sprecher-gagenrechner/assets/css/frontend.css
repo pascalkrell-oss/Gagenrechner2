@@ -1,6 +1,38 @@
-@font-face { font-family: 'Rubik Local'; font-style: normal; font-weight: 400; src: local('Rubik Regular'), local('Rubik'); font-display: swap; }
-@font-face { font-family: 'Rubik Local'; font-style: normal; font-weight: 500; src: local('Rubik Medium'), local('Rubik'); font-display: swap; }
-@font-face { font-family: 'Rubik Local'; font-style: normal; font-weight: 600; src: local('Rubik SemiBold'), local('Rubik'); font-display: swap; }
+@font-face {
+    font-family: 'Rubik Local';
+    font-style: normal;
+    font-weight: 400;
+    src: url('/wp-content/assets/fonts/rubik-v31-arabic_cyrillic_cyrillic-ext_hebrew_latin_latin-ext-regular.woff2') format('woff2');
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Rubik Local';
+    font-style: normal;
+    font-weight: 500;
+    src: url('/wp-content/assets/fonts/rubik-v31-arabic_cyrillic_cyrillic-ext_hebrew_latin_latin-ext-500.woff2') format('woff2');
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Rubik Local';
+    font-style: normal;
+    font-weight: 600;
+    src: url('/wp-content/assets/fonts/rubik-v31-arabic_cyrillic_cyrillic-ext_hebrew_latin_latin-ext-600.woff2') format('woff2');
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Rubik Local';
+    font-style: normal;
+    font-weight: 700;
+    src: url('/wp-content/assets/fonts/rubik-v31-arabic_cyrillic_cyrillic-ext_hebrew_latin_latin-ext-700.woff2') format('woff2');
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Rubik Local';
+    font-style: italic;
+    font-weight: 400;
+    src: url('/wp-content/assets/fonts/rubik-v31-arabic_cyrillic_cyrillic-ext_hebrew_latin_latin-ext-italic.woff2') format('woff2');
+    font-display: swap;
+}
 
 :root {
     --src-primary: #1a93ee;
