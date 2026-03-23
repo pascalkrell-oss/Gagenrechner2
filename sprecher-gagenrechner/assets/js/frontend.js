@@ -4,9 +4,9 @@
 	var STORAGE_VERSION = 2;
 	var STORAGE_KEY = 'sgk_calculations_v' + STORAGE_VERSION;
 	var APP_STATE_VERSION = 2;
-	var DEFAULT_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Projekt auswählen</strong><p>Sobald links eine Projektart aktiv ist, erscheint hier die empfohlene Netto-Gage mit Aufschlüsselung.</p></div>';
-	var LOADING_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Deine Kalkulation wird aktualisiert</strong><p>Preisrahmen, Rechte und Zusammenfassung werden gerade neu aufgebaut.</p></div>';
-	var ERROR_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Die Kalkulation ist gerade nicht verfügbar</strong><p>Bitte prüfe die Eingaben oder versuche es in einem Moment noch einmal.</p></div>';
+	var DEFAULT_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Projekt auswählen</strong><p>Sobald links eine Projektart aktiv ist, erscheint hier die empfohlene Netto-Gage mit Rechteübersicht und Breakdown.</p></div>';
+	var LOADING_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Deine Kalkulation wird aktualisiert</strong><p>Preisrahmen, Rechte, Verwertung und Zusammenfassung werden gerade neu aufgebaut.</p></div>';
+	var ERROR_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Die Kalkulation ist gerade nicht verfügbar</strong><p>Bitte prüfe besonders Projektart, Rechteangaben und Umfang oder versuche es in einem Moment noch einmal.</p></div>';
 	var CASE_UI = {
 		werbung_mit_bild: { variantOptions: [['online_video_paid_media', 'Online Video Paid Media'], ['atv_ctv_video_spot', 'ATV / CTV Video Spot'], ['linear_tv_spot_national', 'Linear TV Spot national'], ['linear_tv_spot_regional', 'Linear TV Spot regional'], ['tv_patronat', 'TV Patronat'], ['atv_ctv_patronat', 'ATV / CTV Patronat'], ['kino_spot_national', 'Kino Spot national'], ['kino_spot_regional', 'Kino Spot regional'], ['pos_event_messe', 'POS / Event / Messe'], ['reminder', 'Reminder'], ['layout_animatic_moodfilm_scribble', 'Layout / Animatic / Moodfilm / Scribble']], show: ['variant', 'usage_type', 'duration_term', 'territory', 'medium', 'addon_counts', 'rights_toggles'], scopeCopy: 'Bei Werbefällen stehen Spot-Ausprägung, Rechte-Erweiterungen und Zusatzmotive im Fokus.' },
 		werbung_ohne_bild: { variantOptions: [['online_audio_paid_media', 'Online Audio Paid Media'], ['funk_spot_national', 'Funkspot national'], ['funk_spot_regional', 'Funkspot regional'], ['funk_spot_lokal', 'Funkspot lokal'], ['ladenfunk', 'Ladenfunk'], ['telefon_werbespot', 'Telefon-Werbespot'], ['reminder', 'Reminder']], show: ['variant', 'usage_type', 'duration_term', 'territory', 'medium', 'addon_counts', 'rights_toggles'], scopeCopy: 'Audio-Werbung arbeitet mit Varianten, Reminder-/Allongen-Logik und passenden Zusatzrechten.' },
@@ -25,7 +25,7 @@
 	var SCENARIO_TO_CASE = { online_audio_spot_unpaid: 'webvideo_imagefilm_praesentation_unpaid', online_video_spot_unpaid: 'webvideo_imagefilm_praesentation_unpaid', in_app_ads: 'werbung_mit_bild', telefon_werbespot: 'werbung_ohne_bild', marketing_elearning: 'webvideo_imagefilm_praesentation_unpaid', oeffentliches_elearning: 'webvideo_imagefilm_praesentation_unpaid', video_podcast: 'webvideo_imagefilm_praesentation_unpaid', podcast_sponsoring_audio: 'werbung_ohne_bild', podcast_sponsoring_video: 'werbung_mit_bild', werbliche_podcast_verpackung_audio: 'werbung_ohne_bild', werbliche_podcast_verpackung_video: 'werbung_mit_bild', lokaler_funkspot: 'kleinraeumig', werbliche_games_zusatznutzung: 'werbung_mit_bild' };
 	var FIELD_DEFAULTS = { manual_offer_total: '', case_key: '', case_variant: '', usage_type: 'organic_branding', duration_term: '', territory: '', medium: '', package_key: '', duration_minutes: '', net_minutes: '', module_count: '', fah: '', recording_hours: '', recording_days: '1', same_day_projects: '1', additional_year: '0', additional_territory: '0', additional_motif: '0', prior_layout_fee: '0', session_hours: '0', project_title: '', customer_name: '', internal_notes: '', needs_cutdown: '0', archivgage: '0', layout_fee: '0', follow_up_usage: '0', is_paid_media: '0', usage_social_media: '0', usage_praesentation: '0', unlimited_time: '0', unlimited_territory: '0', unlimited_media: '0', reminder: '0', allongen: '0' };
 	var NUMERIC_FIELDS = { duration_minutes: { min: 1, step: 0.1 }, net_minutes: { min: 1, step: 0.1 }, module_count: { min: 1, step: 1 }, fah: { min: 1, step: 0.5 }, recording_hours: { min: 1, step: 0.5 }, recording_days: { min: 1, step: 1 }, same_day_projects: { min: 1, step: 1 }, additional_year: { min: 0, step: 1 }, additional_territory: { min: 0, step: 1 }, additional_motif: { min: 0, step: 1 }, prior_layout_fee: { min: 0, step: 0.01 }, session_hours: { min: 1, step: 0.5 }, manual_offer_total: { min: 0, step: 0.01 } };
-	var FIELD_LABELS = { case_key: 'Projektart', case_variant: 'Variante', duration_minutes: 'Dauer in Minuten', net_minutes: 'Netto-Sendeminuten', module_count: 'Anzahl der Module', fah: 'FAH', recording_hours: 'Aufnahmestunden', recording_days: 'Aufnahmetage', same_day_projects: 'Weitere Projekte am selben Tag', additional_year: 'Zusatzjahre', additional_territory: 'Zusätzliche Gebiete', additional_motif: 'Zusatzmotive', duration_term: 'Laufzeit', territory: 'Territorium', medium: 'Medium', session_hours: 'Session-Stunden' };
+	var FIELD_LABELS = { case_key: 'Projektart', case_variant: 'Variante', duration_minutes: 'Minuten Audiomaterial', net_minutes: 'Netto-Sendeminuten', module_count: 'Module oder Ansagen', fah: 'Final Audio Hours', recording_hours: 'Aufnahmestunden', recording_days: 'Aufnahmetage', same_day_projects: 'Weitere Projekte am selben Tag', additional_year: 'Zusätzliche Jahre', additional_territory: 'Zusätzliche Gebiete', additional_motif: 'Zusätzliche Motive oder Versionen', duration_term: 'Laufzeit der Nutzung', territory: 'Gebiet der Nutzung', medium: 'Medium / Ausspielweg', session_hours: 'Session-Stunden', archivgage: 'Archivnutzung', follow_up_usage: 'Spätere Nachnutzung', prior_layout_fee: 'Vorheriges Layout-Honorar', unlimited_time: 'Zeitlich unbegrenzte Nutzung', unlimited_territory: 'Räumlich unbegrenzte Nutzung', unlimited_media: 'Medial unbegrenzte Nutzung' };
 	var BLOCK_FIELD_MAP = { variant: ['case_variant'], usage_type: ['usage_type'], media_toggles: ['is_paid_media', 'usage_social_media', 'usage_praesentation'], duration_term: ['duration_term'], territory: ['territory'], medium: ['medium'], duration_minutes: ['duration_minutes'], net_minutes: ['net_minutes'], module_count: ['module_count'], fah: ['fah'], recording_hours: ['recording_hours'], recording_days: ['recording_days'], same_day_projects: ['same_day_projects'], addon_counts: ['additional_year', 'additional_territory', 'additional_motif'], rights_toggles: ['archivgage', 'reminder', 'allongen', 'follow_up_usage'], session_hours: ['session_hours'], prior_layout_fee: ['prior_layout_fee'], unlimited_usage: ['unlimited_time', 'unlimited_territory', 'unlimited_media'] };
 
 	function htmlEscape(value) { return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
@@ -79,6 +79,38 @@
 		var current = select.value;
 		select.innerHTML = '<option value="">' + htmlEscape(placeholder || 'Bitte auswählen') + '</option>' + (values || []).map(function (value) { return '<option value="' + htmlEscape(value) + '">' + htmlEscape(optionLabel(value)) + '</option>'; }).join('');
 		if (current && matchesAny(current, values || [])) { select.value = current; }
+	}
+
+	function summarizeSelection(value) { return value ? optionLabel(value) : 'Noch offen'; }
+	function updateGuidanceSummary(app, formData, ui) {
+		var rightsNode = app.querySelector('[data-sgk-rights-summary]');
+		var journeyNode = app.querySelector('[data-sgk-journey-summary]');
+		var caseLabel = formData.case_key ? labelFromKey(formData.case_key) : 'Noch nicht gewählt';
+		var rightsParts = [];
+		if (ui.caseConfig && (ui.caseConfig.allowed_territories || []).length) { rightsParts.push('Gebiet: ' + summarizeSelection(formData.territory)); }
+		if (ui.caseConfig && (ui.caseConfig.allowed_durations || []).length) { rightsParts.push('Laufzeit: ' + summarizeSelection(formData.duration_term)); }
+		if (ui.caseConfig && (ui.caseConfig.allowed_media || []).length) { rightsParts.push('Medium: ' + summarizeSelection(formData.medium)); }
+		if (isTruthy(formData.unlimited_time) || isTruthy(formData.unlimited_territory) || isTruthy(formData.unlimited_media)) { rightsParts.push('Unlimited-Option aktiv'); }
+		if ((normalizeNumber(formData.additional_year) || 0) > 0 || (normalizeNumber(formData.additional_territory) || 0) > 0 || (normalizeNumber(formData.additional_motif) || 0) > 0) {
+			rightsParts.push('Erweiterungen aktiv');
+		}
+		if (rightsNode) {
+			rightsNode.innerHTML = '<strong>Deine aktuelle Rechte-Zusammenfassung</strong><p>' + htmlEscape(rightsParts.length ? rightsParts.join(' · ') : 'Sobald Du Projekt und Variante gewählt hast, zeigen wir hier Gebiet, Laufzeit, Medium und wichtige Rechte-Erweiterungen.') + '</p>';
+		}
+		if (journeyNode) {
+			var scopeSummary = 'Noch offen';
+			['duration_minutes', 'net_minutes', 'module_count', 'fah', 'recording_hours', 'session_hours'].some(function (field) {
+				var value = formData[field];
+				if (value && value !== '0') {
+					scopeSummary = (FIELD_LABELS[field] || labelFromKey(field)) + ': ' + value;
+					return true;
+				}
+				return false;
+			});
+			journeyNode.innerHTML = '<div class="src-tower-journey-item"><span>Projekt</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
+				'<div class="src-tower-journey-item"><span>Rechte</span><strong>' + htmlEscape(rightsParts.length ? rightsParts.slice(0, 2).join(' · ') : 'Werden nach Auswahl sichtbar') + '</strong></div>' +
+				'<div class="src-tower-journey-item"><span>Umfang</span><strong>' + htmlEscape(scopeSummary) + '</strong></div>';
+		}
 	}
 
 	function normalizePersistedEntry(entry, cases) {
@@ -299,7 +331,7 @@
 		var expertShell = form.querySelector('[data-sgk-expert-shell]');
 		if (expertShell) { expertShell.classList.toggle('is-disabled', !hasSelection); }
 		var scopeCopy = form.querySelector('[data-sgk-scope-copy]');
-		if (scopeCopy) { scopeCopy.textContent = hasSelection ? ((CASE_UI[ui.effectiveCase] && CASE_UI[ui.effectiveCase].scopeCopy) || 'Die Angaben werden passend zu deiner Auswahl geführt.') : 'Wähle zuerst eine Projektart, damit wir dir die passenden Umfangsangaben zeigen können.'; }
+		if (scopeCopy) { scopeCopy.textContent = hasSelection ? ((CASE_UI[ui.effectiveCase] && CASE_UI[ui.effectiveCase].scopeCopy) || 'Die Angaben werden passend zu Deiner Auswahl geführt.') : 'Wähle zuerst eine Projektart, damit wir Dir die passenden Umfangsangaben zeigen können.'; }
 	}
 
 	function resetInvisibleBlockFields(form, visibleBlocks) {
@@ -391,7 +423,7 @@
 			'<div class="src-result-grid">' +
 				'<section class="src-result-card"><div class="src-result-card-head"><strong>Rechenweg & Breakdown</strong><p>Alle Basis-, Zusatz-, Credit- und Mindestgage-Komponenten werden separat ausgewiesen.</p></div>' + renderBreakdownSections(breakdownSections) + '</section>' +
 				'<section class="src-result-card"><div class="src-result-card-head"><strong>Angebotspositionen</strong><p>Diese Positionen werden auch für Export und Angebotsvorschau verwendet.</p></div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '<div class="src-receipt-total"><span>Kalkulationsbasis</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div></div></section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Zusatzrechte & Nutzung</strong><p>Rechteumfang, Sonderfälle und automatische Zuordnung bleiben nachvollziehbar.</p></div>' + rightsMarkup + '<div class="src-result-subsection"><strong>Sonderfälle & Einordnung</strong>' + renderRouteSummary(routeTrace) + '</div></section>' +
+				'<section class="src-result-card"><div class="src-result-card-head"><strong>Nutzungsrechte & Verwertung</strong><p>Gebiet, Laufzeit, Medium und mögliche Rechte-Erweiterungen werden hier klar zusammengefasst.</p></div>' + rightsMarkup + '<div class="src-result-subsection"><strong>Einordnung & Sonderfälle</strong>' + renderRouteSummary(routeTrace) + '</div></section>' +
 				'<section class="src-result-card"><div class="src-result-card-head"><strong>Hinweise, Credits & Pakete</strong><p>Mindestgage, Sonderlogik und Paket-Alternativen getrennt von der Basis.</p></div><div class="src-result-subsection"><strong>Hinweise</strong>' + renderSimpleList(warnings.concat(notes), 'Aktuell liegen keine zusätzlichen Hinweise vor.') + '</div><div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + packageMarkup + '</div></section>' +
 			'</div>' +
 			'<div class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot vorbereiten <span aria-hidden="true">→</span></button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-sgk-action="copy-summary">Zusammenfassung</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-sgk-action="copy-positions">Positionen</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-sgk-action="copy-rights">Rechte</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-sgk-action="copy-json">Exportdaten</button></div></div>' +
@@ -433,6 +465,7 @@
 			toggleBlocks(form, ui, !!ui.selectedCase);
 			resetInvisibleBlockFields(form, ui.visibleBlocks);
 			updateConditionalRows(form, ui, normalized);
+			updateGuidanceSummary(app, normalized, ui);
 			syncSegmentedControl(form.querySelector('[data-sgk-usage-type-control]'), fieldNode(form, 'usage_type').value);
 			syncSegmentedControl(form.querySelector('[data-sgk-variant-control]'), fieldNode(form, 'case_variant').value);
 			updateRedirectBanner(app, app.__sgkLastPayload || null);
@@ -452,7 +485,7 @@
 		function requestCalculation(reason) {
 			var state = app.__sgkState;
 			if (!state.normalizedPayload || !state.normalizedPayload.case_key) { resultContainer.innerHTML = DEFAULT_RESULT_MESSAGE; return; }
-			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.innerHTML = '<div class="src-result-empty"><strong>Noch nicht berechnungsbereit</strong><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
+			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.innerHTML = '<div class="src-result-empty"><strong>Für die Preisempfehlung fehlen noch Angaben</strong><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
 			abortPendingRequest();
 			requestSequence += 1;
 			state.activeRequestId = requestSequence;
