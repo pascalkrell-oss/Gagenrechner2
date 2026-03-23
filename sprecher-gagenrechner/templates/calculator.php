@@ -108,7 +108,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<div class="src-panel-row src-panel-row--stack">
 							<div class="src-row-content">
 								<div class="src-row-label"><?php esc_html_e( 'Nutzungsart', 'sprecher-gagenrechner' ); ?></div>
-								<div class="src-row-desc"><?php esc_html_e( 'Organisch oder paid – die Auswahl steuert Rechte- und Routinglogik im Hintergrund.', 'sprecher-gagenrechner' ); ?></div>
+								<div class="src-row-desc"><?php esc_html_e( 'Nur dort sichtbar, wo die Nutzungsart fachlich eigenständig geführt werden muss. Im 1.3-Block läuft die Primärauswahl über die Projektart.', 'sprecher-gagenrechner' ); ?></div>
 							</div>
 							<select id="sgk-usage-type" name="usage_type" class="src-native-select src-hidden-select">
 								<option value="organic_branding"><?php esc_html_e( 'Branding / organisch / nicht paid', 'sprecher-gagenrechner' ); ?></option>
@@ -162,7 +162,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					</div>
 					<div class="src-panel-group src-toggle-grid" data-sgk-block="media_toggles">
 						<label class="src-panel-row">
-							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Paid Media', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Aktiviert Werberouting und verlässt damit den unpaid-1.3-Block.', 'sprecher-gagenrechner' ); ?></div></div>
+							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Paid Media', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Zusatzrouting für echte Paid-Ausspielung. Die primäre 1.3-Projektart bleibt oben über die Variante gewählt.', 'sprecher-gagenrechner' ); ?></div></div>
 							<span class="src-switch"><input type="checkbox" name="is_paid_media" value="1" /><span class="src-slider"></span></span>
 						</label>
 						<label class="src-panel-row">
@@ -173,9 +173,6 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Präsentation', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Zusätzliche Präsentationsnutzung – nicht die primäre Projektart.', 'sprecher-gagenrechner' ); ?></div></div>
 							<span class="src-switch"><input type="checkbox" name="usage_praesentation" value="1" /><span class="src-slider"></span></span>
 						</label>
-						<input type="hidden" name="usage_awardfilm" value="0" />
-						<input type="hidden" name="usage_casefilm" value="0" />
-						<input type="hidden" name="usage_mitarbeiterfilm" value="0" />
 					</div>
 				</section>
 

@@ -53,7 +53,10 @@ class SGK_UI_State {
 	public function sanitize_input( array $payload ) {
 		$sanitized = array();
 		$bool_keys = array(
-			'needs_cutdown', 'archivgage', 'layout_fee', 'follow_up_usage', 'is_paid_media', 'usage_social_media', 'usage_praesentation', 'usage_awardfilm', 'usage_casefilm', 'usage_mitarbeiterfilm', 'unlimited_time', 'unlimited_territory', 'unlimited_media', 'reminder', 'allongen',
+			'needs_cutdown', 'archivgage', 'layout_fee', 'follow_up_usage', 'is_paid_media', 'usage_social_media', 'usage_praesentation',
+			// Legacy 1.3 flags remain accepted for backward-compatible payload sanitization only.
+			'usage_awardfilm', 'usage_casefilm', 'usage_mitarbeiterfilm',
+			'unlimited_time', 'unlimited_territory', 'unlimited_media', 'reminder', 'allongen',
 		);
 		$float_keys = array( 'manual_offer_total', 'duration_minutes', 'net_minutes', 'fah', 'recording_hours', 'prior_layout_fee', 'session_hours' );
 		$int_keys   = array( 'module_count', 'recording_days', 'same_day_projects', 'additional_year', 'additional_territory', 'additional_motif' );

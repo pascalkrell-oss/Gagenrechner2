@@ -10,7 +10,7 @@
 	var CASE_UI = {
 		werbung_mit_bild: { variantOptions: [['online_video_paid_media', 'Online Video Paid Media'], ['atv_ctv_video_spot', 'ATV / CTV Video Spot'], ['linear_tv_spot_national', 'Linear TV Spot national'], ['linear_tv_spot_regional', 'Linear TV Spot regional'], ['tv_patronat', 'TV Patronat'], ['atv_ctv_patronat', 'ATV / CTV Patronat'], ['kino_spot_national', 'Kino Spot national'], ['kino_spot_regional', 'Kino Spot regional'], ['pos_event_messe', 'POS / Event / Messe'], ['reminder', 'Reminder'], ['layout_animatic_moodfilm_scribble', 'Layout / Animatic / Moodfilm / Scribble']], show: ['variant', 'usage_type', 'duration_term', 'territory', 'medium', 'addon_counts', 'rights_toggles'], scopeCopy: 'Bei Werbefällen stehen Spot-Ausprägung, Rechte-Erweiterungen und Zusatzmotive im Fokus.' },
 		werbung_ohne_bild: { variantOptions: [['online_audio_paid_media', 'Online Audio Paid Media'], ['funk_spot_national', 'Funkspot national'], ['funk_spot_regional', 'Funkspot regional'], ['funk_spot_lokal', 'Funkspot lokal'], ['ladenfunk', 'Ladenfunk'], ['telefon_werbespot', 'Telefon-Werbespot'], ['reminder', 'Reminder']], show: ['variant', 'usage_type', 'duration_term', 'territory', 'medium', 'addon_counts', 'rights_toggles'], scopeCopy: 'Audio-Werbung arbeitet mit Varianten, Reminder-/Allongen-Logik und passenden Zusatzrechten.' },
-		webvideo_imagefilm_praesentation_unpaid: { variantOptions: [['imagefilm_webvideo_praesentation', 'Imagefilm / Webvideo / Präsentation', 'Standard-Ausprägung im 1.3-Block.'], ['awardfilm', 'Awardfilm', 'Primäre Ausprägung für Festival- und Awardfilme.'], ['casefilm', 'Casefilm', 'Primäre Ausprägung für Casefilme und Referenzfilme.'], ['mitarbeiterfilm', 'Mitarbeiterfilm', 'Primäre Ausprägung für interne oder employer-branding-nahe Mitarbeiterfilme.']], show: ['variant', 'usage_type', 'duration_minutes', 'media_toggles'], scopeCopy: 'Im 1.3-Block wählst du zuerst die primäre Projektart und ergänzt danach nur echte Zusatznutzungen wie Social Media.' },
+		webvideo_imagefilm_praesentation_unpaid: { variantOptions: [['imagefilm_webvideo_praesentation', 'Imagefilm / Webvideo / Präsentation', 'Standard-Ausprägung im 1.3-Block.'], ['awardfilm', 'Awardfilm', 'Primäre Ausprägung für Festival- und Awardfilme.'], ['casefilm', 'Casefilm', 'Primäre Ausprägung für Casefilme und Referenzfilme.'], ['mitarbeiterfilm', 'Mitarbeiterfilm', 'Primäre Ausprägung für interne oder employer-branding-nahe Mitarbeiterfilme.']], show: ['variant', 'duration_minutes', 'media_toggles'], scopeCopy: 'Im 1.3-Block wählst du zuerst die primäre Projektart und ergänzt danach nur echte Zusatznutzungen wie Social Media.' },
 		app: { show: ['duration_minutes', 'duration_term'], scopeCopy: 'Apps werden über eine minutenbasierte Standardnutzung mit unbegrenzter Laufzeit kalkuliert.' },
 		telefonansage: { show: ['module_count'], scopeCopy: 'Telefonansagen werden über die Anzahl der Module erfasst.' },
 		elearning_audioguide: { variantOptions: [['elearning_intern', 'E-Learning intern'], ['audioguide', 'Audioguide']], show: ['variant', 'duration_minutes'], scopeCopy: 'E-Learning und Audioguides basieren auf Minutenstaffeln und der passenden Inhaltsart.' },
@@ -23,10 +23,10 @@
 		session_fee: { show: ['session_hours'], scopeCopy: 'Session Fee erfasst ausschließlich die Aufnahmestunden ohne öffentliche Lizenz.' }
 	};
 	var SCENARIO_TO_CASE = { online_audio_spot_unpaid: 'webvideo_imagefilm_praesentation_unpaid', online_video_spot_unpaid: 'webvideo_imagefilm_praesentation_unpaid', in_app_ads: 'werbung_mit_bild', telefon_werbespot: 'werbung_ohne_bild', marketing_elearning: 'webvideo_imagefilm_praesentation_unpaid', oeffentliches_elearning: 'webvideo_imagefilm_praesentation_unpaid', video_podcast: 'webvideo_imagefilm_praesentation_unpaid', podcast_sponsoring_audio: 'werbung_ohne_bild', podcast_sponsoring_video: 'werbung_mit_bild', werbliche_podcast_verpackung_audio: 'werbung_ohne_bild', werbliche_podcast_verpackung_video: 'werbung_mit_bild', lokaler_funkspot: 'kleinraeumig', werbliche_games_zusatznutzung: 'werbung_mit_bild' };
-	var FIELD_DEFAULTS = { manual_offer_total: '', case_key: '', case_variant: '', usage_type: 'organic_branding', duration_term: '', territory: '', medium: '', package_key: '', duration_minutes: '', net_minutes: '', module_count: '', fah: '', recording_hours: '', recording_days: '1', same_day_projects: '1', additional_year: '0', additional_territory: '0', additional_motif: '0', prior_layout_fee: '0', session_hours: '0', project_title: '', customer_name: '', internal_notes: '', needs_cutdown: '0', archivgage: '0', layout_fee: '0', follow_up_usage: '0', is_paid_media: '0', usage_social_media: '0', usage_praesentation: '0', usage_awardfilm: '0', usage_casefilm: '0', usage_mitarbeiterfilm: '0', unlimited_time: '0', unlimited_territory: '0', unlimited_media: '0', reminder: '0', allongen: '0' };
+	var FIELD_DEFAULTS = { manual_offer_total: '', case_key: '', case_variant: '', usage_type: 'organic_branding', duration_term: '', territory: '', medium: '', package_key: '', duration_minutes: '', net_minutes: '', module_count: '', fah: '', recording_hours: '', recording_days: '1', same_day_projects: '1', additional_year: '0', additional_territory: '0', additional_motif: '0', prior_layout_fee: '0', session_hours: '0', project_title: '', customer_name: '', internal_notes: '', needs_cutdown: '0', archivgage: '0', layout_fee: '0', follow_up_usage: '0', is_paid_media: '0', usage_social_media: '0', usage_praesentation: '0', unlimited_time: '0', unlimited_territory: '0', unlimited_media: '0', reminder: '0', allongen: '0' };
 	var NUMERIC_FIELDS = { duration_minutes: { min: 1, step: 0.1 }, net_minutes: { min: 1, step: 0.1 }, module_count: { min: 1, step: 1 }, fah: { min: 1, step: 0.5 }, recording_hours: { min: 1, step: 0.5 }, recording_days: { min: 1, step: 1 }, same_day_projects: { min: 1, step: 1 }, additional_year: { min: 0, step: 1 }, additional_territory: { min: 0, step: 1 }, additional_motif: { min: 0, step: 1 }, prior_layout_fee: { min: 0, step: 0.01 }, session_hours: { min: 1, step: 0.5 }, manual_offer_total: { min: 0, step: 0.01 } };
 	var FIELD_LABELS = { case_key: 'Projektart', case_variant: 'Variante', duration_minutes: 'Dauer in Minuten', net_minutes: 'Netto-Sendeminuten', module_count: 'Anzahl der Module', fah: 'FAH', recording_hours: 'Aufnahmestunden', recording_days: 'Aufnahmetage', same_day_projects: 'Weitere Projekte am selben Tag', additional_year: 'Zusatzjahre', additional_territory: 'Zusätzliche Gebiete', additional_motif: 'Zusatzmotive', duration_term: 'Laufzeit', territory: 'Territorium', medium: 'Medium', session_hours: 'Session-Stunden' };
-	var BLOCK_FIELD_MAP = { variant: ['case_variant'], usage_type: ['usage_type'], media_toggles: ['is_paid_media', 'usage_social_media', 'usage_praesentation', 'usage_awardfilm', 'usage_casefilm', 'usage_mitarbeiterfilm'], duration_term: ['duration_term'], territory: ['territory'], medium: ['medium'], duration_minutes: ['duration_minutes'], net_minutes: ['net_minutes'], module_count: ['module_count'], fah: ['fah'], recording_hours: ['recording_hours'], recording_days: ['recording_days'], same_day_projects: ['same_day_projects'], addon_counts: ['additional_year', 'additional_territory', 'additional_motif'], rights_toggles: ['archivgage', 'reminder', 'allongen', 'follow_up_usage'], session_hours: ['session_hours'], prior_layout_fee: ['prior_layout_fee'], unlimited_usage: ['unlimited_time', 'unlimited_territory', 'unlimited_media'] };
+	var BLOCK_FIELD_MAP = { variant: ['case_variant'], usage_type: ['usage_type'], media_toggles: ['is_paid_media', 'usage_social_media', 'usage_praesentation'], duration_term: ['duration_term'], territory: ['territory'], medium: ['medium'], duration_minutes: ['duration_minutes'], net_minutes: ['net_minutes'], module_count: ['module_count'], fah: ['fah'], recording_hours: ['recording_hours'], recording_days: ['recording_days'], same_day_projects: ['same_day_projects'], addon_counts: ['additional_year', 'additional_territory', 'additional_motif'], rights_toggles: ['archivgage', 'reminder', 'allongen', 'follow_up_usage'], session_hours: ['session_hours'], prior_layout_fee: ['prior_layout_fee'], unlimited_usage: ['unlimited_time', 'unlimited_territory', 'unlimited_media'] };
 
 	function htmlEscape(value) { return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
 	function parseJsonAttribute(node, attribute) { try { return JSON.parse(node.getAttribute(attribute) || '{}'); } catch (error) { return {}; } }
@@ -161,6 +161,9 @@
 		var visibleBlocks = (visualConfig.show || []).concat(['scope_note']);
 		var variantVisibilityRules = resolvedCaseConfig.variant_visibility_rules || {};
 		var activeVariant = formData.case_variant || (resolvedCaseConfig.allowed_variants || [])[0] || '';
+		if (effectiveCase === 'webvideo_imagefilm_praesentation_unpaid' && !formData.case_variant) {
+			activeVariant = 'imagefilm_webvideo_praesentation';
+		}
 		var variantRule = variantVisibilityRules[activeVariant] || null;
 		if (variantRule && Array.isArray(variantRule.show_blocks)) {
 			variantRule.show_blocks.forEach(function (block) { if (visibleBlocks.indexOf(block) === -1) { visibleBlocks.push(block); } });
@@ -226,6 +229,7 @@
 			if (allowed.indexOf(key) === -1) { normalized[key] = FIELD_DEFAULTS[key]; }
 		});
 		if (ui.caseConfig.allowed_variants && ui.caseConfig.allowed_variants.length && !matchesAny(normalized.case_variant, ui.caseConfig.allowed_variants)) { normalized.case_variant = ''; }
+		if (ui.effectiveCase === 'webvideo_imagefilm_praesentation_unpaid' && !normalized.case_variant) { normalized.case_variant = 'imagefilm_webvideo_praesentation'; }
 		if (ui.caseConfig.allowed_durations && ui.caseConfig.allowed_durations.length && !matchesAny(normalized.duration_term, ui.caseConfig.allowed_durations)) { normalized.duration_term = ui.caseConfig.duration_rules && ui.caseConfig.duration_rules.default_term ? ui.caseConfig.duration_rules.default_term : ''; }
 		if (ui.caseConfig.allowed_territories && ui.caseConfig.allowed_territories.length && !matchesAny(normalized.territory, ui.caseConfig.allowed_territories)) { normalized.territory = ui.caseConfig.territory_rules && ui.caseConfig.territory_rules.default ? ui.caseConfig.territory_rules.default : ''; }
 		if (ui.caseConfig.allowed_media && ui.caseConfig.allowed_media.length && !matchesAny(normalized.medium, ui.caseConfig.allowed_media)) { var mediaDefault = ui.caseConfig.media_rules && Array.isArray(ui.caseConfig.media_rules.default) ? ui.caseConfig.media_rules.default[0] : ''; normalized.medium = mediaDefault; }
@@ -236,33 +240,35 @@
 		Object.keys(normalized).forEach(function (key) { setFieldValue(fieldNode(form, key), normalized[key]); });
 	}
 
+	function pushUniqueError(errors, message) { if (message && errors.indexOf(message) === -1) { errors.push(message); } }
+
 	function validateFormData(formData, ui) {
 		var errors = [];
 		ui.requiredFields.forEach(function (field) {
 			var value = formData[field];
-			if (value == null || value === '') { errors.push(FIELD_LABELS[field] || labelFromKey(field)); }
+			if (value == null || value === '') { pushUniqueError(errors, FIELD_LABELS[field] || labelFromKey(field)); }
 		});
 		if (errors.length) { return { valid: false, message: 'Bitte ergänze zuerst: ' + errors.join(', ') + '.', missing: errors }; }
 		Object.keys(NUMERIC_FIELDS).forEach(function (field) {
 			if (formData[field] === '' || FIELD_DEFAULTS[field] === formData[field] && ui.requiredFields.indexOf(field) === -1) { return; }
 			var numericValue = normalizeNumber(formData[field]);
-			if (numericValue == null) { errors.push((FIELD_LABELS[field] || labelFromKey(field)) + ' ist keine gültige Zahl'); return; }
-			if (NUMERIC_FIELDS[field].min != null && numericValue < NUMERIC_FIELDS[field].min) { errors.push((FIELD_LABELS[field] || labelFromKey(field)) + ' muss mindestens ' + NUMERIC_FIELDS[field].min + ' sein'); }
+			if (numericValue == null) { pushUniqueError(errors, (FIELD_LABELS[field] || labelFromKey(field)) + ' ist keine gültige Zahl'); return; }
+			if (NUMERIC_FIELDS[field].min != null && numericValue < NUMERIC_FIELDS[field].min) { pushUniqueError(errors, (FIELD_LABELS[field] || labelFromKey(field)) + ' muss mindestens ' + NUMERIC_FIELDS[field].min + ' sein'); }
 		});
-		if (ui.effectiveCase === 'telefonansage' && formData.is_paid_media === '1') { errors.push('Telefonansagen dürfen nicht als Paid Media kalkuliert werden'); }
+		if (ui.effectiveCase === 'telefonansage' && formData.is_paid_media === '1') { pushUniqueError(errors, 'Telefonansagen dürfen nicht als Paid Media kalkuliert werden'); }
 		['archivgage', 'reminder', 'allongen', 'follow_up_usage', 'prior_layout_fee', 'unlimited_time', 'unlimited_territory', 'unlimited_media'].forEach(function (field) {
 			var active = field === 'prior_layout_fee' ? normalizeNumber(formData[field]) > 0 : isTruthy(formData[field]);
-			if (active && !isCaseFieldAllowed(ui, field, formData)) { errors.push((FIELD_LABELS[field] || labelFromKey(field)) + ' ist für diese Auswahl nicht zulässig'); }
+			if (active && !isCaseFieldAllowed(ui, field, formData)) { pushUniqueError(errors, (FIELD_LABELS[field] || labelFromKey(field)) + ' ist für diese Auswahl nicht zulässig'); }
 		});
-		if (isTruthy(formData.follow_up_usage) && !(normalizeNumber(formData.prior_layout_fee) > 0)) { errors.push('Für Nachnutzung muss ein vorheriges Layout-Honorar angegeben werden'); }
-		if ((isTruthy(formData.unlimited_time) || isTruthy(formData.unlimited_territory) || isTruthy(formData.unlimited_media)) && String(formData.case_variant || '').indexOf('patronat') !== -1) { errors.push('Patronat bleibt für Unlimited-/Buyout-Kombinationen gesperrt'); }
+		if (isTruthy(formData.follow_up_usage) && !(normalizeNumber(formData.prior_layout_fee) > 0)) { pushUniqueError(errors, 'Für Nachnutzung muss ein vorheriges Layout-Honorar angegeben werden'); }
+		if ((isTruthy(formData.unlimited_time) || isTruthy(formData.unlimited_territory) || isTruthy(formData.unlimited_media)) && String(formData.case_variant || '').indexOf('patronat') !== -1) { pushUniqueError(errors, 'Patronat bleibt für Unlimited-/Buyout-Kombinationen gesperrt'); }
 		if (ui.effectiveCase === 'session_fee' && (formData.case_variant || formData.duration_term || formData.territory || formData.medium || isTruthy(formData.archivgage) || isTruthy(formData.reminder) || isTruthy(formData.allongen) || isTruthy(formData.follow_up_usage) || isTruthy(formData.unlimited_time) || isTruthy(formData.unlimited_territory) || isTruthy(formData.unlimited_media) || normalizeNumber(formData.additional_year) > 0 || normalizeNumber(formData.additional_territory) > 0 || normalizeNumber(formData.additional_motif) > 0 || normalizeNumber(formData.prior_layout_fee) > 0)) {
-			errors.push('Session Fee darf nicht mit Lizenz-, Rechte- oder Unlimited-Optionen kombiniert werden');
+			pushUniqueError(errors, 'Session Fee darf nicht mit Lizenz-, Rechte- oder Unlimited-Optionen kombiniert werden');
 		}
-		if (ui.caseConfig.allowed_variants && ui.caseConfig.allowed_variants.length && formData.case_variant && !matchesAny(formData.case_variant, ui.caseConfig.allowed_variants)) { errors.push('Die gewählte Variante ist für diesen Fall nicht zulässig'); }
-		if (ui.caseConfig.allowed_durations && ui.caseConfig.allowed_durations.length && formData.duration_term && !matchesAny(formData.duration_term, ui.caseConfig.allowed_durations)) { errors.push('Die gewählte Laufzeit ist für diesen Fall nicht zulässig'); }
-		if (ui.caseConfig.allowed_territories && ui.caseConfig.allowed_territories.length && formData.territory && !matchesAny(formData.territory, ui.caseConfig.allowed_territories)) { errors.push('Das gewählte Territorium ist für diesen Fall nicht zulässig'); }
-		if (ui.caseConfig.allowed_media && ui.caseConfig.allowed_media.length && formData.medium && !matchesAny(formData.medium, ui.caseConfig.allowed_media)) { errors.push('Das gewählte Medium ist für diesen Fall nicht zulässig'); }
+		if (ui.caseConfig.allowed_variants && ui.caseConfig.allowed_variants.length && formData.case_variant && !matchesAny(formData.case_variant, ui.caseConfig.allowed_variants)) { pushUniqueError(errors, 'Die gewählte Variante ist für diesen Fall nicht zulässig'); }
+		if (ui.caseConfig.allowed_durations && ui.caseConfig.allowed_durations.length && formData.duration_term && !matchesAny(formData.duration_term, ui.caseConfig.allowed_durations)) { pushUniqueError(errors, 'Die gewählte Laufzeit ist für diesen Fall nicht zulässig'); }
+		if (ui.caseConfig.allowed_territories && ui.caseConfig.allowed_territories.length && formData.territory && !matchesAny(formData.territory, ui.caseConfig.allowed_territories)) { pushUniqueError(errors, 'Das gewählte Territorium ist für diesen Fall nicht zulässig'); }
+		if (ui.caseConfig.allowed_media && ui.caseConfig.allowed_media.length && formData.medium && !matchesAny(formData.medium, ui.caseConfig.allowed_media)) { pushUniqueError(errors, 'Das gewählte Medium ist für diesen Fall nicht zulässig'); }
 		return { valid: errors.length === 0, message: errors[0] || 'Die Eingaben sind vollständig und fachlich konsistent.', errors: errors };
 	}
 
