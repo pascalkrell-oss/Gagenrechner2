@@ -49,9 +49,15 @@ $cases = array(
 	),
 	'unpaid_social' => array(
 		'case_key'            => 'webvideo_imagefilm_praesentation_unpaid',
+		'case_variant'        => 'awardfilm',
 		'duration_minutes'    => '7',
 		'usage_social_media'  => '1',
 		'usage_praesentation' => '1',
+	),
+	'unpaid_legacy_primary_usage' => array(
+		'case_key'         => 'webvideo_imagefilm_praesentation_unpaid',
+		'duration_minutes' => '4',
+		'usage_casefilm'   => '1',
 	),
 	'app_case' => array(
 		'case_key'          => 'app',
@@ -154,6 +160,35 @@ foreach ( $cases as $name => $payload ) {
 	if ( ! isset( $result['document_payload']['sections'] ) ) {
 		$failures[] = $name . ': document payload missing sections';
 	}
+}
+
+
+$unpaidPrimaryResult = $formatter->format(
+	$calculator->calculate(
+		$ui_state->sanitize_input( $cases['unpaid_social'] )
+	)
+);
+
+if ( 'awardfilm' !== $unpaidPrimaryResult['resolved_variant'] ) {
+	$failures[] = 'unpaid primary usage variant not preserved';
+}
+
+$awardfilmLineItems = array_values(
+	array_filter(
+		$unpaidPrimaryResult['line_items'],
+		static function ( $item ) {
+			return false !== strpos( (string) $item['label'], 'Awardfilm' );
+		}
+	)
+);
+
+if ( count( $awardfilmLineItems ) < 1 ) {
+	$failures[] = 'awardfilm primary usage not visible in line items';
+}
+
+$legacyPrimaryResult = $calculator->calculate( $ui_state->sanitize_input( $cases['unpaid_legacy_primary_usage'] ) );
+if ( 'casefilm' !== $legacyPrimaryResult['resolved_variant'] ) {
+	$failures[] = 'legacy unpaid primary usage mapping failed';
 }
 
 $layoutCreditResult = $formatter->format(

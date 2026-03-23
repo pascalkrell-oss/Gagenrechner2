@@ -155,6 +155,39 @@ class SGK_Resolver {
 			$normalized[ $field ] = $this->to_bool_string( isset( $input[ $field ] ) ? $input[ $field ] : 0 );
 		}
 
+		$normalized = $this->normalize_unpaid_primary_usage( $normalized );
+
+		return $normalized;
+	}
+
+	protected function normalize_unpaid_primary_usage( array $normalized ) {
+		if ( 'webvideo_imagefilm_praesentation_unpaid' !== $normalized['case_key'] ) {
+			return $normalized;
+		}
+
+		$legacy_map = array(
+			'usage_awardfilm'       => 'awardfilm',
+			'usage_casefilm'        => 'casefilm',
+			'usage_mitarbeiterfilm' => 'mitarbeiterfilm',
+		);
+
+		foreach ( $legacy_map as $field => $variant ) {
+			if ( '1' === $normalized[ $field ] && '' === $normalized['case_variant'] ) {
+				$normalized['case_variant'] = $variant;
+				break;
+			}
+		}
+
+		if ( in_array( $normalized['case_variant'], array( 'awardfilm', 'casefilm', 'mitarbeiterfilm', 'imagefilm_webvideo_praesentation' ), true ) ) {
+			$normalized['usage_awardfilm']       = '0';
+			$normalized['usage_casefilm']        = '0';
+			$normalized['usage_mitarbeiterfilm'] = '0';
+		}
+
+		if ( '' === $normalized['case_variant'] && 'webvideo_imagefilm_praesentation_unpaid' === $normalized['case_key'] ) {
+			$normalized['case_variant'] = 'imagefilm_webvideo_praesentation';
+		}
+
 		return $normalized;
 	}
 

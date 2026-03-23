@@ -228,44 +228,62 @@ class SGK_Calculator {
 	}
 
 	protected function calculate_tiered_minutes_case( array &$result, array $case, array $input ) {
-		$minutes   = max( 1, (float) $input['duration_minutes'] );
-		$tiers     = isset( $case['pricing']['tiers'] ) ? $case['pricing']['tiers'] : array();
-		$base_key  = 'bis_2_min';
-		$base_note = sprintf( 'Basisstaffel für %.2f Minuten.', $minutes );
+		$minutes       = max( 1, (float) $input['duration_minutes'] );
+		$tiers         = isset( $case['pricing']['tiers'] ) ? $case['pricing']['tiers'] : array();
+		$variant       = $this->resolve_variant( $case, $input, 'imagefilm_webvideo_praesentation' );
+		$variant_label = $this->get_primary_usage_label( $case, $variant );
+		$base_key      = 'bis_2_min';
+		$base_note     = sprintf( 'Basisstaffel für %.2f Minuten innerhalb der Primärausprägung %s.', $minutes, $variant_label );
 
 		if ( $minutes > 2 ) {
 			$base_key = 'bis_5_min';
 		}
 
+		$this->add_breakdown_item( $result, 'basis', $this->build_breakdown_entry( 'primary_usage_' . $variant, 'Primäre Nutzungsausprägung: ' . $variant_label, 'basis', 1, 'Projektart', $this->zero_amounts(), 'Fachliche Hauptausprägung innerhalb des 1.3-Blocks.' ) );
+
 		$base = isset( $tiers[ $base_key ]['amount'] ) ? $tiers[ $base_key ]['amount'] : $this->zero_amounts();
-		$this->add_breakdown_item( $result, 'basis', $this->build_breakdown_entry( $base_key, $this->humanize_key( $base_key ), 'basis', 1, 'Lizenz', $base, $base_note ) );
-		$this->add_line_item( $result, $this->build_line_item( $base_key, $this->humanize_key( $base_key ), 'license', 1, 'Lizenz', $base, $case['case_key'], $base_note, false, $case['case_key'] !== $input['case_key'], false ) );
-		$this->add_license_reference( $result, $case, $result['resolved_variant'] );
+		$this->add_breakdown_item( $result, 'basis', $this->build_breakdown_entry( $variant . '_' . $base_key, $variant_label . ' · ' . $this->humanize_key( $base_key ), 'basis', 1, 'Lizenz', $base, $base_note ) );
+		$this->add_line_item( $result, $this->build_line_item( $variant . '_' . $base_key, $variant_label . ' · ' . $this->humanize_key( $base_key ), 'license', 1, 'Lizenz', $base, $case['case_key'], $base_note, false, $case['case_key'] !== $input['case_key'], false ) );
+		$this->add_license_reference( $result, $case, $variant );
 
 		if ( $minutes > 5 && isset( $tiers['je_weitere_5']['amount'] ) ) {
 			$blocks = (int) ceil( ( $minutes - 5 ) / 5 );
 			$extra  = $this->multiply_amounts( $tiers['je_weitere_5']['amount'], $blocks );
-			$this->add_breakdown_item( $result, 'additive', $this->build_breakdown_entry( 'extra_5_min', 'Je weitere 5 Minuten', 'additive', $blocks, '5-Minuten-Block', $extra, 'Additive Minutenstaffel.' ) );
-			$this->add_line_item( $result, $this->build_line_item( 'extra_5_min', 'Je weitere 5 Minuten', 'addon_license', $blocks, '5-Minuten-Block', $extra, $case['case_key'], 'Additive Minutenstaffel.', true, $case['case_key'] !== $input['case_key'], false ) );
+			$this->add_breakdown_item( $result, 'additive', $this->build_breakdown_entry( $variant . '_extra_5_min', $variant_label . ' · Je weitere 5 Minuten', 'additive', $blocks, '5-Minuten-Block', $extra, 'Additive Minutenstaffel innerhalb derselben Primärausprägung.' ) );
+			$this->add_line_item( $result, $this->build_line_item( $variant . '_extra_5_min', $variant_label . ' · Je weitere 5 Minuten', 'addon_license', $blocks, '5-Minuten-Block', $extra, $case['case_key'], 'Additive Minutenstaffel innerhalb derselben Primärausprägung.', true, $case['case_key'] !== $input['case_key'], false ) );
 		}
 
+		$this->apply_unpaid_usage_addons( $result, $case, $input, $variant );
+		$this->enforce_case_minimum_if_defined( $result, $case );
+	}
+
+	protected function apply_unpaid_usage_addons( array &$result, array $case, array $input, $variant ) {
 		$usage_addons = isset( $case['pricing']['usage_addons'] ) ? $case['pricing']['usage_addons'] : array();
 		$usage_map    = array(
-			'usage_social_media'     => 'social_media',
-			'usage_praesentation'    => 'praesentation',
-			'usage_awardfilm'        => 'awardfilm',
-			'usage_casefilm'         => 'casefilm',
-			'usage_mitarbeiterfilm'  => 'mitarbeiterfilm',
+			'usage_social_media'  => array( 'key' => 'social_media', 'label' => 'Social Media', 'note' => 'Optionale Zusatznutzung zusätzlich zur primären 1.3-Ausprägung.' ),
+			'usage_praesentation' => array( 'key' => 'praesentation', 'label' => 'Präsentation (zusätzlich)', 'note' => 'Optionale Präsentationsnutzung zusätzlich zur primären 1.3-Ausprägung.' ),
 		);
 
-		foreach ( $usage_map as $field => $key ) {
-			if ( '1' === $input[ $field ] && isset( $usage_addons[ $key ] ) ) {
-				$this->add_breakdown_item( $result, 'additive', $this->build_breakdown_entry( $key, $this->humanize_key( $key ), 'additive', 1, 'Zusatzlizenz', $usage_addons[ $key ], 'Zusatzlizenz außerhalb der Basisstaffel.' ) );
-				$this->add_line_item( $result, $this->build_line_item( $key, $this->humanize_key( $key ), 'addon_license', 1, 'Zusatzlizenz', $usage_addons[ $key ], $case['case_key'], 'Zusatzlizenz außerhalb der Basisstaffel.', true, $case['case_key'] !== $input['case_key'], false ) );
+		foreach ( $usage_map as $field => $definition ) {
+			if ( '1' !== $input[ $field ] || empty( $usage_addons[ $definition['key'] ] ) ) {
+				continue;
 			}
+
+			if ( 'imagefilm_webvideo_praesentation' === $variant && 'usage_praesentation' === $field ) {
+				continue;
+			}
+
+			$this->add_breakdown_item( $result, 'additive', $this->build_breakdown_entry( $definition['key'], $definition['label'], 'additive', 1, 'Zusatzlizenz', $usage_addons[ $definition['key'] ], $definition['note'] ) );
+			$this->add_line_item( $result, $this->build_line_item( $definition['key'], $definition['label'], 'addon_license', 1, 'Zusatzlizenz', $usage_addons[ $definition['key'] ], $case['case_key'], $definition['note'], true, $case['case_key'] !== $input['case_key'], false ) );
+		}
+	}
+
+	protected function get_primary_usage_label( array $case, $variant ) {
+		if ( ! empty( $case['primary_usage_variants'][ $variant ]['label'] ) ) {
+			return $case['primary_usage_variants'][ $variant ]['label'];
 		}
 
-		$this->enforce_case_minimum_if_defined( $result, $case );
+		return $this->humanize_key( $variant );
 	}
 
 	protected function calculate_modules_case( array &$result, array $case, array $input ) {

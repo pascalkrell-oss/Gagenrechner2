@@ -274,11 +274,18 @@ return array(
 				'case_key' => 'webvideo_imagefilm_praesentation_unpaid',
 				'label' => 'Webvideo / Imagefilm / Präsentation (unpaid)',
 				'title' => 'Webvideo / Imagefilm / Präsentation (unpaid)',
-				'description' => 'Minutenbasierte Unpaid-Lizenzlogik mit Zusatzlizenzen für Social Media und Präsentation.',
+				'description' => 'Minutenbasierte Unpaid-Lizenzlogik mit primären Nutzungsausprägungen für Imagefilm/Webvideo, Awardfilm, Casefilm und Mitarbeiterfilm sowie optionalen Zusatznutzungen.',
 				'pricing_mode' => 'tiered_minutes',
 				'unit_type' => 'minute',
 				'quantity_mode' => 'minute',
+				'allowed_variants' => array( 'imagefilm_webvideo_praesentation', 'awardfilm', 'casefilm', 'mitarbeiterfilm' ),
 				'allowed_usage_modes' => array( 'corporate_unpaid', 'organic_branding' ),
+				'primary_usage_variants' => array(
+					'imagefilm_webvideo_praesentation' => array( 'label' => 'Imagefilm / Webvideo / Präsentation', 'description' => 'Standard-Ausprägung für klassische unpaid Unternehmens-, PR- und Präsentationsfilme.' ),
+					'awardfilm' => array( 'label' => 'Awardfilm', 'description' => 'Primärnutzung für Festival-, Award- oder Einreichungsfilme.' ),
+					'casefilm' => array( 'label' => 'Casefilm', 'description' => 'Primärnutzung für Casefilme, Referenzfilme und Projekt-Cases.' ),
+					'mitarbeiterfilm' => array( 'label' => 'Mitarbeiterfilm', 'description' => 'Primärnutzung für interne oder employer-branding-nahe Mitarbeiterfilme.' ),
+				),
 				'pricing' => array(
 					'tiers' => array(
 						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 350, 400 ) ),
@@ -288,9 +295,6 @@ return array(
 					'usage_addons' => array(
 						'social_media' => $money_range( 50, 150, 250 ),
 						'praesentation' => $money_range( 50, 150, 250 ),
-						'awardfilm' => $money_range( 300, 350, 400 ),
-						'casefilm' => $money_range( 300, 350, 400 ),
-						'mitarbeiterfilm' => $money_range( 300, 350, 400 ),
 					),
 				),
 				'range_values' => array(
@@ -302,12 +306,10 @@ return array(
 					'usage_addons' => array(
 						'social_media' => $money_range( 50, 150, 250 ),
 						'praesentation' => $money_range( 50, 150, 250 ),
-						'awardfilm' => $money_range( 300, 350, 400 ),
-						'casefilm' => $money_range( 300, 350, 400 ),
-						'mitarbeiterfilm' => $money_range( 300, 350, 400 ),
 					),
 				),
 				'validation_rules' => array(
+					'allowed_variant_field' => 'case_variant',
 					'numeric_ranges' => array( 'duration_minutes' => array( 'min' => 1, 'max' => 600 ) ),
 				),
 				'minimum_fee_rules' => array( 'minimum_totals' => $money_range( 300, 350, 400 ) ),
