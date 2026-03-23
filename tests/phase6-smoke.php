@@ -70,6 +70,21 @@ $cases = array(
 		'case_key'      => 'podcast',
 		'case_variant'  => 'marketing_unlim',
 	),
+	'podcast_content' => array(
+		'case_key'          => 'podcast',
+		'case_variant'      => 'podcast_inhalte',
+		'duration_minutes'  => '12',
+	),
+	'patronat_without_unlimited' => array(
+		'case_key'      => 'werbung_mit_bild',
+		'case_variant'  => 'tv_patronat',
+	),
+	'allowed_credit_case' => array(
+		'case_key'         => 'werbung_mit_bild',
+		'case_variant'     => 'linear_tv_spot_national',
+		'follow_up_usage'  => '1',
+		'prior_layout_fee' => '300',
+	),
 	'hoerbuch' => array(
 		'case_key'  => 'hoerbuch',
 		'fah'       => '8',
@@ -105,6 +120,20 @@ $cases = array(
 	'redirect_marketing_elearning_paid_guard' => array(
 		'case_key'       => 'marketing_elearning',
 		'is_paid_media'  => '1',
+	),
+	'disallowed_patronat_unlimited' => array(
+		'case_key'          => 'werbung_mit_bild',
+		'case_variant'      => 'tv_patronat',
+		'unlimited_time'    => '1',
+	),
+	'disallowed_credit_case' => array(
+		'case_key'         => 'podcast',
+		'case_variant'     => 'marketing_3',
+		'follow_up_usage'  => '1',
+		'prior_layout_fee' => '300',
+	),
+	'podcast_ad_redirect' => array(
+		'case_key' => 'podcast_sponsoring_audio',
 	),
 );
 
@@ -149,6 +178,21 @@ if ( 'webvideo_imagefilm_praesentation_unpaid' !== $redirectResult['resolved_cas
 $guardResult = $calculator->calculate( $ui_state->sanitize_input( $cases['redirect_marketing_elearning_paid_guard'] ) );
 if ( 'werbung_mit_bild' !== $guardResult['resolved_case'] ) {
 	$failures[] = 'marketing e-learning paid-media guard failed';
+}
+
+$podcastAdResult = $calculator->calculate( $ui_state->sanitize_input( $cases['podcast_ad_redirect'] ) );
+if ( 'werbung_ohne_bild' !== $podcastAdResult['resolved_case'] ) {
+	$failures[] = 'podcast ad redirect failed';
+}
+
+$patronatUnlimitedResult = $calculator->calculate( $ui_state->sanitize_input( $cases['disallowed_patronat_unlimited'] ) );
+if ( empty( $patronatUnlimitedResult['errors'] ) ) {
+	$failures[] = 'patronat unlimited guard failed';
+}
+
+$disallowedCreditResult = $calculator->calculate( $ui_state->sanitize_input( $cases['disallowed_credit_case'] ) );
+if ( empty( $disallowedCreditResult['errors'] ) ) {
+	$failures[] = 'credit guard outside allowed family failed';
 }
 
 if ( $failures ) {

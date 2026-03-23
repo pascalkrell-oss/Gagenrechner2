@@ -310,6 +310,25 @@ class SGK_Result_Formatter {
 		return $positions;
 	}
 
+	protected function humanize_key( $key ) {
+		$labels = array(
+			'werbung_mit_bild'     => 'Werbung mit Bild',
+			'werbung_ohne_bild'    => 'Werbung ohne Bild',
+			'podcast'              => 'Podcast',
+			'podcast_inhalte'      => 'Podcast-Inhalt',
+			'non_commercial_3'     => 'Podcast-Verpackung nicht-kommerziell · bis 3 Folgen',
+			'non_commercial_unlim' => 'Podcast-Verpackung nicht-kommerziell · Serienlizenz',
+			'marketing_3'          => 'Podcast-Verpackung kommerziell · bis 3 Folgen',
+			'marketing_unlim'      => 'Podcast-Verpackung kommerziell · Serienlizenz',
+		);
+
+		if ( isset( $labels[ $key ] ) ) {
+			return $labels[ $key ];
+		}
+
+		return ucwords( str_replace( '_', ' ', $key ) );
+	}
+
 	protected function build_rights_overview( array $result ) {
 		$overview = array();
 		foreach ( $result['licenses'] as $license ) {
@@ -537,10 +556,6 @@ class SGK_Result_Formatter {
 		}
 
 		return $this->format_quantity( $quantity ) . ' ' . $unit_label;
-	}
-
-	protected function humanize_key( $key ) {
-		return ucwords( str_replace( '_', ' ', (string) $key ) );
 	}
 
 	protected function format_quantity( $quantity ) {
