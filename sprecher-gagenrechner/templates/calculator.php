@@ -13,7 +13,6 @@ $cases      = isset( $view_data['cases'] ) ? $view_data['cases'] : array();
 $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array();
 $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : array();
 ?>
-<script src="https://unpkg.com/lucide@latest"></script>
 <div class="sgk-app src-app-shell" data-sgk-app data-sgk-cases="<?php echo esc_attr( wp_json_encode( $cases ) ); ?>" data-sgk-ui-state="<?php echo esc_attr( wp_json_encode( $ui_state ) ); ?>">
 	<div class="src-app-backdrop"></div>
 	<div class="src-layout">

@@ -22,6 +22,8 @@ class SGK_Result_Formatter {
 			$result['formatted_manual_offer_total'] = $this->format_currency( $result['manual_offer_total'] );
 		}
 
+		$result['breakdown_sections'] = $this->build_breakdown_sections( $result );
+
 		foreach ( $result['line_items'] as $index => $item ) {
 			$result['line_items'][ $index ]['formatted'] = array(
 				'lower' => $this->format_currency( $item['lower'] ),
@@ -53,8 +55,14 @@ class SGK_Result_Formatter {
 	}
 
 	protected function build_summary( array $result ) {
+		$context = $this->build_calculation_context( $result );
+
 		return array(
 			'title'                 => $result['display_title'],
+			'display_title'         => $result['display_title'],
+			'case_key'              => $result['resolved_case'],
+			'case_label'            => $context['case_label'],
+			'sub_variant'           => $context['variant_label'],
 			'recommended_range'     => array(
 				'lower' => $result['formatted_totals']['lower'],
 				'mid'   => $result['formatted_totals']['mid'],
@@ -64,6 +72,181 @@ class SGK_Result_Formatter {
 			'manual_offer_required' => ! empty( $result['result_meta']['manual_final_offer_required'] ),
 			'position_count'        => count( $result['offer_positions'] ),
 			'rights_count'          => count( $result['rights_overview'] ),
+			'context'               => $context,
+			'final_highlight'       => array(
+				'range_label' => $result['formatted_totals']['lower'] . ' – ' . $result['formatted_totals']['upper'],
+				'mid_label'   => $result['formatted_totals']['mid'],
+			),
+		);
+	}
+
+	protected function build_breakdown_sections( array $result ) {
+		$sections      = array();
+		$context       = $this->build_calculation_context( $result );
+		$raw_breakdown = isset( $result['breakdown'] ) ? $result['breakdown'] : array();
+		$schema        = array(
+			'basis' => array(
+				'label'       => 'Basispreis',
+				'description' => 'Ausgangswert aus Hauptfall, Variante und Mengenbasis.',
+			),
+			'surcharge' => array(
+				'label'       => 'Sonderzuschläge',
+				'description' => 'Sondernutzungen wie Reminder werden separat ausgewiesen.',
+			),
+			'additive' => array(
+				'label'       => 'Zusatzrechte & Erweiterungen',
+				'description' => 'Zusatzmotive, Zusatzjahre, Territorien, Archiv- oder Layoutkomponenten.',
+			),
+			'multiplier' => array(
+				'label'       => 'Multiplikatoren',
+				'description' => 'Unbegrenzte oder besonders weitreichende Nutzungen.',
+			),
+			'credit' => array(
+				'label'       => 'Anrechnungen / Credits',
+				'description' => 'Bereits bezahlte Vorleistungen werden separat abgezogen.',
+			),
+			'minimum_fee_adjustment' => array(
+				'label'       => 'Mindestgage',
+				'description' => 'Automatischer Ausgleich, wenn eine Mindestgage greift.',
+			),
+		);
+
+		foreach ( $schema as $bucket => $definition ) {
+			$entries = isset( $raw_breakdown[ $bucket ] ) && is_array( $raw_breakdown[ $bucket ] ) ? $raw_breakdown[ $bucket ] : array();
+			if ( empty( $entries ) ) {
+				continue;
+			}
+
+			$items = array();
+			foreach ( $entries as $entry ) {
+				$items[] = array(
+					'key'            => isset( $entry['key'] ) ? $entry['key'] : '',
+					'label'          => isset( $entry['label'] ) ? $entry['label'] : '',
+					'quantity_label' => $this->format_quantity_label( isset( $entry['quantity'] ) ? $entry['quantity'] : 1, isset( $entry['unit_label'] ) ? $entry['unit_label'] : '' ),
+					'formatted'      => $this->format_amount_triplet( isset( $entry['totals'] ) ? $entry['totals'] : array() ),
+					'note'           => isset( $entry['note'] ) ? $entry['note'] : '',
+					'is_credit'      => 'credit' === $bucket,
+					'is_minimum'     => 'minimum_fee_adjustment' === $bucket,
+				);
+			}
+
+			$sections[] = array(
+				'key'         => $bucket,
+				'label'       => $definition['label'],
+				'description' => $definition['description'],
+				'items'       => $items,
+			);
+		}
+
+		$context_items = array_filter(
+			array(
+				array(
+					'label' => 'Gewählter Hauptfall',
+					'value' => $context['case_label'],
+				),
+				! empty( $context['variant_label'] ) ? array(
+					'label' => 'Gewählte Untervariante',
+					'value' => $context['variant_label'],
+				) : null,
+				! empty( $context['quantity_basis'] ) ? array(
+					'label' => 'Mengenbasis',
+					'value' => implode( ' · ', $context['quantity_basis'] ),
+				) : null,
+				array(
+					'label' => 'Basispreis low/mid/high',
+					'value' => $context['base_range_label'],
+				),
+			)
+		);
+
+		if ( ! empty( $context_items ) ) {
+			array_unshift(
+				$sections,
+				array(
+					'key'         => 'context',
+					'label'       => 'Kalkulationsgrundlage',
+					'description' => 'So wurde der Fall fachlich eingeordnet, bevor Zuschläge oder Credits hinzukommen.',
+					'items'       => array_map(
+						static function ( $item ) {
+							return array(
+								'label'          => $item['label'],
+								'quantity_label' => '',
+								'formatted'      => array(
+									'low_mid_high' => $item['value'],
+								),
+								'note'           => '',
+								'is_credit'      => false,
+								'is_minimum'     => false,
+							);
+						},
+						$context_items
+					),
+				)
+			);
+		}
+
+		$sections[] = array(
+			'key'         => 'final_totals',
+			'label'       => 'Finale Summen',
+			'description' => 'Abschließender Preisrahmen nach allen Zu- und Abschlägen.',
+			'items'       => array(
+				array(
+					'label'          => 'Final low / mid / high',
+					'quantity_label' => '',
+					'formatted'      => $this->format_amount_triplet( $result['totals'] ),
+					'note'           => null !== $result['manual_offer_total'] ? 'Zusätzlich liegt ein manuell gesetzter Angebotswert vor: ' . $this->format_currency( $result['manual_offer_total'] ) . '.' : 'Die finale Angebotssumme kann bei Bedarf separat gesetzt werden.',
+					'is_credit'      => false,
+					'is_minimum'     => false,
+				),
+			),
+		);
+
+		return $sections;
+	}
+
+	protected function build_calculation_context( array $result ) {
+		$input      = isset( $result['normalized_input'] ) ? $result['normalized_input'] : array();
+		$base_items = isset( $result['breakdown']['basis'] ) ? $result['breakdown']['basis'] : array();
+		$base_range = ! empty( $base_items[0]['totals'] ) ? $base_items[0]['totals'] : $result['totals'];
+
+		$quantity_basis = array();
+		$mapping        = array(
+			'duration_minutes' => 'Dauer',
+			'net_minutes'      => 'Netto-Sendeminuten',
+			'module_count'     => 'Module',
+			'fah'              => 'FAH',
+			'recording_hours'  => 'Aufnahmestunden',
+			'recording_days'   => 'Aufnahmetage',
+			'same_day_projects'=> 'Projekte am selben Tag',
+			'session_hours'    => 'Session-Stunden',
+		);
+
+		foreach ( $mapping as $field => $label ) {
+			if ( empty( $input[ $field ] ) || '0' === (string) $input[ $field ] ) {
+				continue;
+			}
+			$quantity_basis[] = $label . ': ' . $this->format_quantity( $input[ $field ] );
+		}
+
+		foreach ( array( 'additional_motif' => 'Zusatzmotive', 'additional_year' => 'Zusatzjahre', 'additional_territory' => 'Zusatzterritorien' ) as $field => $label ) {
+			if ( empty( $input[ $field ] ) || (int) $input[ $field ] <= 0 ) {
+				continue;
+			}
+			$quantity_basis[] = $label . ': ' . (int) $input[ $field ];
+		}
+
+		foreach ( array( 'reminder' => 'Reminder', 'archivgage' => 'Archivnutzung', 'allongen' => 'Allongen', 'follow_up_usage' => 'Nachnutzung' ) as $field => $label ) {
+			if ( empty( $input[ $field ] ) || '1' !== (string) $input[ $field ] ) {
+				continue;
+			}
+			$quantity_basis[] = $label . ': aktiv';
+		}
+
+		return array(
+			'case_label'       => $this->humanize_key( $result['resolved_case'] ),
+			'variant_label'    => ! empty( $result['resolved_variant'] ) ? $this->humanize_key( $result['resolved_variant'] ) : '',
+			'quantity_basis'   => $quantity_basis,
+			'base_range_label' => $this->format_currency( $base_range['lower'] ) . ' / ' . $this->format_currency( $base_range['mid'] ) . ' / ' . $this->format_currency( $base_range['upper'] ),
 		);
 	}
 
@@ -89,10 +272,10 @@ class SGK_Result_Formatter {
 				'hinweistext'                 => $item['calculation_note'],
 				'export_label'                => $item['export_label'],
 				'formatted_prices'            => array(
-					'lower'     => $this->format_currency( $item['lower'] ),
-					'mid'       => $this->format_currency( $item['mid'] ),
-					'upper'     => $this->format_currency( $item['upper'] ),
-					'manual'    => null,
+					'lower'  => $this->format_currency( $item['lower'] ),
+					'mid'    => $this->format_currency( $item['mid'] ),
+					'upper'  => $this->format_currency( $item['upper'] ),
+					'manual' => null,
 				),
 			);
 			$sort_key += 10;
@@ -103,7 +286,7 @@ class SGK_Result_Formatter {
 				'position_number'             => sprintf( '%02d', count( $positions ) + 1 ),
 				'sort_key'                    => $sort_key,
 				'titel'                       => 'Finale Angebotssumme',
-				'beschreibung'                => 'Manuell gesetzter Angebotswert als Verhandlungs- und Transferposition. Überschreibt nicht die Empfehlung, sondern ergänzt sie als finale Angebotsangabe.',
+				'beschreibung'                => 'Manuell gesetzter Angebotswert für Angebot, Export und Kundendokument. Die rechnerische Empfehlung bleibt separat nachvollziehbar.',
 				'menge'                       => 1,
 				'einheit'                     => 'Angebot',
 				'einzelpreis_lower'           => $result['manual_offer_total'],
@@ -131,7 +314,7 @@ class SGK_Result_Formatter {
 		$overview = array();
 		foreach ( $result['licenses'] as $license ) {
 			$territory = isset( $license['territory_rules']['default_scope'] ) ? $license['territory_rules']['default_scope'] : ( isset( $license['territory_rules']['default'] ) ? $license['territory_rules']['default'] : 'projektbezogen' );
-			$media     = isset( $license['media_rules']['default_scope'] ) ? $license['media_rules']['default_scope'] : ( isset( $license['media_rules']['default_scope'] ) ? $license['media_rules']['default_scope'] : ( isset( $license['media_rules']['default'] ) ? $license['media_rules']['default'] : 'gemäß Fallkonfiguration' ) );
+			$media     = isset( $license['media_rules']['default_scope'] ) ? $license['media_rules']['default_scope'] : ( isset( $license['media_rules']['default'] ) ? $license['media_rules']['default'] : 'gemäß Fallkonfiguration' );
 			$duration  = isset( $license['duration_rules']['default_term'] ) ? $license['duration_rules']['default_term'] : 'projektbezogen';
 			if ( is_array( $media ) ) {
 				$media = implode( ', ', array_map( 'strval', $media ) );
@@ -188,13 +371,14 @@ class SGK_Result_Formatter {
 
 	protected function build_internal_meta( array $result ) {
 		return array(
-			'resolved_case'      => $result['resolved_case'],
-			'line_item_count'    => count( $result['line_items'] ),
-			'addon_count'        => count( $result['addons'] ),
-			'credit_count'       => count( $result['credits'] ),
-			'manual_offer_total' => $result['manual_offer_total'],
-			'input_snapshot'     => $result['input_snapshot'],
-			'route_trace'        => $result['route_trace'],
+			'resolved_case'       => $result['resolved_case'],
+			'line_item_count'     => count( $result['line_items'] ),
+			'addon_count'         => count( $result['addons'] ),
+			'credit_count'        => count( $result['credits'] ),
+			'manual_offer_total'  => $result['manual_offer_total'],
+			'input_snapshot'      => $result['input_snapshot'],
+			'route_trace'         => $result['route_trace'],
+			'breakdown_sections'  => $result['breakdown_sections'],
 		);
 	}
 
@@ -214,6 +398,18 @@ class SGK_Result_Formatter {
 			$rights_lines[] = $line;
 		}
 
+		$breakdown_lines = array();
+		foreach ( $result['breakdown_sections'] as $section ) {
+			if ( empty( $section['items'] ) || in_array( $section['key'], array( 'context', 'final_totals' ), true ) ) {
+				continue;
+			}
+			$entry_lines = array();
+			foreach ( $section['items'] as $item ) {
+				$entry_lines[] = $item['label'] . ': ' . $item['formatted']['low_mid_high'];
+			}
+			$breakdown_lines[] = $section['label'] . ' – ' . implode( '; ', $entry_lines );
+		}
+
 		$summary = $title . ' | Empfehlung ' . $result['formatted_totals']['lower'] . ' bis ' . $result['formatted_totals']['upper'] . ', Mittelwert ' . $result['formatted_totals']['mid'] . '. ' . $manual_note;
 		$headline = 'Angebot Sprecherhonorar – ' . $title;
 		$rights_block = ! empty( $rights_lines ) ? implode( "\n", $rights_lines ) : 'Rechteumfang wird anhand der gewählten Nutzung im Detail ergänzt.';
@@ -226,6 +422,7 @@ class SGK_Result_Formatter {
 			'rights_block'            => $rights_block,
 			'notes_block'             => $notes_block,
 			'positions_block'         => $positions_block,
+			'breakdown_block'         => implode( "\n", $breakdown_lines ),
 			'manual_offer_notice'     => $manual_note,
 			'legal_notice_block'      => implode( "\n", $result['legal_texts'] ),
 		);
@@ -255,11 +452,11 @@ class SGK_Result_Formatter {
 			'route_summary'        => $result['route_summary_offer'],
 			'alternative_packages' => $result['alternatives'],
 			'credit_information'   => $result['credits'],
+			'breakdown_sections'   => $result['breakdown_sections'],
 			'calculation_meta'     => $result['internal_meta'],
 			'export_text_blocks'   => $result['export_text_blocks'],
 		);
 	}
-
 
 	protected function build_document_payload( array $export_payload ) {
 		if ( class_exists( 'SGK_Offer_Document' ) ) {
@@ -319,6 +516,27 @@ class SGK_Result_Formatter {
 			$label = 'Anrechnung auf bestehende Vorleistung';
 		}
 		return $label;
+	}
+
+	protected function format_amount_triplet( array $amounts ) {
+		$lower = isset( $amounts['lower'] ) ? (float) $amounts['lower'] : 0;
+		$mid   = isset( $amounts['mid'] ) ? (float) $amounts['mid'] : 0;
+		$upper = isset( $amounts['upper'] ) ? (float) $amounts['upper'] : 0;
+
+		return array(
+			'lower'        => $this->format_currency( $lower ),
+			'mid'          => $this->format_currency( $mid ),
+			'upper'        => $this->format_currency( $upper ),
+			'low_mid_high' => $this->format_currency( $lower ) . ' / ' . $this->format_currency( $mid ) . ' / ' . $this->format_currency( $upper ),
+		);
+	}
+
+	protected function format_quantity_label( $quantity, $unit_label ) {
+		if ( '' === (string) $unit_label ) {
+			return '';
+		}
+
+		return $this->format_quantity( $quantity ) . ' ' . $unit_label;
 	}
 
 	protected function humanize_key( $key ) {
