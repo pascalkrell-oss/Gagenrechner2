@@ -40,23 +40,34 @@ class SGK_API {
 			'/calculate',
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
-				'permission_callback' => '__return_true',
+				'permission_callback' => array( $this, 'permissions_check' ),
 				'callback'            => array( $this, 'calculate' ),
 			)
 		);
 	}
 
+	public function permissions_check( WP_REST_Request $request ) {
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+		if ( empty( $nonce ) ) {
+			return true;
+		}
+
+		return (bool) wp_verify_nonce( $nonce, 'wp_rest' );
+	}
+
 	public function calculate( WP_REST_Request $request ) {
-		$payload   = $request->get_json_params();
-		$payload   = is_array( $payload ) ? $payload : array();
-		$payload   = $this->ui_state->sanitize_input( $payload );
+		$payload           = $request->get_json_params();
+		$payload           = is_array( $payload ) ? $payload : array();
+		$client_request_id = isset( $payload['client_request_id'] ) ? sanitize_text_field( (string) $payload['client_request_id'] ) : '';
+		$payload           = $this->ui_state->sanitize_input( $payload );
 		$raw       = $this->calculator->calculate( $payload );
 		$formatted = $this->formatter->format( $raw );
 		$status    = ! empty( $raw['errors'] ) ? 422 : 200;
 
 		return new WP_REST_Response(
 			array(
-				'success'          => empty( $raw['errors'] ),
+				'success'           => empty( $raw['errors'] ),
+				'client_request_id' => $client_request_id,
 				'normalized_input' => isset( $raw['normalized_input'] ) ? $raw['normalized_input'] : array(),
 				'resolved_case'    => isset( $raw['resolved_case'] ) ? $raw['resolved_case'] : '',
 				'resolved_variant' => isset( $raw['resolved_variant'] ) ? $raw['resolved_variant'] : '',

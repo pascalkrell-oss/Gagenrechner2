@@ -93,6 +93,39 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 							</div>
 						</div>
 					</div>
+					<div class="src-panel-group" data-sgk-block="duration_term">
+						<div class="src-panel-row src-panel-row--stack">
+							<div class="src-row-content">
+								<div class="src-row-label"><?php esc_html_e( 'Laufzeit', 'sprecher-gagenrechner' ); ?></div>
+								<div class="src-row-desc"><?php esc_html_e( 'Nur anzeigen, wenn der Fachfall eine konkrete Laufzeit vorgibt.', 'sprecher-gagenrechner' ); ?></div>
+							</div>
+							<select id="sgk-duration-term" name="duration_term" class="src-native-select src-input-text">
+								<option value=""><?php esc_html_e( 'Bitte Laufzeit wählen', 'sprecher-gagenrechner' ); ?></option>
+							</select>
+						</div>
+					</div>
+					<div class="src-panel-group" data-sgk-block="territory">
+						<div class="src-panel-row src-panel-row--stack">
+							<div class="src-row-content">
+								<div class="src-row-label"><?php esc_html_e( 'Territorium', 'sprecher-gagenrechner' ); ?></div>
+								<div class="src-row-desc"><?php esc_html_e( 'Nur relevante Gebiete werden zur Auswahl gestellt.', 'sprecher-gagenrechner' ); ?></div>
+							</div>
+							<select id="sgk-territory" name="territory" class="src-native-select src-input-text">
+								<option value=""><?php esc_html_e( 'Bitte Gebiet wählen', 'sprecher-gagenrechner' ); ?></option>
+							</select>
+						</div>
+					</div>
+					<div class="src-panel-group" data-sgk-block="medium">
+						<div class="src-panel-row src-panel-row--stack">
+							<div class="src-row-content">
+								<div class="src-row-label"><?php esc_html_e( 'Medium', 'sprecher-gagenrechner' ); ?></div>
+								<div class="src-row-desc"><?php esc_html_e( 'Die Auswahl wird aus der aktiven Fachkonfiguration aufgebaut.', 'sprecher-gagenrechner' ); ?></div>
+							</div>
+							<select id="sgk-medium" name="medium" class="src-native-select src-input-text">
+								<option value=""><?php esc_html_e( 'Bitte Medium wählen', 'sprecher-gagenrechner' ); ?></option>
+							</select>
+						</div>
+					</div>
 					<div class="src-smart-hint" data-sgk-redirect-banner hidden>
 						<i data-lucide="sparkles" width="18" height="18"></i>
 						<div>
@@ -181,11 +214,11 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<div class="src-foldable-content">
 							<div class="src-badge-row" data-sgk-expert-badges><span class="src-inline-badge is-muted"><?php esc_html_e( 'Noch keine zusätzlichen Optionen aktiv', 'sprecher-gagenrechner' ); ?></span></div>
 							<div class="src-panel-group">
-								<div class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Vorheriges Layout-Honorar', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-prior-layout" name="prior_layout_fee" type="number" min="0" step="0.01" value="0" class="src-input-text src-input-text--compact" /></div>
-								<div class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Session-Stunden', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-session-hours" name="session_hours" type="number" min="0" step="0.5" value="0" class="src-input-text src-input-text--compact" /></div>
-								<label class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Zeitlich unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für besondere Fälle mit unbegrenzter Laufzeit.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_time" value="1" /><span class="src-slider"></span></span></label>
-								<label class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Räumlich unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für Einsätze ohne räumliche Begrenzung.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_territory" value="1" /><span class="src-slider"></span></span></label>
-								<label class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Medial unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für weitreichende Sondervereinbarungen.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_media" value="1" /><span class="src-slider"></span></span></label>
+								<div class="src-panel-row" data-sgk-block="prior_layout_fee"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Vorheriges Layout-Honorar', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-prior-layout" name="prior_layout_fee" type="number" min="0" step="0.01" value="0" class="src-input-text src-input-text--compact" /></div>
+								<div class="src-panel-row" data-sgk-block="session_hours"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Session-Stunden', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-session-hours" name="session_hours" type="number" min="0" step="0.5" value="0" class="src-input-text src-input-text--compact" /></div>
+								<label class="src-panel-row" data-sgk-block="unlimited_usage"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Zeitlich unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für besondere Fälle mit unbegrenzter Laufzeit.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_time" value="1" /><span class="src-slider"></span></span></label>
+								<label class="src-panel-row" data-sgk-block="unlimited_usage"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Räumlich unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für Einsätze ohne räumliche Begrenzung.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_territory" value="1" /><span class="src-slider"></span></span></label>
+								<label class="src-panel-row" data-sgk-block="unlimited_usage"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Medial unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für weitreichende Sondervereinbarungen.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_media" value="1" /><span class="src-slider"></span></span></label>
 							</div>
 							<?php if ( ! empty( $demo_cases ) ) : ?>
 								<div class="src-demo-shell">
@@ -202,8 +235,8 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				</section>
 
 				<div class="src-actions">
-					<button type="submit" class="src-btn-primary"><?php esc_html_e( 'Preisrahmen berechnen', 'sprecher-gagenrechner' ); ?></button>
-					<p class="src-actions-hint"><?php esc_html_e( 'Die Live-Kalkulation aktualisiert sich automatisch, sobald du eine relevante Eingabe änderst.', 'sprecher-gagenrechner' ); ?></p>
+					<button type="submit" class="src-btn-primary" data-sgk-submit><?php esc_html_e( 'Preisrahmen berechnen', 'sprecher-gagenrechner' ); ?></button>
+					<p class="src-actions-hint" data-sgk-validation-status><?php esc_html_e( 'Wähle zuerst eine Projektart und ergänze dann die Pflichtfelder.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
 			</form>
 		</main>

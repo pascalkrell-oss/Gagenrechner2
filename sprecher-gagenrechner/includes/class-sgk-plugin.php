@@ -104,14 +104,14 @@ class SGK_Plugin {
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/css/frontend.css',
 			array(),
-			'0.1.0'
+			'0.2.0'
 		);
 
 		wp_register_script(
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/js/frontend.js',
 			array(),
-			'0.1.0',
+			'0.2.0',
 			true
 		);
 
