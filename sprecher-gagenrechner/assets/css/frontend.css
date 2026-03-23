@@ -67,7 +67,7 @@
 .sgk-app, .sgk-app *, .sgk-app *::before, .sgk-app *::after { box-sizing: border-box; }
 .sgk-app {
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     font-family: var(--sgk-font);
     color: var(--src-text-main);
     background: var(--src-bg-app);
@@ -210,6 +210,42 @@ button, input, textarea, select { font: inherit; }
 .src-section-title { color: #334155; margin: 0; }
 .src-section-copy { font-size: 14px; }
 .src-native-select.src-hidden-select { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+.src-native-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, #64748b 50%), linear-gradient(135deg, #64748b 50%, transparent 50%), linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
+    background-position: calc(100% - 22px) calc(50% - 3px), calc(100% - 16px) calc(50% - 3px), 0 0;
+    background-size: 6px 6px, 6px 6px, 100% 100%;
+    background-repeat: no-repeat;
+    padding-right: 42px;
+    min-height: 50px;
+    position: relative;
+    z-index: 2;
+}
+.src-native-select:focus {
+    outline: none;
+    border-color: var(--src-primary);
+    box-shadow: var(--shadow-focus);
+}
+.src-native-select:not(.src-hidden-select) {
+    cursor: pointer;
+}
+.src-panel-row:focus-within {
+    position: relative;
+    z-index: 3;
+}
+.src-panel-row[data-sgk-block],
+.src-panel-row[data-sgk-conditional-field] {
+    transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+.src-panel-row[data-sgk-block]:focus-within,
+.src-panel-row[data-sgk-conditional-field]:focus-within,
+.src-panel-row[data-sgk-block]:hover,
+.src-panel-row[data-sgk-conditional-field]:hover {
+    background: rgba(248,250,252,.92);
+}
+
 
 .src-grid-cards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
 .src-grid-cards--demo { grid-template-columns: repeat(2, minmax(0,1fr)); }
@@ -257,7 +293,7 @@ button, input, textarea, select { font: inherit; }
 .src-context-card { padding: 18px 20px; border-radius: 22px; }
 .src-context-card strong { display: block; margin-bottom: 8px; font-size: 15px; }
 
-.src-panel-group { overflow: hidden; border-radius: 24px; }
+.src-panel-group { overflow: visible; border-radius: 24px; }
 .src-panel-row {
     display: flex;
     align-items: center;
@@ -319,7 +355,7 @@ button, input, textarea, select { font: inherit; }
     display: grid;
     place-items: center;
 }
-.src-stepper button:hover { background: rgba(238,242,255,.9); color: var(--src-text-main); }
+.src-stepper button:hover, .src-stepper button:focus-visible { background: rgba(238,242,255,.9); color: var(--src-text-main); outline: none; }
 .src-stepper input {
     width: 54px;
     border: 0;
@@ -330,6 +366,7 @@ button, input, textarea, select { font: inherit; }
     font-weight: 600;
 }
 .src-stepper input:focus { outline: none; }
+.src-stepper:focus-within { border-color: rgba(26,147,238,.42); box-shadow: var(--shadow-focus); }
 
 .src-switch { position: relative; display: inline-block; width: 48px; height: 28px; flex-shrink: 0; }
 .src-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
@@ -348,6 +385,7 @@ button, input, textarea, select { font: inherit; }
 }
 .src-switch input:checked + .src-slider { background: linear-gradient(135deg, var(--src-primary), var(--src-accent)); }
 .src-switch input:checked + .src-slider::before { transform: translateX(20px); }
+.src-switch input:focus-visible + .src-slider { box-shadow: var(--shadow-focus); }
 
 .src-smart-hint {
     display: flex;
@@ -478,6 +516,7 @@ button, input, textarea, select { font: inherit; }
 .src-result-btn-grid, .src-storage-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
 .src-btn-secondary.src-btn-secondary--dark { background: rgba(255,255,255,.02); border-color: rgba(255,255,255,.12); color: #fff; }
 .src-btn-secondary.src-btn-secondary--dark:hover, .src-btn-secondary.src-btn-secondary--dark:focus-visible { background: rgba(0,102,179,.18); border-color: rgba(0,102,179,.4); color: #fff; }
+.src-btn-primary.is-feedback, .src-btn-secondary.is-feedback { transform: none; }
 .src-storage-panel label { color: #fff; font-size: 13px; font-weight: 600; }
 .src-storage-panel select, .src-manual-offer input {
     width: 100%;
@@ -509,7 +548,7 @@ button, input, textarea, select { font: inherit; }
 
 .src-modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.45); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: var(--transition-smooth); }
 .src-modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
-.src-modal-content { width: min(1180px, 100%); max-height: calc(100vh - 48px); overflow: auto; border-radius: 30px; transform: translateY(14px) scale(.98); transition: var(--transition-smooth); }
+.src-modal-content { width: min(1180px, 100%); max-height: calc(100vh - 48px); overflow: auto; border-radius: 30px; transform: translateY(14px) scale(.98); transition: var(--transition-smooth); outline: none; }
 .src-modal-backdrop.is-open .src-modal-content { transform: translateY(0) scale(1); }
 .src-modal-header, .src-modal-footer { padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .src-modal-header { border-bottom: 1px solid var(--src-border-light); }

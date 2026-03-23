@@ -82,11 +82,29 @@
 	}
 
 	function summarizeSelection(value) { return value ? optionLabel(value) : 'Noch offen'; }
+	function buildScopeGuidance(formData, ui) {
+		var effectiveCase = ui.effectiveCase;
+		var scopeBlocks = ['duration_minutes', 'net_minutes', 'module_count', 'fah', 'recording_hours', 'recording_days', 'same_day_projects', 'session_hours'];
+		var hasConcreteScope = scopeBlocks.some(function (block) { return ui.visibleBlocks.indexOf(block) !== -1; });
+		if (hasConcreteScope) { return ((CASE_UI[effectiveCase] && CASE_UI[effectiveCase].scopeCopy) || 'Die passenden Umfangsangaben richten sich nach Deiner Projektart.') + ' Trage hier nur den Umfang ein, der für diesen Fall wirklich abgefragt wird.'; }
+		switch (effectiveCase) {
+			case 'werbung_mit_bild':
+			case 'werbung_ohne_bild':
+			case 'kleinraeumig':
+				return 'Hier ist keine zusätzliche Mengeneingabe nötig. Die Preisempfehlung ergibt sich vor allem aus Variante, Gebiet, Laufzeit, Medium und eventuellen Rechte-Erweiterungen.';
+			case 'podcast':
+				return 'Für diese Podcast-Auswahl brauchen wir hier keinen Extra-Umfang. Entscheidend sind vor allem die gewählte Podcast-Variante und die passende Nutzungseinordnung.';
+			default:
+				return ((CASE_UI[effectiveCase] && CASE_UI[effectiveCase].scopeCopy) || 'Für diesen Fall ist aktuell keine weitere Umfangseingabe nötig.') + ' Die Preisempfehlung stützt sich hier vor allem auf die bisher gewählten Projekt- und Rechteangaben.';
+		}
+	}
+
 	function updateGuidanceSummary(app, formData, ui) {
 		var rightsNode = app.querySelector('[data-sgk-rights-summary]');
 		var journeyNode = app.querySelector('[data-sgk-journey-summary]');
 		var caseLabel = formData.case_key ? labelFromKey(formData.case_key) : 'Noch nicht gewählt';
 		var rightsParts = [];
+		var activeRightsToggles = [];
 		if (ui.caseConfig && (ui.caseConfig.allowed_territories || []).length) { rightsParts.push('Gebiet: ' + summarizeSelection(formData.territory)); }
 		if (ui.caseConfig && (ui.caseConfig.allowed_durations || []).length) { rightsParts.push('Laufzeit: ' + summarizeSelection(formData.duration_term)); }
 		if (ui.caseConfig && (ui.caseConfig.allowed_media || []).length) { rightsParts.push('Medium: ' + summarizeSelection(formData.medium)); }
@@ -94,8 +112,12 @@
 		if ((normalizeNumber(formData.additional_year) || 0) > 0 || (normalizeNumber(formData.additional_territory) || 0) > 0 || (normalizeNumber(formData.additional_motif) || 0) > 0) {
 			rightsParts.push('Erweiterungen aktiv');
 		}
+		[['archivgage','Archivnutzung'],['reminder','Reminder'],['allongen','Allongen'],['follow_up_usage','Nachnutzung']].forEach(function (item) {
+			if (isTruthy(formData[item[0]])) { activeRightsToggles.push(item[1]); }
+		});
+		if (activeRightsToggles.length) { rightsParts.push(activeRightsToggles.join(' · ')); }
 		if (rightsNode) {
-			rightsNode.innerHTML = '<strong>Deine aktuelle Rechte-Zusammenfassung</strong><p>' + htmlEscape(rightsParts.length ? rightsParts.join(' · ') : 'Sobald Du Projekt und Variante gewählt hast, zeigen wir hier Gebiet, Laufzeit, Medium und wichtige Rechte-Erweiterungen.') + '</p>';
+			rightsNode.innerHTML = '<strong>Dein aktueller Rechte-Stand</strong><p>' + htmlEscape(rightsParts.length ? rightsParts.join(' · ') : 'Sobald Du Projekt und Variante gewählt hast, fassen wir hier Gebiet, Laufzeit, Medium und wichtige Rechte-Erweiterungen kompakt zusammen.') + '</p>';
 		}
 		if (journeyNode) {
 			var scopeSummary = 'Noch offen';
@@ -108,7 +130,7 @@
 				return false;
 			});
 			journeyNode.innerHTML = '<div class="src-tower-journey-item"><span>Projekt</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
-				'<div class="src-tower-journey-item"><span>Rechte</span><strong>' + htmlEscape(rightsParts.length ? rightsParts.slice(0, 2).join(' · ') : 'Werden nach Auswahl sichtbar') + '</strong></div>' +
+				'<div class="src-tower-journey-item"><span>Rechte</span><strong>' + htmlEscape(rightsParts.length ? rightsParts.slice(0, 3).join(' · ') : 'Folgt nach Deiner Auswahl') + '</strong></div>' +
 				'<div class="src-tower-journey-item"><span>Umfang</span><strong>' + htmlEscape(scopeSummary) + '</strong></div>';
 		}
 	}
@@ -133,7 +155,10 @@
 	function buildSavedLabel(entry) { return (entry.projectTitle || 'Gespeicherte Kalkulation') + ' · ' + new Date(entry.savedAt).toLocaleString('de-DE'); }
 
 	function validateManualOffer(value, result) { if (value == null || value === '') { return { valid: false, message: 'Für ein fertiges Angebot solltest du einen finalen Angebotswert festlegen.' }; } if (value <= 0) { return { valid: false, message: 'Bitte trage einen positiven Angebotswert ein.' }; } if (result && result.totals && value < result.totals.lower * 0.25) { return { valid: false, message: 'Der eingetragene Angebotswert liegt deutlich unter der empfohlenen Spanne.' }; } return { valid: true, message: 'Der Angebotswert wird separat übernommen, ohne die Empfehlung zu verändern.' }; }
-	function copyText(text, trigger) { if (!text) { return Promise.reject(new Error('empty')); } var promise = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject(new Error('clipboard-unavailable')); return promise.then(function () { if (trigger) { var original = trigger.getAttribute('data-label') || trigger.textContent; trigger.textContent = 'Kopiert'; setTimeout(function () { trigger.textContent = original; }, 1600); } }); }
+	function setButtonFeedback(trigger, successLabel, fallbackLabel, duration) { if (!trigger) { return; } var label = successLabel || trigger.getAttribute('data-feedback-label') || 'Erledigt'; var resetDelay = duration || 1800; if (!trigger.hasAttribute('data-original-label')) { trigger.setAttribute('data-original-label', trigger.textContent.trim()); } trigger.textContent = label; trigger.classList.add('is-feedback'); window.clearTimeout(trigger.__sgkFeedbackTimer); trigger.__sgkFeedbackTimer = window.setTimeout(function () { trigger.textContent = fallbackLabel || trigger.getAttribute('data-original-label') || trigger.getAttribute('data-label') || trigger.textContent; trigger.classList.remove('is-feedback'); }, resetDelay); }
+	function setStatusMessage(node, message, tone) { if (!node) { return; } node.textContent = message || ''; node.classList.remove('is-success', 'is-error'); if (tone === 'success') { node.classList.add('is-success'); }
+		if (tone === 'error') { node.classList.add('is-error'); } }
+	function copyText(text, trigger) { if (!text) { return Promise.reject(new Error('empty')); } var promise = navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text) : Promise.reject(new Error('clipboard-unavailable')); return promise.then(function () { setButtonFeedback(trigger, trigger && trigger.getAttribute('data-feedback-label') || 'Kopiert'); return true; }); }
 	function buildExportPayload(result, formData, offerMeta) { var payload = clone(result.export_payload || {}); payload.summary = payload.summary || {}; payload.summary.project_title = formData.project_title || ''; payload.summary.customer_name = formData.customer_name || ''; payload.summary.display_title = result.display_title || ''; payload.summary.generated_at = new Date().toISOString(); payload.calculation_meta = payload.calculation_meta || {}; payload.calculation_meta.internal_notes = formData.internal_notes || ''; payload.calculation_meta.source_form = formData; payload.calculation_meta.offer_meta = offerMeta || {}; return payload; }
 	function prettifyRouteMessage(message) { var raw = String(message || ''); if (!raw) { return 'Die Auswahl wurde passend für die Kalkulation eingeordnet.'; } return raw.replace(/Resolver/gi, 'Auswahl').replace(/Berechnungsengine/gi, 'Kalkulation').replace(/normalisiert/gi, 'geordnet').replace(/suppressed invalid paths/gi, 'nicht passende Varianten').replace(/Redirect aktiv/gi, 'Diese Auswahl wird').replace(/fachlich sauber/gi, 'passend').replace(/Berechnungspfad/gi, 'Einordnung').replace(/route trace/gi, 'Einordnung').replace(/aktivierte Regeln/gi, 'berücksichtigte Auswahl').replace(/Resolver-Logik/gi, 'Zuordnung').trim(); }
 	function routeLabel(step, label) { var map = { resolver: 'Auswahl', normalization: 'Auswahl', redirect: 'Einordnung', suppressed_invalid_path: 'Bereinigt', case: 'Projektart' }; return map[step] || label || 'Schritt'; }
@@ -331,7 +356,7 @@
 		var expertShell = form.querySelector('[data-sgk-expert-shell]');
 		if (expertShell) { expertShell.classList.toggle('is-disabled', !hasSelection); }
 		var scopeCopy = form.querySelector('[data-sgk-scope-copy]');
-		if (scopeCopy) { scopeCopy.textContent = hasSelection ? ((CASE_UI[ui.effectiveCase] && CASE_UI[ui.effectiveCase].scopeCopy) || 'Die Angaben werden passend zu Deiner Auswahl geführt.') : 'Wähle zuerst eine Projektart, damit wir Dir die passenden Umfangsangaben zeigen können.'; }
+		if (scopeCopy) { scopeCopy.textContent = hasSelection ? buildScopeGuidance(serializeForm(form), ui) : 'Wähle zuerst eine Projektart, damit wir Dir die passenden Umfangsangaben zeigen können.'; }
 	}
 
 	function resetInvisibleBlockFields(form, visibleBlocks) {
@@ -428,8 +453,8 @@
 			'</div>' +
 			'<div class="src-result-stack">' +
 				'<div class="src-inline-dark-panel src-manual-offer"><strong>Finale Angebotssumme</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div></div>' +
-				'<div class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot vorbereiten <span aria-hidden="true">→</span></button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-sgk-action="copy-summary">Zusammenfassung</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-sgk-action="copy-positions">Positionen</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-sgk-action="copy-rights">Rechte</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-sgk-action="copy-json">Exportdaten</button></div></div>' +
-				'<div class="src-storage-panel"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select><div class="src-storage-actions"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung speichern" data-sgk-action="save">Speichern</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung laden" data-sgk-action="load">Laden</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung löschen" data-sgk-action="delete">Löschen</button></div><div class="src-storage-status" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Deine Kalkulationen werden lokal im Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</div></div>' +
+				'<div class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot vorbereiten <span aria-hidden="true">→</span></button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-feedback-label="Zusammenfassung kopiert" data-sgk-action="copy-summary">Zusammenfassung teilen</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-feedback-label="Positionen kopiert" data-sgk-action="copy-positions">Positionen teilen</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-feedback-label="Rechte kopiert" data-sgk-action="copy-rights">Rechte teilen</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-feedback-label="Exportdaten kopiert" data-sgk-action="copy-json">Exportdaten kopieren</button></div></div>' +
+				'<div class="src-storage-panel"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select><div class="src-storage-actions"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung speichern" data-feedback-label="Gespeichert" data-sgk-action="save">Speichern</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung laden" data-feedback-label="Geladen" data-sgk-action="load">Laden</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung löschen" data-feedback-label="Gelöscht" data-sgk-action="delete">Löschen</button></div><div class="src-storage-status" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Deine Kalkulationen werden lokal im Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</div></div>' +
 				'<div class="src-result-accordion"><div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Zusammenfassung</span></button><div class="src-accordion-content"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div><div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Breakdown für Export</span></button><div class="src-accordion-content"><p>' + htmlEscape(((result.export_text_blocks && result.export_text_blocks.breakdown_block) || 'Der Breakdown wird nach der Berechnung ergänzt.')) + '</p></div></div></div>' +
 			'</div>';
 		if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); }
@@ -533,31 +558,32 @@
 		form.addEventListener('input', function () { syncUI(); scheduleCalculation('input', 260); });
 		form.addEventListener('submit', function (event) { event.preventDefault(); syncUI(); requestCalculation('submit'); });
 		resultContainer.addEventListener('click', function (event) {
-			var action = event.target.getAttribute('data-sgk-action');
+			var actionButton = event.target.closest('[data-sgk-action]');
+			var action = actionButton && actionButton.getAttribute('data-sgk-action');
 			var state = currentState();
 			if (!action || !state.payload || !state.payload.result) { return; }
 			var copyBlocks = buildCopyBlocks(state.payload.result, state.formData, getOfferMeta(app, state.formData));
 			var statusNode = resultContainer.querySelector('[data-sgk-storage-status]');
 			var entries, selectedId, entry;
 			if (action === 'open-pdf') { hydrateOfferModal(app, state.payload.result, state.formData); openModal(); return; }
-			if (action === 'copy-summary') { copyText(copyBlocks.summary, event.target); return; }
-			if (action === 'copy-positions') { copyText(copyBlocks.positions, event.target); return; }
-			if (action === 'copy-rights') { copyText(copyBlocks.rights, event.target); return; }
-			if (action === 'copy-json') { copyText(copyBlocks.json, event.target); return; }
-			if (action === 'save') { entries = getSavedCalculations(cases); entry = { id: 'sgk-' + Date.now(), version: STORAGE_VERSION, savedAt: new Date().toISOString(), projectTitle: state.formData.project_title || state.payload.result.display_title || 'Kalkulation', formData: state.formData, result: state.payload.result, exportPayload: buildExportPayload(state.payload.result, state.formData, getOfferMeta(app, state.formData)) }; setSavedCalculations([entry].concat(entries).slice(0, 15)); refreshSavedList(resultContainer, cases); if (statusNode) { statusNode.textContent = 'Kalkulation lokal gespeichert: ' + buildSavedLabel(entry); } return; }
+			if (action === 'copy-summary') { copyText(copyBlocks.summary, actionButton); return; }
+			if (action === 'copy-positions') { copyText(copyBlocks.positions, actionButton); return; }
+			if (action === 'copy-rights') { copyText(copyBlocks.rights, actionButton); return; }
+			if (action === 'copy-json') { copyText(copyBlocks.json, actionButton); return; }
+			if (action === 'save') { entries = getSavedCalculations(cases); entry = { id: 'sgk-' + Date.now(), version: STORAGE_VERSION, savedAt: new Date().toISOString(), projectTitle: state.formData.project_title || state.payload.result.display_title || 'Kalkulation', formData: state.formData, result: state.payload.result, exportPayload: buildExportPayload(state.payload.result, state.formData, getOfferMeta(app, state.formData)) }; setSavedCalculations([entry].concat(entries).slice(0, 15)); refreshSavedList(resultContainer, cases); setButtonFeedback(actionButton, 'Gespeichert'); setStatusMessage(statusNode, 'Lokal gespeichert: ' + buildSavedLabel(entry), 'success'); return; }
 			selectedId = (resultContainer.querySelector('[data-sgk-saved-list]') || {}).value;
-			if (!selectedId) { if (statusNode) { statusNode.textContent = 'Bitte wähle zuerst eine gespeicherte Kalkulation aus.'; } return; }
+			if (!selectedId) { setStatusMessage(statusNode, 'Bitte wähle zuerst eine gespeicherte Kalkulation aus.', 'error'); return; }
 			entries = getSavedCalculations(cases);
 			entry = entries.find(function (item) { return item.id === selectedId; });
-			if (!entry) { if (statusNode) { statusNode.textContent = 'Die gespeicherte Kalkulation konnte nicht geladen werden.'; } return; }
-			if (action === 'load') { fillForm(form, entry.formData || {}); syncUI(); requestCalculation('load'); if (statusNode) { statusNode.textContent = 'Kalkulation geladen: ' + buildSavedLabel(entry); } return; }
-			if (action === 'delete') { setSavedCalculations(entries.filter(function (item) { return item.id !== selectedId; })); refreshSavedList(resultContainer, cases); if (statusNode) { statusNode.textContent = 'Kalkulation gelöscht.'; } }
+			if (!entry) { setStatusMessage(statusNode, 'Die gespeicherte Kalkulation konnte nicht geladen werden.', 'error'); return; }
+			if (action === 'load') { fillForm(form, entry.formData || {}); syncUI(); requestCalculation('load'); setButtonFeedback(actionButton, 'Geladen'); setStatusMessage(statusNode, 'Geladen: ' + buildSavedLabel(entry), 'success'); return; }
+			if (action === 'delete') { setSavedCalculations(entries.filter(function (item) { return item.id !== selectedId; })); refreshSavedList(resultContainer, cases); setButtonFeedback(actionButton, 'Gelöscht'); setStatusMessage(statusNode, 'Die gespeicherte Kalkulation wurde entfernt.', 'success'); }
 		});
-		resultContainer.addEventListener('click', function (event) { if (!event.target.hasAttribute('data-sgk-sync-manual-offer')) { return; } var input = resultContainer.querySelector('[data-sgk-manual-offer]'); var value = normalizeNumber(input && input.value); if (value == null) { input.focus(); return; } setFieldValue(fieldNode(form, 'manual_offer_total'), String(value)); syncUI(); requestCalculation('manual-offer'); });
+		resultContainer.addEventListener('click', function (event) { var syncButton = event.target.closest('[data-sgk-sync-manual-offer]'); if (!syncButton) { return; } var input = resultContainer.querySelector('[data-sgk-manual-offer]'); var value = normalizeNumber(input && input.value); if (value == null) { input.focus(); return; } setFieldValue(fieldNode(form, 'manual_offer_total'), String(value)); setButtonFeedback(syncButton, 'Übernommen'); syncUI(); requestCalculation('manual-offer'); });
 		modal.querySelectorAll('[data-sgk-offer-close]').forEach(function (button) { button.addEventListener('click', closeModal); });
 		if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); }
 		modal.addEventListener('input', function () { var state = currentState(); if (state.payload && state.payload.result && !modal.hidden) { hydrateOfferModal(app, state.payload.result, state.formData); } });
-		modal.addEventListener('click', function (event) { var action = event.target.getAttribute('data-sgk-offer-action'); if (!action) { return; } var state = currentState(); if (!state.payload || !state.payload.result) { return; } hydrateOfferModal(app, state.payload.result, state.formData); if (action === 'copy-mail') { copyText(app.__sgkOfferPreview.text, event.target); return; } if (action === 'print') { openPrintDocument(app.__sgkOfferPreview.html); } });
+		modal.addEventListener('click', function (event) { if (event.target === modal) { closeModal(); return; } var actionButton = event.target.closest('[data-sgk-offer-action]'); var action = actionButton && actionButton.getAttribute('data-sgk-offer-action'); if (!action) { return; } var state = currentState(); if (!state.payload || !state.payload.result) { return; } hydrateOfferModal(app, state.payload.result, state.formData); if (action === 'copy-mail') { copyText(app.__sgkOfferPreview.text, actionButton); return; } if (action === 'print') { setButtonFeedback(actionButton, 'Druckdialog geöffnet'); openPrintDocument(app.__sgkOfferPreview.html); } });
 		document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && !modal.hidden) { closeModal(); } });
 		setModalState(false);
 		syncUI();
