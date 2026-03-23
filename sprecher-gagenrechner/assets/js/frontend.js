@@ -14,7 +14,7 @@
 		app: { show: ['duration_minutes', 'duration_term'], scopeCopy: 'Apps werden über eine minutenbasierte Standardnutzung mit unbegrenzter Laufzeit kalkuliert.' },
 		telefonansage: { show: ['module_count'], scopeCopy: 'Telefonansagen werden über die Anzahl der Module erfasst.' },
 		elearning_audioguide: { variantOptions: [['elearning_intern', 'E-Learning intern'], ['audioguide', 'Audioguide']], show: ['variant', 'duration_minutes'], scopeCopy: 'E-Learning und Audioguides basieren auf Minutenstaffeln und der passenden Inhaltsart.' },
-		podcast: { variantOptions: [['podcast_inhalte', 'Podcast-Inhalte'], ['non_commercial_3', 'Verpackung nicht-kommerziell 3 Jahre'], ['non_commercial_unlim', 'Verpackung nicht-kommerziell unbegrenzt'], ['marketing_3', 'Verpackung Marketing 3 Jahre'], ['marketing_unlim', 'Verpackung Marketing unbegrenzt']], show: ['variant', 'duration_minutes'], scopeCopy: 'Bei Podcasts unterscheiden wir zwischen Inhalt und Verpackung.' },
+		podcast: { variantOptions: [['podcast_inhalte', 'Podcast-Inhalte'], ['non_commercial_3', 'Verpackung nicht-kommerziell 3 Jahre'], ['non_commercial_unlim', 'Verpackung nicht-kommerziell unbegrenzt'], ['marketing_3', 'Verpackung Marketing 3 Jahre'], ['marketing_unlim', 'Verpackung Marketing unbegrenzt']], show: ['variant'], scopeCopy: 'Bei Podcasts unterscheiden wir zwischen Inhalt und Verpackung; Minuten werden nur für Inhalte abgefragt.' },
 		hoerbuch: { show: ['fah'], scopeCopy: 'Hörbücher bleiben als Vorschlagskalkulation mit Expertenergänzungen aufgebaut.' },
 		games: { show: ['recording_hours', 'recording_days', 'same_day_projects'], scopeCopy: 'Games berücksichtigen Session-Logik, Wiederholungen an Folgetagen und parallele Projekte.' },
 		redaktionell_doku_tv_reportage: { variantOptions: [['kommentarstimme', 'Kommentarstimme'], ['overvoice', 'Overvoice']], show: ['variant', 'net_minutes'], scopeCopy: 'Redaktionelle Inhalte kombinieren Minutensatz und Mindestgage transparent.' },
@@ -151,6 +151,12 @@
 		var resolvedCaseConfig = caseConfig(cases, selectedCase) || {};
 		var visualConfig = CASE_UI[effectiveCase] || {};
 		var visibleBlocks = (visualConfig.show || []).concat(['scope_note']);
+		var variantVisibilityRules = resolvedCaseConfig.variant_visibility_rules || {};
+		var activeVariant = formData.case_variant || (resolvedCaseConfig.allowed_variants || [])[0] || '';
+		var variantRule = variantVisibilityRules[activeVariant] || null;
+		if (variantRule && Array.isArray(variantRule.show_blocks)) {
+			variantRule.show_blocks.forEach(function (block) { if (visibleBlocks.indexOf(block) === -1) { visibleBlocks.push(block); } });
+		}
 		var requiredFields = ['case_key'];
 		(visibleBlocks || []).forEach(function (block) { (BLOCK_FIELD_MAP[block] || []).forEach(function (field) { if (requiredFields.indexOf(field) === -1) { requiredFields.push(field); } }); });
 		requiredFields = requiredFields.filter(function (field) {
@@ -166,7 +172,29 @@
 		if ((resolvedCaseConfig.validation_rules && Array.isArray(resolvedCaseConfig.validation_rules.required))) {
 			resolvedCaseConfig.validation_rules.required.forEach(function (field) { if (requiredFields.indexOf(field) === -1) { requiredFields.push(field); } });
 		}
+		if (variantRule && Array.isArray(variantRule.required)) {
+			variantRule.required.forEach(function (field) { if (requiredFields.indexOf(field) === -1) { requiredFields.push(field); } });
+		}
 		return { selectedCase: selectedCase, effectiveCase: effectiveCase, caseConfig: resolvedCaseConfig, visibleBlocks: visibleBlocks, requiredFields: requiredFields };
+	}
+
+	function isCaseFieldAllowed(ui, fieldName, formData) {
+		var caseConfig = ui.caseConfig || {};
+		var variant = (formData && formData.case_variant) || (caseConfig.allowed_variants || [])[0] || '';
+		if (fieldName === 'follow_up_usage' || fieldName === 'prior_layout_fee') {
+			var followUpRules = caseConfig.follow_up_credit_rules || {};
+			if (!followUpRules.allowed) { return false; }
+			return !Array.isArray(followUpRules.allowed_variants) || !followUpRules.allowed_variants.length || matchesAny(variant, followUpRules.allowed_variants);
+		}
+		if (fieldName === 'unlimited_time' || fieldName === 'unlimited_territory' || fieldName === 'unlimited_media') {
+			var unlimitedRules = caseConfig.unlimited_usage_rules || {};
+			if (!unlimitedRules.allowed) { return false; }
+			return !Array.isArray(unlimitedRules.allowed_variants) || !unlimitedRules.allowed_variants.length || matchesAny(variant, unlimitedRules.allowed_variants);
+		}
+		if (caseConfig.additive_rules && caseConfig.additive_rules[fieldName] && Array.isArray(caseConfig.additive_rules[fieldName].allowed_variants) && caseConfig.additive_rules[fieldName].allowed_variants.length) {
+			return matchesAny(variant, caseConfig.additive_rules[fieldName].allowed_variants);
+		}
+		return true;
 	}
 
 	function coerceFieldValue(field, value) {
@@ -213,6 +241,14 @@
 			if (NUMERIC_FIELDS[field].min != null && numericValue < NUMERIC_FIELDS[field].min) { errors.push((FIELD_LABELS[field] || labelFromKey(field)) + ' muss mindestens ' + NUMERIC_FIELDS[field].min + ' sein'); }
 		});
 		if (ui.effectiveCase === 'telefonansage' && formData.is_paid_media === '1') { errors.push('Telefonansagen dürfen nicht als Paid Media kalkuliert werden'); }
+		['archivgage', 'reminder', 'allongen', 'follow_up_usage', 'prior_layout_fee', 'unlimited_time', 'unlimited_territory', 'unlimited_media'].forEach(function (field) {
+			var active = field === 'prior_layout_fee' ? normalizeNumber(formData[field]) > 0 : isTruthy(formData[field]);
+			if (active && !isCaseFieldAllowed(ui, field, formData)) { errors.push((FIELD_LABELS[field] || labelFromKey(field)) + ' ist für diese Auswahl nicht zulässig'); }
+		});
+		if (isTruthy(formData.follow_up_usage) && !(normalizeNumber(formData.prior_layout_fee) > 0)) { errors.push('Für Nachnutzung muss ein vorheriges Layout-Honorar angegeben werden'); }
+		if (ui.effectiveCase === 'session_fee' && (formData.case_variant || formData.duration_term || formData.territory || formData.medium || isTruthy(formData.archivgage) || isTruthy(formData.reminder) || isTruthy(formData.allongen) || isTruthy(formData.follow_up_usage) || isTruthy(formData.unlimited_time) || isTruthy(formData.unlimited_territory) || isTruthy(formData.unlimited_media) || normalizeNumber(formData.additional_year) > 0 || normalizeNumber(formData.additional_territory) > 0 || normalizeNumber(formData.additional_motif) > 0 || normalizeNumber(formData.prior_layout_fee) > 0)) {
+			errors.push('Session Fee darf nicht mit Lizenz-, Rechte- oder Unlimited-Optionen kombiniert werden');
+		}
 		if (ui.caseConfig.allowed_variants && ui.caseConfig.allowed_variants.length && formData.case_variant && !matchesAny(formData.case_variant, ui.caseConfig.allowed_variants)) { errors.push('Die gewählte Variante ist für diesen Fall nicht zulässig'); }
 		if (ui.caseConfig.allowed_durations && ui.caseConfig.allowed_durations.length && formData.duration_term && !matchesAny(formData.duration_term, ui.caseConfig.allowed_durations)) { errors.push('Die gewählte Laufzeit ist für diesen Fall nicht zulässig'); }
 		if (ui.caseConfig.allowed_territories && ui.caseConfig.allowed_territories.length && formData.territory && !matchesAny(formData.territory, ui.caseConfig.allowed_territories)) { errors.push('Das gewählte Territorium ist für diesen Fall nicht zulässig'); }
@@ -268,6 +304,19 @@
 				var range = ui.caseConfig.validation_rules.numeric_ranges[name];
 				if (range.min != null) { field.min = range.min; }
 				if (range.max != null) { field.max = range.max; } else { field.removeAttribute('max'); }
+			}
+		});
+	}
+
+	function updateConditionalRows(form, ui, formData) {
+		form.querySelectorAll('[data-sgk-conditional-field]').forEach(function (row) {
+			var fieldName = row.getAttribute('data-sgk-conditional-field');
+			var allowed = !!ui.selectedCase && isCaseFieldAllowed(ui, fieldName, formData);
+			var field = fieldNode(form, fieldName);
+			row.hidden = !allowed;
+			row.classList.toggle('sgk-hidden', !allowed);
+			if (!allowed && field) {
+				setFieldValue(field, FIELD_DEFAULTS.hasOwnProperty(fieldName) ? FIELD_DEFAULTS[fieldName] : '');
 			}
 		});
 	}
@@ -366,6 +415,7 @@
 			updateCaseContext(app, ui.selectedCase, cases);
 			toggleBlocks(form, ui, !!ui.selectedCase);
 			resetInvisibleBlockFields(form, ui.visibleBlocks);
+			updateConditionalRows(form, ui, normalized);
 			syncSegmentedControl(form.querySelector('[data-sgk-usage-type-control]'), fieldNode(form, 'usage_type').value);
 			syncSegmentedControl(form.querySelector('[data-sgk-variant-control]'), fieldNode(form, 'case_variant').value);
 			updateRedirectBanner(app, app.__sgkLastPayload || null);

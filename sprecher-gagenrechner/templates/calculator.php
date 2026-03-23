@@ -54,6 +54,34 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 							<span class="src-card-icon"><i data-lucide="podcast" width="20" height="20"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Podcast', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Inhalt oder Verpackung', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
+						<button type="button" class="src-card" data-sgk-quick-case="app">
+							<span class="src-card-icon"><i data-lucide="smartphone" width="20" height="20"></i></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'App', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Minutenbasiert für App-Inhalte', 'sprecher-gagenrechner' ); ?></small></span>
+						</button>
+						<button type="button" class="src-card" data-sgk-quick-case="hoerbuch">
+							<span class="src-card-icon"><i data-lucide="book-audio" width="20" height="20"></i></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Hörbuch', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'FAH-basierte Vorschlagskalkulation', 'sprecher-gagenrechner' ); ?></small></span>
+						</button>
+						<button type="button" class="src-card" data-sgk-quick-case="games">
+							<span class="src-card-icon"><i data-lucide="gamepad-2" width="20" height="20"></i></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Games', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Session-, Tages- und Projektlogik', 'sprecher-gagenrechner' ); ?></small></span>
+						</button>
+						<button type="button" class="src-card" data-sgk-quick-case="redaktionell_doku_tv_reportage">
+							<span class="src-card-icon"><i data-lucide="captions" width="20" height="20"></i></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Redaktionell / Doku', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Kommentarstimme, Overvoice, Mindestgage', 'sprecher-gagenrechner' ); ?></small></span>
+						</button>
+						<button type="button" class="src-card" data-sgk-quick-case="audiodeskription">
+							<span class="src-card-icon"><i data-lucide="accessibility" width="20" height="20"></i></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Audiodeskription', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Minutenpreis mit Mindestgage', 'sprecher-gagenrechner' ); ?></small></span>
+						</button>
+						<button type="button" class="src-card" data-sgk-quick-case="kleinraeumig">
+							<span class="src-card-icon"><i data-lucide="map-pinned" width="20" height="20"></i></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Kleinräumige Nutzung', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Lokal begrenzte Sonderfälle', 'sprecher-gagenrechner' ); ?></small></span>
+						</button>
+						<button type="button" class="src-card" data-sgk-quick-case="session_fee">
+							<span class="src-card-icon"><i data-lucide="clock-3" width="20" height="20"></i></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Session Fee', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Nur Aufnahmestunden ohne Lizenz', 'sprecher-gagenrechner' ); ?></small></span>
+						</button>
 					</div>
 					<div class="src-context-card" data-sgk-case-context hidden></div>
 				</section>
@@ -189,10 +217,10 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 							<div class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Zusatzmotive', 'sprecher-gagenrechner' ); ?></div></div><div class="src-stepper" data-sgk-stepper><button type="button" data-sgk-step="down"><i data-lucide="minus" width="14" height="14"></i></button><input id="sgk-add-motif" name="additional_motif" type="number" min="0" step="1" value="0" /><button type="button" data-sgk-step="up"><i data-lucide="plus" width="14" height="14"></i></button></div></div>
 						</div>
 						<div class="src-panel-group" data-sgk-block="rights_toggles">
-							<label class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Archivnutzung', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für passende Paid-Fälle mit separater Archivnutzung.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="archivgage" value="1" /><span class="src-slider"></span></span></label>
-							<label class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Reminder', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Zusätzliche Reminder-Nutzung für passende Werbefälle.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="reminder" value="1" /><span class="src-slider"></span></span></label>
-							<label class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Allongen', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Ergänzend für klassische Audio-Werbung.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="allongen" value="1" /><span class="src-slider"></span></span></label>
-							<label class="src-panel-row"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Nachnutzung', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für spätere weitere Nutzung auf Basis einer bestehenden Kalkulation.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="follow_up_usage" value="1" /><span class="src-slider"></span></span></label>
+							<label class="src-panel-row" data-sgk-conditional-field="archivgage"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Archivnutzung', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für passende Paid-Fälle mit separater Archivnutzung.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="archivgage" value="1" /><span class="src-slider"></span></span></label>
+							<label class="src-panel-row" data-sgk-conditional-field="reminder"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Reminder', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Zusätzliche Reminder-Nutzung für passende Werbefälle.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="reminder" value="1" /><span class="src-slider"></span></span></label>
+							<label class="src-panel-row" data-sgk-conditional-field="allongen"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Allongen', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Ergänzend für klassische Audio-Werbung.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="allongen" value="1" /><span class="src-slider"></span></span></label>
+							<label class="src-panel-row" data-sgk-conditional-field="follow_up_usage"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Nachnutzung', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für spätere weitere Nutzung auf Basis einer bestehenden Kalkulation.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="follow_up_usage" value="1" /><span class="src-slider"></span></span></label>
 						</div>
 					</div>
 				</section>
@@ -213,11 +241,11 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<div class="src-foldable-content">
 							<div class="src-badge-row" data-sgk-expert-badges><span class="src-inline-badge is-muted"><?php esc_html_e( 'Noch keine zusätzlichen Optionen aktiv', 'sprecher-gagenrechner' ); ?></span></div>
 							<div class="src-panel-group">
-								<div class="src-panel-row" data-sgk-block="prior_layout_fee"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Vorheriges Layout-Honorar', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-prior-layout" name="prior_layout_fee" type="number" min="0" step="0.01" value="0" class="src-input-text src-input-text--compact" /></div>
+								<div class="src-panel-row" data-sgk-block="prior_layout_fee" data-sgk-conditional-field="prior_layout_fee"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Vorheriges Layout-Honorar', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-prior-layout" name="prior_layout_fee" type="number" min="0" step="0.01" value="0" class="src-input-text src-input-text--compact" /></div>
 								<div class="src-panel-row" data-sgk-block="session_hours"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Session-Stunden', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-session-hours" name="session_hours" type="number" min="0" step="0.5" value="0" class="src-input-text src-input-text--compact" /></div>
-								<label class="src-panel-row" data-sgk-block="unlimited_usage"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Zeitlich unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für besondere Fälle mit unbegrenzter Laufzeit.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_time" value="1" /><span class="src-slider"></span></span></label>
-								<label class="src-panel-row" data-sgk-block="unlimited_usage"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Räumlich unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für Einsätze ohne räumliche Begrenzung.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_territory" value="1" /><span class="src-slider"></span></span></label>
-								<label class="src-panel-row" data-sgk-block="unlimited_usage"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Medial unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für weitreichende Sondervereinbarungen.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_media" value="1" /><span class="src-slider"></span></span></label>
+								<label class="src-panel-row" data-sgk-block="unlimited_usage" data-sgk-conditional-field="unlimited_time"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Zeitlich unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für besondere Fälle mit unbegrenzter Laufzeit.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_time" value="1" /><span class="src-slider"></span></span></label>
+								<label class="src-panel-row" data-sgk-block="unlimited_usage" data-sgk-conditional-field="unlimited_territory"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Räumlich unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für Einsätze ohne räumliche Begrenzung.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_territory" value="1" /><span class="src-slider"></span></span></label>
+								<label class="src-panel-row" data-sgk-block="unlimited_usage" data-sgk-conditional-field="unlimited_media"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Medial unbegrenzt', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für weitreichende Sondervereinbarungen.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_media" value="1" /><span class="src-slider"></span></span></label>
 							</div>
 							<?php if ( ! empty( $demo_cases ) ) : ?>
 								<div class="src-demo-shell">

@@ -155,7 +155,7 @@ return array(
 					'additional_territory' => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzterritorium' ),
 					'additional_motif'     => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzmotiv' ),
 					'reminder'             => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.30, 0.35, 0.40 ), 'label' => 'Reminder' ),
-					'archivgage'           => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.35, 0.40, 0.50 ), 'label' => 'Archivgage' ),
+					'archivgage'           => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.35, 0.40, 0.50 ), 'label' => 'Archivgage', 'allowed_variants' => array( 'online_video_paid_media', 'atv_ctv_video_spot', 'linear_tv_spot_national', 'linear_tv_spot_regional', 'kino_spot_national', 'kino_spot_regional', 'pos_event_messe' ) ),
 				),
 				'package_rules' => array(
 					'dach_paket'     => array( 'label' => 'DACH Paket', 'multiplier' => 1.70, 'variants' => array( 'linear_tv_spot_national', 'online_video_paid_media' ) ),
@@ -163,11 +163,16 @@ return array(
 				),
 				'unlimited_usage_rules' => array(
 					'allowed' => true,
+					'allowed_variants' => array( 'online_video_paid_media', 'atv_ctv_video_spot', 'linear_tv_spot_national', 'linear_tv_spot_regional', 'kino_spot_national', 'kino_spot_regional' ),
 					'time_multiplier' => 3,
 					'territory_multiplier' => 4,
 					'media_multiplier' => 4,
 				),
 				'session_fee_rules' => array( 'allowed' => true ),
+				'follow_up_credit_rules' => array(
+					'allowed' => true,
+					'allowed_variants' => array( 'online_video_paid_media', 'atv_ctv_video_spot', 'linear_tv_spot_national', 'linear_tv_spot_regional', 'kino_spot_national', 'kino_spot_regional', 'pos_event_messe', 'tv_patronat', 'atv_ctv_patronat' ),
+				),
 				'expert_options' => array( 'sonderverhandlung', 'rabatte', 'pakete', 'unbegrenzte_nutzung', 'session_fee', 'layout_nachgage' ),
 				'notes' => array(
 					'Archivgage ist keine normale Jahresverlängerung, sondern eine separate Lizenz für passende Paid-Media-Fälle.',
@@ -240,17 +245,22 @@ return array(
 					'additional_year'      => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzjahr' ),
 					'additional_territory' => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzterritorium' ),
 					'additional_motif'     => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzmotiv' ),
-					'reminder'             => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.25, 0.30, 0.35 ), 'label' => 'Reminder' ),
-					'allongen'             => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.30, 0.35, 0.40 ), 'label' => 'Allongen' ),
+					'reminder'             => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.25, 0.30, 0.35 ), 'label' => 'Reminder', 'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'telefon_werbespot' ) ),
+					'allongen'             => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.30, 0.35, 0.40 ), 'label' => 'Allongen', 'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'telefon_werbespot' ) ),
 				),
 				'package_rules' => array(
 					'funk_online' => array( 'label' => 'Funk & Online', 'multiplier' => 1.55, 'variants' => array( 'funk_spot_national', 'online_audio_paid_media' ) ),
 				),
 				'unlimited_usage_rules' => array(
 					'allowed' => true,
+					'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'telefon_werbespot' ),
 					'time_multiplier' => 3,
 					'territory_multiplier' => 4,
 					'media_multiplier' => 4,
+				),
+				'follow_up_credit_rules' => array(
+					'allowed' => true,
+					'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'telefon_werbespot' ),
 				),
 				'notes' => array( 'Reine Telefonansagen gehören nicht in diesen Block und werden gesondert behandelt.' ),
 				'breakdown_schema' => array( 'base', 'additive', 'credit', 'notes' ),
@@ -390,6 +400,13 @@ return array(
 					),
 				),
 				'validation_rules' => array( 'numeric_ranges' => array( 'duration_minutes' => array( 'min' => 1, 'max' => 600 ) ) ),
+				'variant_visibility_rules' => array(
+					'podcast_inhalte'      => array( 'show_blocks' => array( 'duration_minutes' ), 'required' => array( 'duration_minutes' ) ),
+					'non_commercial_3'     => array( 'show_blocks' => array(), 'required' => array() ),
+					'non_commercial_unlim' => array( 'show_blocks' => array(), 'required' => array() ),
+					'marketing_3'          => array( 'show_blocks' => array(), 'required' => array() ),
+					'marketing_unlim'      => array( 'show_blocks' => array(), 'required' => array() ),
+				),
 				'notes' => array( 'Video-Podcasts werden fachlich in den unpaid Bewegtbildbereich umgeleitet, solange keine aktive Werbenutzung vorliegt.' ),
 			)
 		),
