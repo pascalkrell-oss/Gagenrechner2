@@ -165,6 +165,7 @@ class SGK_Resolver {
 			return $normalized;
 		}
 
+		// Legacy 1.3 payloads may still send old primary-usage flags; map them silently to case_variant.
 		$legacy_map = array(
 			'usage_awardfilm'       => 'awardfilm',
 			'usage_casefilm'        => 'casefilm',
@@ -179,6 +180,7 @@ class SGK_Resolver {
 		}
 
 		if ( in_array( $normalized['case_variant'], array( 'awardfilm', 'casefilm', 'mitarbeiterfilm', 'imagefilm_webvideo_praesentation' ), true ) ) {
+			// Once the primary 1.3 project type is known, legacy flags are cleared to keep downstream logic canonical.
 			$normalized['usage_awardfilm']       = '0';
 			$normalized['usage_casefilm']        = '0';
 			$normalized['usage_mitarbeiterfilm'] = '0';
