@@ -53,6 +53,7 @@ class SGK_Calculator {
 		$this->apply_unlimited_usage_rules( $result, $normalized, $case );
 		$this->build_package_alternatives( $result, $case, $normalized );
 		$this->ensure_consistent_totals( $result );
+		$this->guard_against_invalid_totals( $result );
 		$this->synchronize_breakdown_totals( $result );
 
 		if ( isset( $normalized['manual_offer_total'] ) && $normalized['manual_offer_total'] > 0 ) {
@@ -167,6 +168,10 @@ class SGK_Calculator {
 
 		if ( $this->has_any_unlimited_flag( $input ) && ! $this->is_unlimited_usage_allowed( $case, $variant ) ) {
 			$errors[] = __( 'Unlimited-Optionen sind für diese Auswahl fachlich nicht zulässig.', 'sprecher-gagenrechner' );
+		}
+
+		if ( $this->has_any_unlimited_flag( $input ) && false !== strpos( (string) $variant, 'patronat' ) ) {
+			$errors[] = __( 'Patronat bleibt für Unlimited-/Buyout-Kombinationen gesperrt.', 'sprecher-gagenrechner' );
 		}
 
 		if ( 'session_fee' === $case['case_key'] && $this->has_session_fee_conflicts( $input ) ) {
@@ -401,7 +406,11 @@ class SGK_Calculator {
 				continue;
 			}
 			$rule   = $rules[ $key ];
-			$amount = $this->multiply_amounts_by_range( $base_amounts, $rule['percentage'], $quantity );
+			if ( isset( $rule['mode'] ) && 'fixed_amount' === $rule['mode'] && ! empty( $rule['amount'] ) ) {
+				$amount = $this->multiply_amounts( $rule['amount'], $quantity );
+			} else {
+				$amount = $this->multiply_amounts_by_range( $base_amounts, $rule['percentage'], $quantity );
+			}
 			$label  = isset( $rule['label'] ) ? $rule['label'] : $this->humanize_key( $key );
 			$note   = sprintf( 'Regelbasierter Zuschlag für %s auf Basis des Ausgangswerts.', strtolower( $label ) );
 			$bucket = in_array( $key, array( 'reminder' ), true ) ? 'surcharge' : 'additive';
@@ -467,7 +476,9 @@ class SGK_Calculator {
 			if ( ! empty( $package['variants'] ) && ! in_array( $variant, $package['variants'], true ) ) {
 				continue;
 			}
-			$totals = $this->multiply_amounts( $result['totals'], isset( $package['multiplier'] ) ? (float) $package['multiplier'] : 1 );
+			$totals = ! empty( $package['multiplier_range'] )
+				? $this->multiply_amounts_by_range( $result['totals'], $package['multiplier_range'], 1 )
+				: $this->multiply_amounts( $result['totals'], isset( $package['multiplier'] ) ? (float) $package['multiplier'] : 1 );
 			$result['alternatives'][] = array(
 				'key'        => $key,
 				'label'      => $package['label'],
@@ -603,6 +614,15 @@ class SGK_Calculator {
 		$ordered = array( (float) $result['totals']['lower'], (float) $result['totals']['mid'], (float) $result['totals']['upper'] );
 		sort( $ordered, SORT_NUMERIC );
 		$result['totals'] = array( 'lower' => $ordered[0], 'mid' => $ordered[1], 'upper' => $ordered[2] );
+	}
+
+	protected function guard_against_invalid_totals( array &$result ) {
+		foreach ( array( 'lower', 'mid', 'upper' ) as $key ) {
+			if ( ! isset( $result['totals'][ $key ] ) || ! is_finite( (float) $result['totals'][ $key ] ) ) {
+				$result['totals'][ $key ] = 0.0;
+				$result['errors'][]       = __( 'Die Kalkulation enthielt einen ungültigen Zahlenwert und wurde zurückgesetzt.', 'sprecher-gagenrechner' );
+			}
+		}
 	}
 
 	protected function multiply_amounts( array $amounts, $factor ) {

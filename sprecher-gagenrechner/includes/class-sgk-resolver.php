@@ -220,6 +220,19 @@ class SGK_Resolver {
 			$trace[]  = array( 'step' => 'activated_rule', 'case' => $resolved, 'message' => 'Werbliche Games-Zusatznutzung wurde in Werbung mit Bild überführt.' );
 		}
 
+		if ( 'podcast' === $resolved && in_array( $normalized['case_variant'], array( 'marketing_3', 'marketing_unlim' ), true ) ) {
+			$trace[] = array(
+				'step'    => 'podcast_marketing_packaging',
+				'case'    => $resolved,
+				'message' => 'Kommerzielle Podcast-Verpackung bleibt im Podcast-Fall, solange kein echter Sponsor- oder Werbespot gewählt wurde.',
+			);
+		}
+
+		if ( false !== strpos( (string) $normalized['case_variant'], 'patronat' ) && ( '1' === $normalized['unlimited_time'] || '1' === $normalized['unlimited_territory'] || '1' === $normalized['unlimited_media'] ) ) {
+			$warnings[] = 'Patronat bleibt bewusst ohne Unlimited-/Buyout-Kombination.';
+			$trace[]    = array( 'step' => 'guardrail', 'case' => $resolved, 'message' => 'Unlimited wurde für Patronat fachlich unterdrückt.' );
+		}
+
 		return $resolved;
 	}
 
