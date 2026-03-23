@@ -242,6 +242,16 @@ class SGK_Result_Formatter {
 			$quantity_basis[] = $label . ': aktiv';
 		}
 
+		foreach ( array( 'usage_social_media' => 'Social Media', 'usage_praesentation' => 'Präsentation zusätzlich' ) as $field => $label ) {
+			if ( empty( $input[ $field ] ) || '1' !== (string) $input[ $field ] ) {
+				continue;
+			}
+			if ( 'usage_praesentation' === $field && 'imagefilm_webvideo_praesentation' === ( isset( $result['resolved_variant'] ) ? $result['resolved_variant'] : '' ) ) {
+				continue;
+			}
+			$quantity_basis[] = $label . ': aktiv';
+		}
+
 		return array(
 			'case_label'       => $this->humanize_key( $result['resolved_case'] ),
 			'variant_label'    => ! empty( $result['resolved_variant'] ) ? $this->humanize_key( $result['resolved_variant'] ) : '',
@@ -312,14 +322,25 @@ class SGK_Result_Formatter {
 
 	protected function humanize_key( $key ) {
 		$labels = array(
-			'werbung_mit_bild'     => 'Werbung mit Bild',
-			'werbung_ohne_bild'    => 'Werbung ohne Bild',
-			'podcast'              => 'Podcast',
-			'podcast_inhalte'      => 'Podcast-Inhalt',
-			'non_commercial_3'     => 'Podcast-Verpackung nicht-kommerziell · bis 3 Folgen',
-			'non_commercial_unlim' => 'Podcast-Verpackung nicht-kommerziell · Serienlizenz',
-			'marketing_3'          => 'Podcast-Verpackung kommerziell · bis 3 Folgen',
-			'marketing_unlim'      => 'Podcast-Verpackung kommerziell · Serienlizenz',
+			'werbung_mit_bild'                    => 'Werbung mit Bild',
+			'werbung_ohne_bild'                   => 'Werbung ohne Bild',
+			'podcast'                             => 'Podcast',
+			'podcast_inhalte'                     => 'Podcast-Inhalt',
+			'non_commercial_3'                    => 'Podcast-Verpackung nicht-kommerziell · bis 3 Folgen',
+			'non_commercial_unlim'                => 'Podcast-Verpackung nicht-kommerziell · Serienlizenz',
+			'marketing_3'                         => 'Podcast-Verpackung kommerziell · bis 3 Folgen',
+			'marketing_unlim'                     => 'Podcast-Verpackung kommerziell · Serienlizenz',
+			'webvideo_imagefilm_praesentation_unpaid' => 'Webvideo / Imagefilm / Präsentation (unpaid)',
+			'imagefilm_webvideo_praesentation'    => 'Imagefilm / Webvideo / Präsentation',
+			'awardfilm'                           => 'Awardfilm',
+			'casefilm'                            => 'Casefilm',
+			'mitarbeiterfilm'                    => 'Mitarbeiterfilm',
+			'primary_usage_imagefilm_webvideo_praesentation' => 'Primäre Nutzungsausprägung: Imagefilm / Webvideo / Präsentation',
+			'primary_usage_awardfilm'            => 'Primäre Nutzungsausprägung: Awardfilm',
+			'primary_usage_casefilm'             => 'Primäre Nutzungsausprägung: Casefilm',
+			'primary_usage_mitarbeiterfilm'      => 'Primäre Nutzungsausprägung: Mitarbeiterfilm',
+			'social_media'                        => 'Social Media',
+			'praesentation'                       => 'Präsentation (zusätzlich)',
 		);
 
 		if ( isset( $labels[ $key ] ) ) {

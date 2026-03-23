@@ -40,7 +40,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="webvideo_imagefilm_praesentation_unpaid">
 							<span class="src-card-icon"><i data-lucide="clapperboard" width="20" height="20"></i></span>
-							<span class="src-card-copy"><strong><?php esc_html_e( 'Imagefilm & PR', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Webvideo, Präsentation, unpaid', 'sprecher-gagenrechner' ); ?></small></span>
+							<span class="src-card-copy"><strong><?php esc_html_e( 'Imagefilm & PR', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Imagefilm, Awardfilm, Casefilm, unpaid', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="telefonansage">
 							<span class="src-card-icon"><i data-lucide="phone-call" width="20" height="20"></i></span>
@@ -162,25 +162,20 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					</div>
 					<div class="src-panel-group src-toggle-grid" data-sgk-block="media_toggles">
 						<label class="src-panel-row">
-							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Paid Media', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für bezahlte Ausspielung und Reichweite.', 'sprecher-gagenrechner' ); ?></div></div>
+							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Paid Media', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Aktiviert Werberouting und verlässt damit den unpaid-1.3-Block.', 'sprecher-gagenrechner' ); ?></div></div>
 							<span class="src-switch"><input type="checkbox" name="is_paid_media" value="1" /><span class="src-slider"></span></span>
 						</label>
 						<label class="src-panel-row">
-							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Social Media', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Erweitert die Nutzung um soziale Netzwerke.', 'sprecher-gagenrechner' ); ?></div></div>
+							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Social Media', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Echte Zusatznutzung zusätzlich zur primären 1.3-Projektart.', 'sprecher-gagenrechner' ); ?></div></div>
 							<span class="src-switch"><input type="checkbox" name="usage_social_media" value="1" /><span class="src-slider"></span></span>
 						</label>
 						<label class="src-panel-row">
-							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Präsentation', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für interne oder vertriebsnahe Nutzung.', 'sprecher-gagenrechner' ); ?></div></div>
+							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Präsentation', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Zusätzliche Präsentationsnutzung – nicht die primäre Projektart.', 'sprecher-gagenrechner' ); ?></div></div>
 							<span class="src-switch"><input type="checkbox" name="usage_praesentation" value="1" /><span class="src-slider"></span></span>
 						</label>
-						<label class="src-panel-row">
-							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Awardfilm', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Optional für Cases mit Festival- oder Awardnutzung.', 'sprecher-gagenrechner' ); ?></div></div>
-							<span class="src-switch"><input type="checkbox" name="usage_awardfilm" value="1" /><span class="src-slider"></span></span>
-						</label>
-						<label class="src-panel-row">
-							<div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Mitarbeiterfilm', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Für interne Unternehmensfilme.', 'sprecher-gagenrechner' ); ?></div></div>
-							<span class="src-switch"><input type="checkbox" name="usage_mitarbeiterfilm" value="1" /><span class="src-slider"></span></span>
-						</label>
+						<input type="hidden" name="usage_awardfilm" value="0" />
+						<input type="hidden" name="usage_casefilm" value="0" />
+						<input type="hidden" name="usage_mitarbeiterfilm" value="0" />
 					</div>
 				</section>
 
