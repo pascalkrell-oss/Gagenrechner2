@@ -104,14 +104,22 @@ class SGK_Plugin {
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/css/frontend.css',
 			array(),
-			'0.2.0'
+			'0.3.0'
+		);
+
+		wp_register_script(
+			'sgk-lucide-local',
+			SGK_PLUGIN_URL . 'assets/js/lucide-local.js',
+			array(),
+			'0.3.0',
+			true
 		);
 
 		wp_register_script(
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/js/frontend.js',
-			array(),
-			'0.2.0',
+			array( 'sgk-lucide-local' ),
+			'0.3.0',
 			true
 		);
 

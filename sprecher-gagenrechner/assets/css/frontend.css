@@ -483,3 +483,53 @@ button, input, textarea, select { font: inherit; }
     .src-stepper { width: 100%; justify-content: space-between; }
     .src-card { min-height: auto; }
 }
+
+
+.src-result-hero,
+.src-result-grid,
+.src-breakdown-section,
+.src-breakdown-row,
+.src-breakdown-main,
+.src-result-meta-grid,
+.src-result-card,
+.src-result-subsection,
+.src-rights-list,
+.src-route-list,
+.src-result-list { display: grid; gap: 14px; }
+
+.src-result-hero { gap: 18px; }
+.src-result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.src-result-card { padding: 18px; border: 1px solid var(--src-border-light); border-radius: 22px; background: rgba(255,255,255,.98); }
+.src-result-card-head p,
+.src-breakdown-head p,
+.src-result-note,
+.src-rights-list span,
+.src-route-list,
+.src-result-list,
+.src-breakdown-main span,
+.src-breakdown-main small { color: var(--src-text-muted); font-size: 12px; line-height: 1.5; }
+.src-result-meta-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.src-result-meta-card { padding: 14px 16px; border-radius: 18px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); }
+.src-result-meta-card span { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.6); margin-bottom: 6px; }
+.src-result-meta-card strong { color: #fff; font-size: 13px; line-height: 1.45; }
+.src-breakdown-section { padding-top: 14px; border-top: 1px solid var(--src-border-light); }
+.src-breakdown-section:first-of-type { padding-top: 0; border-top: 0; }
+.src-breakdown-row { grid-template-columns: minmax(0, 1fr) auto; align-items: start; padding: 12px 0; border-top: 1px dashed var(--src-border-light); }
+.src-breakdown-row:first-of-type { border-top: 0; }
+.src-breakdown-amount { font-weight: 600; text-align: right; white-space: nowrap; }
+.src-breakdown-amount.is-credit { color: #b42318; }
+.src-breakdown-amount.is-minimum { color: #0f6fbd; }
+.src-receipt-list--detailed .src-receipt-item { grid-template-columns: minmax(0,1fr) auto; align-items: start; }
+.src-receipt-list--detailed .src-receipt-item div { display: grid; gap: 6px; }
+.src-rights-list,
+.src-route-list,
+.src-result-list { margin: 0; padding-left: 18px; }
+.src-rights-list li,
+.src-route-list li,
+.src-result-list li { display: grid; gap: 4px; }
+.src-result-subsection { padding-top: 14px; border-top: 1px solid var(--src-border-light); }
+
+@media (max-width: 960px) {
+    .src-result-grid,
+    .src-result-meta-grid { grid-template-columns: 1fr; }
+}
