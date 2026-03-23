@@ -23,7 +23,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					<h2><?php esc_html_e( 'Mit wenigen Angaben schnell zur realistischen Preisempfehlung.', 'sprecher-gagenrechner' ); ?></h2>
 					<p class="src-hero-lead"><?php esc_html_e( 'Führe Dein Projekt Schritt für Schritt durch Projektart, Nutzung, Rechte und Umfang. Besonders wichtig für die Kalkulation sind Gebiet, Laufzeit, Medium und mögliche Rechte-Erweiterungen.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
-				<div class="src-hero-highlights">
+				<div class="src-hero-highlights" aria-label="So ist der Rechner aufgebaut">
 					<div class="src-hero-stat"><strong><?php esc_html_e( 'So gehst Du vor', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( '1. Projekt wählen · 2. Nutzung einordnen · 3. Rechte festlegen · 4. Umfang ergänzen · 5. Extras prüfen.', 'sprecher-gagenrechner' ); ?></span></div>
 					<div class="src-hero-stat"><strong><?php esc_html_e( 'Wichtig für die Preisempfehlung', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Vor allem Rechte und Verwertung beeinflussen die Empfehlung: Wo läuft das Projekt, wie lange und über welche Kanäle?', 'sprecher-gagenrechner' ); ?></span></div>
 					<div class="src-hero-stat"><strong><?php esc_html_e( 'Ergebnis', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Rechtsübersicht, Preisrahmen und Angebotsvorbereitung aktualisieren sich automatisch, sobald die Eingaben vollständig sind.', 'sprecher-gagenrechner' ); ?></span></div>
@@ -309,15 +309,20 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					<div class="src-live-badge"><span class="src-live-dot"></span><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></div>
 				</div>
 				<div class="src-tower-intro">
-					<div class="src-inline-dark-panel"><strong><?php esc_html_e( 'Was Du hier bekommst', 'sprecher-gagenrechner' ); ?></strong><?php esc_html_e( 'Sobald die Eingaben vollständig sind, siehst Du sofort eine realistische Preisempfehlung inklusive Rechteübersicht, Breakdown und Angebotsvorbereitung.', 'sprecher-gagenrechner' ); ?></div>
-				</div>
-				<div class="src-tower-journey" data-sgk-journey-summary>
-					<div class="src-tower-journey-item"><span>Projekt</span><strong><?php esc_html_e( 'Noch nicht gewählt', 'sprecher-gagenrechner' ); ?></strong></div>
-					<div class="src-tower-journey-item"><span>Rechte</span><strong><?php esc_html_e( 'Werden nach Auswahl sichtbar', 'sprecher-gagenrechner' ); ?></strong></div>
-					<div class="src-tower-journey-item"><span>Umfang</span><strong><?php esc_html_e( 'Noch offen', 'sprecher-gagenrechner' ); ?></strong></div>
+					<div class="src-inline-dark-panel"><strong><?php esc_html_e( 'Preisfokus & Ergebnis', 'sprecher-gagenrechner' ); ?></strong><?php esc_html_e( 'Sobald die Eingaben vollständig sind, steht hier zuerst Deine Preisempfehlung. Direkt darunter folgen Projektzusammenfassung, Rechte, Umfang und Exportaktionen in klarer Reihenfolge.', 'sprecher-gagenrechner' ); ?></div>
 				</div>
 				<div class="src-tower-result" data-sgk-result>
 					<div class="src-result-empty"><strong><?php esc_html_e( 'Projekt auswählen', 'sprecher-gagenrechner' ); ?></strong><p><?php esc_html_e( 'Sobald links eine Projektart aktiv ist, erscheint hier die empfohlene Netto-Gage mit Rechteübersicht und Breakdown.', 'sprecher-gagenrechner' ); ?></p></div>
+				</div>
+				<div class="src-tower-journey-shell">
+					<div class="src-inline-dark-panel src-inline-dark-panel--subtle">
+						<strong><?php esc_html_e( 'Projektzusammenfassung', 'sprecher-gagenrechner' ); ?></strong>
+						<div class="src-tower-journey" data-sgk-journey-summary>
+							<div class="src-tower-journey-item"><span>Projekt</span><strong><?php esc_html_e( 'Noch nicht gewählt', 'sprecher-gagenrechner' ); ?></strong></div>
+							<div class="src-tower-journey-item"><span>Rechte</span><strong><?php esc_html_e( 'Werden nach Auswahl sichtbar', 'sprecher-gagenrechner' ); ?></strong></div>
+							<div class="src-tower-journey-item"><span>Umfang</span><strong><?php esc_html_e( 'Noch offen', 'sprecher-gagenrechner' ); ?></strong></div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="src-tower-info">
