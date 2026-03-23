@@ -36,13 +36,13 @@ $ui_state   = new SGK_UI_State( $config );
 $cases = array(
 	'werbung_mit_bild_paid_archiv' => array(
 		'case_key'       => 'werbung_mit_bild',
-		'case_variant'   => 'linear_tv_spot',
+		'case_variant'   => 'linear_tv_spot_national',
 		'archivgage'     => '1',
 		'additional_year'=> '1',
 	),
 	'werbung_ohne_bild_layout_credit' => array(
 		'case_key'          => 'werbung_ohne_bild',
-		'case_variant'      => 'layout',
+		'case_variant'      => 'funk_spot_national',
 		'follow_up_usage'   => '1',
 		'prior_layout_fee'  => '250',
 		'manual_offer_total'=> '490',
@@ -91,7 +91,7 @@ $cases = array(
 	),
 	'kleinraeumig' => array(
 		'case_key'            => 'kleinraeumig',
-		'case_variant'        => 'lokaler_funkspot',
+		'case_variant'        => 'funk_spot_lokal',
 		'additional_motif'    => '1',
 	),
 	'session_fee' => array(

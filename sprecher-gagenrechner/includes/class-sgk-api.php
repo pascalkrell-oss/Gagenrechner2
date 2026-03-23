@@ -24,9 +24,6 @@ class SGK_API {
 	/** @var SGK_UI_State */
 	protected $ui_state;
 
-	/**
-	 * Constructor.
-	 */
 	public function __construct( SGK_Config $config, SGK_Resolver $resolver, SGK_Calculator $calculator, SGK_Result_Formatter $formatter, SGK_UI_State $ui_state ) {
 		$this->config     = $config;
 		$this->resolver   = $resolver;
@@ -37,11 +34,6 @@ class SGK_API {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 
-	/**
-	 * Register REST routes.
-	 *
-	 * @return void
-	 */
 	public function register_routes() {
 		register_rest_route(
 			'sgk/v1',
@@ -54,23 +46,29 @@ class SGK_API {
 		);
 	}
 
-	/**
-	 * Calculate response.
-	 *
-	 * @param WP_REST_Request $request Request.
-	 * @return WP_REST_Response
-	 */
 	public function calculate( WP_REST_Request $request ) {
-		$payload = $request->get_json_params();
-		$payload = is_array( $payload ) ? $payload : array();
-		$payload = $this->ui_state->sanitize_input( $payload );
-		$result  = $this->calculator->calculate( $payload );
+		$payload   = $request->get_json_params();
+		$payload   = is_array( $payload ) ? $payload : array();
+		$payload   = $this->ui_state->sanitize_input( $payload );
+		$raw       = $this->calculator->calculate( $payload );
+		$formatted = $this->formatter->format( $raw );
+		$status    = ! empty( $raw['errors'] ) ? 422 : 200;
 
-		return rest_ensure_response(
+		return new WP_REST_Response(
 			array(
-				'result'   => $this->formatter->format( $result ),
-				'ui_state' => $this->ui_state->build_state( $payload, $result ),
-			)
+				'success'          => empty( $raw['errors'] ),
+				'normalized_input' => isset( $raw['normalized_input'] ) ? $raw['normalized_input'] : array(),
+				'resolved_case'    => isset( $raw['resolved_case'] ) ? $raw['resolved_case'] : '',
+				'resolved_variant' => isset( $raw['resolved_variant'] ) ? $raw['resolved_variant'] : '',
+				'pricing_mode'     => isset( $raw['pricing_mode'] ) ? $raw['pricing_mode'] : '',
+				'breakdown'        => isset( $raw['breakdown'] ) ? $raw['breakdown'] : array(),
+				'totals'           => isset( $raw['totals'] ) ? $raw['totals'] : array(),
+				'warnings'         => isset( $raw['warnings'] ) ? $raw['warnings'] : array(),
+				'errors'           => isset( $raw['errors'] ) ? $raw['errors'] : array(),
+				'result'           => $formatted,
+				'ui_state'         => $this->ui_state->build_state( $payload, $raw ),
+			),
+			$status
 		);
 	}
 }
