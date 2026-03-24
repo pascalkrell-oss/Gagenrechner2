@@ -34,6 +34,12 @@
 	function clone(obj) { return JSON.parse(JSON.stringify(obj || {})); }
 	function storageAvailable() { try { localStorage.setItem('__sgk_test__', '1'); localStorage.removeItem('__sgk_test__'); return true; } catch (error) { return false; } }
 	function currency(value) { return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(Number(value || 0)); }
+	function parseCurrencyToNumber(value) {
+		if (!value) { return null; }
+		var normalized = String(value).replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(',', '.');
+		var parsed = parseFloat(normalized);
+		return isNaN(parsed) ? null : parsed;
+	}
 	function normalizeNumber(value) { var parsed = parseFloat(String(value || '').replace(/\./g, '').replace(',', '.').replace(/[^0-9.-]/g, '')); return isNaN(parsed) ? null : parsed; }
 	function todayIso() { return new Date().toISOString().slice(0, 10); }
 	function formatDate(value) { if (!value) { return ''; } return new Date(value).toLocaleDateString('de-DE'); }
@@ -462,9 +468,10 @@
 	function renderBreakdownRows(items) {
 		if (!items.length) { return '<div class="src-result-note">Die Aufschlüsselung erscheint nach der vollständigen Berechnung.</div>'; }
 		return items.map(function (item) {
+			var amountValue = parseCurrencyToNumber(item.amount);
 			return '<div class="src-breakdown-row">' +
 				'<div class="src-breakdown-main"><strong>' + htmlEscape(item.label) + '</strong>' + (item.note ? '<span>' + htmlEscape(item.note) + '</span>' : '') + '</div>' +
-				'<div class="src-breakdown-amount' + (item.is_credit ? ' is-credit' : '') + (item.is_minimum ? ' is-minimum' : '') + '">' + htmlEscape(item.amount) + '</div>' +
+				'<div class="src-breakdown-amount src-count-animate' + (item.is_credit ? ' is-credit' : '') + (item.is_minimum ? ' is-minimum' : '') + '"' + (amountValue !== null ? ' data-sgk-count-value="' + htmlEscape(amountValue) + '"' : '') + '>' + htmlEscape(item.amount) + '</div>' +
 			'</div>';
 		}).join('');
 	}
@@ -472,8 +479,50 @@
 		if (!alternatives.length) { return ''; }
 		return '<div class="src-breakdown-alt-list">' + alternatives.slice(0, 2).map(function (item) {
 			var amount = item.formatted_totals ? (item.formatted_totals.mid || item.formatted_totals.low_mid_high || '—') : '—';
-			return '<div class="src-breakdown-row src-breakdown-row--compact"><div class="src-breakdown-main"><strong>' + htmlEscape(item.label || 'Paket') + '</strong></div><div class="src-breakdown-amount">' + htmlEscape(amount) + '</div></div>';
+			var amountValue = parseCurrencyToNumber(amount);
+			return '<div class="src-breakdown-row src-breakdown-row--compact"><div class="src-breakdown-main"><strong>' + htmlEscape(item.label || 'Paket') + '</strong></div><div class="src-breakdown-amount src-count-animate"' + (amountValue !== null ? ' data-sgk-count-value="' + htmlEscape(amountValue) + '"' : '') + '>' + htmlEscape(amount) + '</div></div>';
 		}).join('') + '</div>';
+	}
+	function filterRelevantNotes(notes) {
+		return (notes || []).filter(function (note) {
+			if (!note) { return false; }
+			return !/(resolver|system|route|validation|client_request|request_id|debug)/i.test(String(note));
+		});
+	}
+	function animatePriceCounters(container, previousValues) {
+		var targets = container.querySelectorAll('[data-sgk-count-value]');
+		targets.forEach(function (node) {
+			var end = parseFloat(node.getAttribute('data-sgk-count-value') || '0');
+			if (isNaN(end)) { return; }
+			var key = node.getAttribute('data-sgk-count-key') || node.textContent.trim();
+			var start = previousValues && previousValues.hasOwnProperty(key) ? previousValues[key] : end;
+			if (Math.abs(end - start) < 0.01) { return; }
+			var startAt = performance.now();
+			var duration = 280;
+			node.classList.add('is-animating');
+			var step = function (now) {
+				var progress = Math.min(1, (now - startAt) / duration);
+				var eased = 1 - Math.pow(1 - progress, 3);
+				var current = start + ((end - start) * eased);
+				node.textContent = currency(current);
+				if (progress < 1) {
+					requestAnimationFrame(step);
+				} else {
+					node.textContent = currency(end);
+					node.classList.remove('is-animating');
+				}
+			};
+			requestAnimationFrame(step);
+		});
+	}
+	function readCurrentCounterValues(container) {
+		var values = {};
+		container.querySelectorAll('[data-sgk-count-value]').forEach(function (node, index) {
+			var key = node.getAttribute('data-sgk-count-key') || ('counter-' + index);
+			var value = parseCurrencyToNumber(node.textContent);
+			if (value !== null) { values[key] = value; }
+		});
+		return values;
 	}
 	function renderKnowledgeAccordion() {
 		var items = [
@@ -495,7 +544,7 @@
 		var result = payload.result || {};
 		var totals = result.formatted_totals || {};
 		var positions = Array.isArray(result.offer_positions) ? result.offer_positions : [];
-		var notes = uniqueItems((result.notes || []).concat(result.warnings || []));
+		var notes = filterRelevantNotes(uniqueItems((result.notes || []).concat(result.warnings || [])));
 		var breakdownSections = Array.isArray(result.breakdown_sections) ? result.breakdown_sections : [];
 		var alternatives = Array.isArray(result.alternatives) ? result.alternatives : [];
 		var manualOffer = result.formatted_manual_offer_total || 'Noch nicht festgelegt';
@@ -509,14 +558,15 @@
 		var variantLabel = summaryContext.variant_label || 'Standardausprägung';
 		var positionMarkup = positions.length ? positions.slice(0, 5).map(function (item) {
 			var price = item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : ((item.formatted_prices && item.formatted_prices.mid) || '0,00 €');
-			return '<div class="src-receipt-item"><div><strong>' + htmlEscape(item.titel) + '</strong></div><span>' + htmlEscape(price) + '</span></div>';
+			var priceValue = parseCurrencyToNumber(price);
+			return '<div class="src-receipt-item"><div><strong>' + htmlEscape(item.titel) + '</strong></div><span class="src-count-animate"' + (priceValue !== null ? ' data-sgk-count-key="position-' + htmlEscape(item.titel) + '" data-sgk-count-value="' + htmlEscape(priceValue) + '"' : '') + '>' + htmlEscape(price) + '</span></div>';
 		}).join('') : '<div class="src-receipt-item"><span>Angebotspositionen folgen mit der Berechnung.</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div>';
-		var extensionMarkup = extensionItems.length ? '<div class="src-result-micro-badges">' + extensionItems.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '<div class="src-result-note">Aktuell sind keine zusätzlichen Rechte oder Sonderfälle aktiv.</div>';
+		var extensionMarkup = extensionItems.length ? '<div class="src-result-micro-badges">' + extensionItems.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '<div class="src-result-note">Derzeit sind keine zusätzlichen Rechte aktiviert – die Kalkulation basiert auf dem gewählten Kernumfang.</div>';
 		var notesMarkup = notes.length ? '<div class="src-result-micro-badges">' + notes.slice(0, 2).map(function (item) { return '<span class="src-result-micro-badge src-result-micro-badge--soft">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '';
 		var alternativesMarkup = renderPackageAlternatives(alternatives);
 		container.innerHTML = '' +
 			'<div class="src-result-hero src-result-hero--stack">' +
-				'<section class="src-result-card src-result-card--price"><div class="src-price-block"><div class="src-price-kicker">Preisrahmen & Preisanker</div><div class="src-price-huge">' + htmlEscape(totals.mid || '0,00 €') + '<span>netto</span></div><div class="src-price-range">Empfohlene Spanne: ' + htmlEscape((totals.lower || '0,00 €') + ' – ' + (totals.upper || '0,00 €')) + '</div></div></section>' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-block"><div class="src-price-kicker">Preisrahmen & Preisanker</div><div class="src-price-huge"><span class="src-price-huge-value src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span>netto</span></div><div class="src-price-range">Empfohlene Spanne: <strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong></div></div></section>' +
 				'<div class="src-result-meta-grid src-result-meta-grid--stack">' +
 					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
 					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape(variantLabel) + '</strong></div>' +
@@ -524,13 +574,13 @@
 			'</div>' +
 			'<div class="src-result-grid src-result-grid--stack">' +
 				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong><p>Diese Angaben beeinflussen den Lizenzwert besonders stark.</p></div><div class="src-keyvalue-list"><div class="src-keyvalue-row"><span>Gebiet</span><strong>' + htmlEscape(rightsSummary.territory) + '</strong></div><div class="src-keyvalue-row"><span>Laufzeit</span><strong>' + htmlEscape(rightsSummary.duration) + '</strong></div><div class="src-keyvalue-row"><span>Medien</span><strong>' + htmlEscape(rightsSummary.media) + '</strong></div></div>' + (rightsSummary.chips.length ? '<div class="src-result-micro-badges">' + rightsSummary.chips.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + '</section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Nur aktive Zusatzrechte und projektrelevante Hinweise.</p></div>' + extensionMarkup + notesMarkup + '</section>' +
+				'<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Es werden nur aktive Zusatzrechte und konkrete Projekthinweise gezeigt.</p></div>' + extensionMarkup + notesMarkup + '</section>' +
 				'<section class="src-result-card"><div class="src-result-card-head"><strong>Breakdown & Pakete</strong><p>Die wichtigsten Preisbausteine kompakt und nachvollziehbar.</p></div><div class="src-breakdown-section">' + renderBreakdownRows(breakdownItems) + '</div>' + (alternativesMarkup ? '<div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + alternativesMarkup + '</div>' : '') + '</section>' +
-				renderKnowledgeAccordion() +
 				'<div class="src-inline-dark-panel src-manual-offer"><strong>Angebots- und Exportaktionen</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '</div></div>' +
 				'<div class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot professionell vorbereiten <span aria-hidden="true">→</span></button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-feedback-label="Zusammenfassung kopiert" data-sgk-action="copy-summary">Zusammenfassung kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-feedback-label="Positionen kopiert" data-sgk-action="copy-positions">Positionen kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-feedback-label="Rechte kopiert" data-sgk-action="copy-rights">Rechte kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-feedback-label="Exportdaten kopiert" data-sgk-action="copy-json">Exportdaten kopieren</button></div></div>' +
 				'<div class="src-storage-panel"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select><div class="src-storage-actions"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung speichern" data-feedback-label="Gespeichert" data-sgk-action="save">Speichern</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung laden" data-feedback-label="Geladen" data-sgk-action="load">Laden</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung löschen" data-feedback-label="Gelöscht" data-sgk-action="delete">Löschen</button></div><div class="src-storage-status" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Kalkulationen werden lokal in diesem Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</div></div>' +
 				'<div class="src-result-accordion"><div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Kurz-Zusammenfassung</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div><div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Breakdown für Export</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content"><p>' + htmlEscape(((result.export_text_blocks && result.export_text_blocks.breakdown_block) || 'Der Breakdown wird nach der Berechnung ergänzt.')) + '</p></div></div></div>' +
+				renderKnowledgeAccordion() +
 			'</div>';
 	if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); }
 	}
@@ -601,9 +651,11 @@
 				.then(function (json) {
 					if (String(state.activeRequestId) !== String(payload.client_request_id)) { return; }
 					if (!json || !json.result) { throw new Error('invalid-payload'); }
+					var previousCounterValues = readCurrentCounterValues(resultContainer);
 					app.__sgkLastPayload = json;
 					state.result = json.result;
 					renderResult(resultContainer, json, payload);
+					animatePriceCounters(resultContainer, previousCounterValues);
 					updateExpertBadges(app, json.ui_state || {});
 					updateRedirectBanner(app, json);
 					refreshSavedList(resultContainer, cases);
