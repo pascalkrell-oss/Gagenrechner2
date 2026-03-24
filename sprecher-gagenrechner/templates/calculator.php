@@ -16,17 +16,19 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 <div class="sgk-app src-app-shell" data-sgk-app data-sgk-cases="<?php echo esc_attr( wp_json_encode( $cases ) ); ?>" data-sgk-ui-state="<?php echo esc_attr( wp_json_encode( $ui_state ) ); ?>">
 	<div class="src-app-backdrop"></div>
 	<div class="src-top-toolbar" aria-label="<?php esc_attr_e( 'Werkzeugleiste', 'sprecher-gagenrechner' ); ?>">
-		<button type="button" class="src-toolbar-btn"><?php esc_html_e( 'Tutorial starten', 'sprecher-gagenrechner' ); ?></button>
-		<button type="button" class="src-toolbar-btn"><?php esc_html_e( 'Anleitung', 'sprecher-gagenrechner' ); ?></button>
-		<div class="src-toolbar-divider" aria-hidden="true"></div>
-		<span class="src-toolbar-label"><?php esc_html_e( 'Währung wählen', 'sprecher-gagenrechner' ); ?></span>
-		<div class="src-toolbar-currency" aria-label="<?php esc_attr_e( 'Währungsauswahl', 'sprecher-gagenrechner' ); ?>">
-			<button type="button" class="src-toolbar-chip is-active">EUR</button>
-			<button type="button" class="src-toolbar-chip">CHF</button>
-			<button type="button" class="src-toolbar-chip">USD</button>
+		<div class="src-toolbar-group">
+			<button type="button" class="src-toolbar-btn"><i class="fa-solid fa-circle-play" aria-hidden="true"></i><span><?php esc_html_e( 'Tutorial starten', 'sprecher-gagenrechner' ); ?></span></button>
+			<button type="button" class="src-toolbar-btn"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span><?php esc_html_e( 'Anleitung', 'sprecher-gagenrechner' ); ?></span></button>
+			<div class="src-toolbar-divider" aria-hidden="true"></div>
+			<span class="src-toolbar-label"><i class="fa-solid fa-coins" aria-hidden="true"></i><?php esc_html_e( 'Währung wählen', 'sprecher-gagenrechner' ); ?></span>
+			<div class="src-toolbar-currency" aria-label="<?php esc_attr_e( 'Währungsauswahl', 'sprecher-gagenrechner' ); ?>">
+				<button type="button" class="src-toolbar-chip is-active">EUR</button>
+				<button type="button" class="src-toolbar-chip">CHF</button>
+				<button type="button" class="src-toolbar-chip">USD</button>
+			</div>
 		</div>
 		<div class="src-toolbar-spacer" aria-hidden="true"></div>
-		<button type="button" class="src-toolbar-btn src-toolbar-btn--ghost"><?php esc_html_e( 'Gagenrechner zurücksetzen', 'sprecher-gagenrechner' ); ?></button>
+		<button type="button" class="src-toolbar-btn src-toolbar-btn--ghost"><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i><span><?php esc_html_e( 'Gagenrechner zurücksetzen', 'sprecher-gagenrechner' ); ?></span></button>
 	</div>
 	<div class="src-layout">
 		<main class="src-config-engine" aria-labelledby="sgk-config-title">
@@ -57,55 +59,55 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					</div>
 					<div class="src-grid-cards" data-sgk-quick-case-grid>
 						<button type="button" class="src-card" data-sgk-quick-case="werbung_mit_bild">
-							<span class="src-card-icon"><i data-lucide="monitor-play" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-photo-film" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Werbung mit Bild', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'TV, CTV, Online Video, Kino', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="werbung_ohne_bild">
-							<span class="src-card-icon"><i data-lucide="radio" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-waveform-lines" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Werbung Audio', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Radio, Audio Ads, Reminder', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="webvideo_imagefilm_praesentation_unpaid">
-							<span class="src-card-icon"><i data-lucide="clapperboard" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-clapperboard" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Imagefilm & PR', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Imagefilm, Awardfilm, Casefilm, unpaid', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="telefonansage">
-							<span class="src-card-icon"><i data-lucide="phone-call" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-phone-volume" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Telefonie', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'IVR, Ansagen, Module', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="elearning_audioguide">
-							<span class="src-card-icon"><i data-lucide="graduation-cap" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'E-Learning', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Minutenbasiert mit klarer Staffel', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="podcast">
-							<span class="src-card-icon"><i data-lucide="podcast" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-podcast" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Podcast', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Inhalt oder Verpackung', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="app">
-							<span class="src-card-icon"><i data-lucide="smartphone" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'App', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Minutenbasiert für App-Inhalte', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="hoerbuch">
-							<span class="src-card-icon"><i data-lucide="book-audio" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-book-open-reader" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Hörbuch', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'FAH-basierte Vorschlagskalkulation', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="games">
-							<span class="src-card-icon"><i data-lucide="gamepad-2" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-gamepad" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Games', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Session-, Tages- und Projektlogik', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="redaktionell_doku_tv_reportage">
-							<span class="src-card-icon"><i data-lucide="captions" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-newspaper" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Redaktionell / Doku', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Kommentarstimme, Overvoice, Mindestgage', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="audiodeskription">
-							<span class="src-card-icon"><i data-lucide="accessibility" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-universal-access" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Audiodeskription', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Minutenpreis mit Mindestgage', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="kleinraeumig">
-							<span class="src-card-icon"><i data-lucide="map-pinned" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Kleinräumige Nutzung', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Lokal begrenzte Sonderfälle', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="session_fee">
-							<span class="src-card-icon"><i data-lucide="clock-3" width="20" height="20"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-stopwatch" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Session Fee', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Nur Aufnahmestunden ohne Lizenz', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 					</div>
