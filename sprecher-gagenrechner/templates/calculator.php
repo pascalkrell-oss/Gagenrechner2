@@ -15,6 +15,19 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 ?>
 <div class="sgk-app src-app-shell" data-sgk-app data-sgk-cases="<?php echo esc_attr( wp_json_encode( $cases ) ); ?>" data-sgk-ui-state="<?php echo esc_attr( wp_json_encode( $ui_state ) ); ?>">
 	<div class="src-app-backdrop"></div>
+	<div class="src-top-toolbar" aria-label="<?php esc_attr_e( 'Werkzeugleiste', 'sprecher-gagenrechner' ); ?>">
+		<button type="button" class="src-toolbar-btn"><?php esc_html_e( 'Tutorial starten', 'sprecher-gagenrechner' ); ?></button>
+		<button type="button" class="src-toolbar-btn"><?php esc_html_e( 'Anleitung', 'sprecher-gagenrechner' ); ?></button>
+		<div class="src-toolbar-divider" aria-hidden="true"></div>
+		<span class="src-toolbar-label"><?php esc_html_e( 'Währung wählen', 'sprecher-gagenrechner' ); ?></span>
+		<div class="src-toolbar-currency" aria-label="<?php esc_attr_e( 'Währungsauswahl', 'sprecher-gagenrechner' ); ?>">
+			<button type="button" class="src-toolbar-chip is-active">EUR</button>
+			<button type="button" class="src-toolbar-chip">CHF</button>
+			<button type="button" class="src-toolbar-chip">USD</button>
+		</div>
+		<div class="src-toolbar-spacer" aria-hidden="true"></div>
+		<button type="button" class="src-toolbar-btn src-toolbar-btn--ghost"><?php esc_html_e( 'Gagenrechner zurücksetzen', 'sprecher-gagenrechner' ); ?></button>
+	</div>
 	<div class="src-layout">
 		<main class="src-config-engine" aria-labelledby="sgk-config-title">
 			<section class="src-hero-panel src-section--glass" aria-label="Einführung in den Rechner">
@@ -272,8 +285,8 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 							<div class="src-badge-row" data-sgk-expert-badges><span class="src-inline-badge is-muted"><?php esc_html_e( 'Noch keine zusätzlichen Optionen aktiv', 'sprecher-gagenrechner' ); ?></span></div>
 							<div class="src-panel-group">
 								<div class="src-panel-row src-panel-row--header"><?php esc_html_e( 'Spezielle Rechte- und Produktionsfälle', 'sprecher-gagenrechner' ); ?></div>
-								<div class="src-panel-row" data-sgk-block="prior_layout_fee" data-sgk-conditional-field="prior_layout_fee"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Vorheriges Layout-Honorar', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Nur nötig, wenn eine frühere Layout- oder Vorstufenvergütung auf eine spätere Nutzung angerechnet wird.', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-prior-layout" name="prior_layout_fee" type="number" min="0" step="0.01" value="0" class="src-input-text src-input-text--compact" /></div>
-								<div class="src-panel-row" data-sgk-block="session_hours"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Session-Stunden', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Nur für Session-Fee-Fälle ohne öffentliche Lizenz.', 'sprecher-gagenrechner' ); ?></div></div><input id="sgk-session-hours" name="session_hours" type="number" min="0" step="0.5" value="0" class="src-input-text src-input-text--compact" /></div>
+								<div class="src-panel-row" data-sgk-block="prior_layout_fee" data-sgk-conditional-field="prior_layout_fee"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Vorheriges Layout-Honorar', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Nur nötig, wenn eine frühere Layout- oder Vorstufenvergütung auf eine spätere Nutzung angerechnet wird.', 'sprecher-gagenrechner' ); ?></div></div><div class="src-stepper" data-sgk-stepper><button type="button" data-sgk-step="down"><i data-lucide="minus" width="14" height="14"></i></button><input id="sgk-prior-layout" name="prior_layout_fee" type="number" min="0" step="0.01" value="0" /><button type="button" data-sgk-step="up"><i data-lucide="plus" width="14" height="14"></i></button></div></div>
+								<div class="src-panel-row" data-sgk-block="session_hours"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Session-Stunden', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Nur für Session-Fee-Fälle ohne öffentliche Lizenz.', 'sprecher-gagenrechner' ); ?></div></div><div class="src-stepper" data-sgk-stepper><button type="button" data-sgk-step="down"><i data-lucide="minus" width="14" height="14"></i></button><input id="sgk-session-hours" name="session_hours" type="number" min="0" step="0.5" value="0" /><button type="button" data-sgk-step="up"><i data-lucide="plus" width="14" height="14"></i></button></div></div>
 								<label class="src-panel-row" data-sgk-block="unlimited_usage" data-sgk-conditional-field="unlimited_time"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Zeitlich unbegrenzte Nutzung', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Aktiviere das nur, wenn die Nutzung ohne zeitliche Begrenzung vereinbart wird.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_time" value="1" /><span class="src-slider"></span></span></label>
 								<label class="src-panel-row" data-sgk-block="unlimited_usage" data-sgk-conditional-field="unlimited_territory"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Räumlich unbegrenzte Nutzung', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Wenn die Nutzung nicht auf einzelne Gebiete begrenzt ist.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_territory" value="1" /><span class="src-slider"></span></span></label>
 								<label class="src-panel-row" data-sgk-block="unlimited_usage" data-sgk-conditional-field="unlimited_media"><div class="src-row-content"><div class="src-row-label"><?php esc_html_e( 'Medial unbegrenzte Nutzung', 'sprecher-gagenrechner' ); ?></div><div class="src-row-desc"><?php esc_html_e( 'Wenn die Verwendung nicht auf einzelne Ausspielwege begrenzt ist.', 'sprecher-gagenrechner' ); ?></div></div><span class="src-switch"><input type="checkbox" name="unlimited_media" value="1" /><span class="src-slider"></span></span></label>
@@ -307,9 +320,6 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<h3 class="src-tower-headline"><?php esc_html_e( 'Preisrahmen, Rechte und nächste Schritte auf einen Blick.', 'sprecher-gagenrechner' ); ?></h3>
 					</div>
 					<div class="src-live-badge"><span class="src-live-dot"></span><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></div>
-				</div>
-				<div class="src-tower-intro">
-					<div class="src-inline-dark-panel"><strong><?php esc_html_e( 'So liest Du das Ergebnis', 'sprecher-gagenrechner' ); ?></strong><?php esc_html_e( 'Starte mit dem Preisrahmen. Danach prüfst Du Rechte, aktive Erweiterungen und die Angebotsaktionen.', 'sprecher-gagenrechner' ); ?></div>
 				</div>
 				<div class="src-tower-result" data-sgk-result>
 					<div class="src-result-empty"><strong><?php esc_html_e( 'Projekt auswählen', 'sprecher-gagenrechner' ); ?></strong><p><?php esc_html_e( 'Sobald Du links startest, zeigen wir hier Preisrahmen, Rechteübersicht und die nächsten Angebotsschritte.', 'sprecher-gagenrechner' ); ?></p></div>
