@@ -309,7 +309,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					<div class="src-live-badge"><span class="src-live-dot"></span><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></div>
 				</div>
 				<div class="src-tower-intro">
-					<div class="src-inline-dark-panel"><strong><?php esc_html_e( 'So liest Du das Ergebnis', 'sprecher-gagenrechner' ); ?></strong><?php esc_html_e( 'Oben steht immer zuerst der Preisrahmen als Ergebnisanker. Danach folgen Hauptfall, Rechte, Erweiterungen, Breakdown und Aktionen in fester Reihenfolge.', 'sprecher-gagenrechner' ); ?></div>
+					<div class="src-inline-dark-panel"><strong><?php esc_html_e( 'Ergebnisstruktur', 'sprecher-gagenrechner' ); ?></strong><?php esc_html_e( 'Preisanker zuerst, Details danach.', 'sprecher-gagenrechner' ); ?></div>
 				</div>
 				<div class="src-tower-result" data-sgk-result>
 					<div class="src-result-empty"><strong><?php esc_html_e( 'Projekt auswählen', 'sprecher-gagenrechner' ); ?></strong><p><?php esc_html_e( 'Sobald Du links eine Projektart auswählst, erscheint hier der Preisrahmen mit Rechteübersicht, Breakdown und Angebotsaktionen.', 'sprecher-gagenrechner' ); ?></p></div>
@@ -326,10 +326,12 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				</div>
 			</div>
 			<div class="src-tower-info">
-				<div class="src-tower-info-header"><i data-lucide="lightbulb" width="16" height="16"></i><?php esc_html_e( 'Kurzhinweise', 'sprecher-gagenrechner' ); ?></div>
-				<div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span><?php esc_html_e( 'Warum sind Nutzungsrechte so wichtig?', 'sprecher-gagenrechner' ); ?></span><i data-lucide="chevron-down" width="14" height="14"></i></button><div class="src-accordion-content"><?php esc_html_e( 'Gebiet, Laufzeit und Medium bestimmen maßgeblich den Rechteumfang. Deshalb werden diese Angaben im Rechner als eigener Kernschritt geführt.', 'sprecher-gagenrechner' ); ?></div></div>
-				<div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span><?php esc_html_e( 'Gilt die Gage pro Motiv?', 'sprecher-gagenrechner' ); ?></span><i data-lucide="chevron-down" width="14" height="14"></i></button><div class="src-accordion-content"><?php esc_html_e( 'Ja, jede eigenständige Variation gilt laut VDS als eigenes Motiv.', 'sprecher-gagenrechner' ); ?></div></div>
-				<div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span><?php esc_html_e( 'Wann brauche ich Unlimited-Optionen?', 'sprecher-gagenrechner' ); ?></span><i data-lucide="chevron-down" width="14" height="14"></i></button><div class="src-accordion-content"><?php esc_html_e( 'Unlimited-Optionen sind nur für besondere Vereinbarungen gedacht, wenn die Nutzung zeitlich, räumlich oder medial nicht begrenzt wird.', 'sprecher-gagenrechner' ); ?></div></div>
+				<div class="src-tower-info-header"><i data-lucide="info" width="16" height="16"></i><?php esc_html_e( 'Kurzinfos', 'sprecher-gagenrechner' ); ?></div>
+				<div class="src-badge-row">
+					<span class="src-inline-badge"><?php esc_html_e( 'Rechte beeinflussen den Preis direkt', 'sprecher-gagenrechner' ); ?></span>
+					<span class="src-inline-badge"><?php esc_html_e( 'Motive werden separat bewertet', 'sprecher-gagenrechner' ); ?></span>
+					<span class="src-inline-badge"><?php esc_html_e( 'Unlimited nur bei Sondervereinbarung', 'sprecher-gagenrechner' ); ?></span>
+				</div>
 			</div>
 		</aside>
 	</div>
