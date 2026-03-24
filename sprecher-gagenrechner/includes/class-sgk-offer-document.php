@@ -21,7 +21,7 @@ class SGK_Offer_Document {
 
 		return array(
 			'document_title'    => 'Angebot Sprecherhonorar',
-			'document_subtitle' => ! empty( $summary['title'] ) ? $summary['title'] : 'Projektkalkulation',
+			'document_subtitle' => ! empty( $summary['title'] ) ? $summary['title'] : 'Projektübersicht',
 			'sections'          => array(
 				'project'      => $this->build_project_section( $summary, $payload ),
 				'breakdown'    => $this->build_breakdown_section( $breakdown ),
@@ -44,13 +44,13 @@ class SGK_Offer_Document {
 		$recommended_range = isset( $payload['recommended_range'] ) ? $payload['recommended_range'] : array();
 
 		return array(
-			'label' => 'Projektdetails',
+			'label' => 'Projekt & Kalkulationsrahmen',
 			'items' => array(
 				array( 'label' => 'Projekt', 'value' => isset( $summary['title'] ) ? $summary['title'] : '' ),
 				array( 'label' => 'Hauptfall', 'value' => isset( $summary['case_label'] ) ? $summary['case_label'] : '' ),
 				array( 'label' => 'Untervariante', 'value' => isset( $summary['sub_variant'] ) ? $summary['sub_variant'] : '' ),
-				array( 'label' => 'Empfohlene Spanne', 'value' => $this->format_range( $recommended_range ) ),
-				array( 'label' => 'Mittelwert', 'value' => isset( $recommended_range['mid'] ) ? $this->format_currency( $recommended_range['mid'] ) : '' ),
+				array( 'label' => 'Preisrahmen', 'value' => $this->format_range( $recommended_range ) ),
+				array( 'label' => 'Empfohlener Mittelwert', 'value' => isset( $recommended_range['mid'] ) ? $this->format_currency( $recommended_range['mid'] ) : '' ),
 				array( 'label' => 'Finale Angebotssumme', 'value' => isset( $payload['manual_offer_total'] ) && null !== $payload['manual_offer_total'] ? $this->format_currency( $payload['manual_offer_total'] ) : 'Noch offen' ),
 			),
 			'route_summary' => isset( $payload['route_summary'] ) ? $payload['route_summary'] : array(),
@@ -75,12 +75,12 @@ class SGK_Offer_Document {
 		$recommended_range = isset( $payload['recommended_range'] ) ? $payload['recommended_range'] : array();
 
 		return array(
-			'label' => 'Angebotssumme',
+			'label' => 'Angebotsfreigabe',
 			'items' => array(
 				array( 'label' => 'Finale Angebotssumme', 'value' => isset( $payload['manual_offer_total'] ) && null !== $payload['manual_offer_total'] ? $this->format_currency( $payload['manual_offer_total'] ) : 'Noch offen' ),
 				array( 'label' => 'Empfohlener Mittelwert', 'value' => isset( $payload['recommended_mid'] ) ? $this->format_currency( $payload['recommended_mid'] ) : null ),
 				array( 'label' => 'Errechnete Spanne', 'value' => $this->format_range( $recommended_range ) ),
-				array( 'label' => 'Hinweis', 'value' => ! empty( $summary['manual_offer_required'] ) ? 'Für das finale Angebot sollte ein finaler Angebotswert gesetzt werden.' : 'Die errechnete Empfehlung kann direkt als Angebotsbasis genutzt werden.' ),
+				array( 'label' => 'Hinweis', 'value' => ! empty( $summary['manual_offer_required'] ) ? 'Für das finale Dokument sollte eine konkrete Angebotssumme gesetzt werden.' : 'Die errechnete Empfehlung kann als belastbare Angebotsbasis genutzt werden.' ),
 			),
 		);
 	}
@@ -94,7 +94,7 @@ class SGK_Offer_Document {
 
 	protected function build_notes_section( array $notes ) {
 		return array(
-			'label' => 'Hinweise & Anmerkungen',
+			'label' => 'Hinweise',
 			'items' => $notes,
 		);
 	}
