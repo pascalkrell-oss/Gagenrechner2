@@ -414,10 +414,14 @@
 		}).join('');
 	}
 	function renderRouteSummary(routeTrace) {
-		return routeTrace.length ? '<ul class="src-route-list">' + routeTrace.map(function (item) { return '<li><strong>' + htmlEscape(routeLabel(item.step, item.label)) + ':</strong> ' + htmlEscape(prettifyRouteMessage(item.message)) + '</li>'; }).join('') + '</ul>' : '<div class="src-result-note">Die fachliche Einordnung erscheint nach der Berechnung.</div>';
+		if (!routeTrace.length) { return '<div class="src-result-note">Die Einordnung folgt nach der Berechnung.</div>'; }
+		return '<ul class="src-route-list">' + routeTrace.slice(0, 2).map(function (item) { return '<li><strong>' + htmlEscape(routeLabel(item.step, item.label)) + ':</strong> ' + htmlEscape(prettifyRouteMessage(item.message)) + '</li>'; }).join('') + '</ul>';
 	}
 	function renderSimpleList(items, emptyText) {
-		return items.length ? '<ul class="src-result-list">' + items.map(function (item) { return '<li>' + htmlEscape(item) + '</li>'; }).join('') + '</ul>' : '<div class="src-result-note">' + htmlEscape(emptyText) + '</div>';
+		return items.length ? '<ul class="src-result-list">' + items.slice(0, 3).map(function (item) { return '<li>' + htmlEscape(item) + '</li>'; }).join('') + '</ul>' : '<div class="src-result-note">' + htmlEscape(emptyText) + '</div>';
+	}
+	function renderMicroBadges(items, emptyText) {
+		return items.length ? '<div class="src-result-micro-badges">' + items.slice(0, 3).map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '<div class="src-result-note">' + htmlEscape(emptyText) + '</div>';
 	}
 
 	function renderResult(container, payload, formData) {
@@ -435,21 +439,21 @@
 		var copyBlocks = buildCopyBlocks(result, formData, {});
 		var rightsMarkup = rights.length ? '<ul class="src-rights-list">' + rights.map(function (item) { return '<li><strong>' + htmlEscape(item.title + (item.variant ? ' · ' + item.variant : '')) + '</strong><span>Laufzeit: ' + htmlEscape(item.duration || '—') + ' · Gebiet: ' + htmlEscape(item.territory || '—') + ' · Medien: ' + htmlEscape(item.media || '—') + '</span></li>'; }).join('') + '</ul>' : '<div class="src-result-note">Die Rechteübersicht wird nach der ersten vollständigen Berechnung ergänzt.</div>';
 		var positionMarkup = positions.length ? positions.map(function (item) { var price = item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : ((item.formatted_prices && item.formatted_prices.mid) || '0,00 €'); return '<div class="src-receipt-item"><div><strong>' + htmlEscape(item.titel) + '</strong><small>' + htmlEscape(item.beschreibung || '') + '</small></div><span>' + htmlEscape(price) + '</span></div>'; }).join('') : '<div class="src-receipt-item"><span>Kalkulationsbasis</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div>';
-		var packageMarkup = alternatives.length ? '<ul class="src-result-list">' + alternatives.map(function (item) { return '<li><strong>' + htmlEscape(item.label || 'Paket') + ':</strong> ' + htmlEscape(item.formatted_totals ? item.formatted_totals.low_mid_high || item.formatted_totals.mid : '—'); }).join('') + '</ul>' : '<div class="src-result-note">Aktuell sind keine alternativen Paketpreise vorhanden.</div>';
+		var packageMarkup = alternatives.length ? '<ul class="src-result-list">' + alternatives.slice(0, 2).map(function (item) { return '<li><strong>' + htmlEscape(item.label || 'Paket') + ':</strong> ' + htmlEscape(item.formatted_totals ? item.formatted_totals.low_mid_high || item.formatted_totals.mid : '—'); }).join('') + '</ul>' : '<div class="src-result-note">Keine Paket-Alternativen verfügbar.</div>';
+		var hintMarkup = renderMicroBadges(warnings.concat(notes), 'Keine zusätzlichen Hinweise.');
 		container.innerHTML = '' +
-			'<div class="src-result-hero">' +
-				'<div class="src-price-block"><div class="src-price-kicker">Empfohlener Preisrahmen</div><div class="src-price-huge">' + htmlEscape(totals.mid || '0,00 €') + '<span>netto</span></div><div class="src-price-range">Spanne: ' + htmlEscape((totals.lower || '0,00 €') + ' – ' + (totals.upper || '0,00 €')) + '</div></div>' +
-				'<div class="src-result-meta-grid">' +
+			'<div class="src-result-hero src-result-hero--stack">' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-block"><div class="src-price-kicker">Preisanker</div><div class="src-price-huge">' + htmlEscape(totals.mid || '0,00 €') + '<span>netto</span></div><div class="src-price-range">Rahmen: ' + htmlEscape((totals.lower || '0,00 €') + ' – ' + (totals.upper || '0,00 €')) + '</div></div></section>' +
+				'<div class="src-result-meta-grid src-result-meta-grid--stack">' +
 					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape((result.summary && result.summary.context && result.summary.context.case_label) || labelFromKey(result.resolved_case)) + '</strong></div>' +
 					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape((result.summary && result.summary.context && result.summary.context.variant_label) || 'Standard') + '</strong></div>' +
-					'<div class="src-result-meta-card"><span>Preisanker</span><strong>' + htmlEscape((totals.lower || '0,00 €') + ' / ' + (totals.mid || '0,00 €') + ' / ' + (totals.upper || '0,00 €')) + '</strong></div>' +
 				'</div>' +
 			'</div>' +
-			'<div class="src-result-grid">' +
-				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong><p>Gebiet, Laufzeit, Medien und aktive Rechte-Erweiterungen im Überblick.</p></div>' + rightsMarkup + '</section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Fachliche Einordnung, zusätzliche Rechteoptionen und relevante Hinweise.</p></div><div class="src-result-subsection"><strong>Einordnung</strong>' + renderRouteSummary(routeTrace) + '</div><div class="src-result-subsection"><strong>Hinweise</strong>' + renderSimpleList(warnings.concat(notes), 'Aktuell liegen keine zusätzlichen Hinweise vor.') + '</div><div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + packageMarkup + '</div></section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Breakdown & Rechenweg</strong><p>Basis-, Zusatz-, Mindest- und Credit-Positionen transparent aufgeschlüsselt.</p></div>' + renderBreakdownSections(breakdownSections) + '</section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Angebotsbasis</strong><p>Diese Positionen werden für Vorschau, Export und Dokument übernommen.</p></div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '<div class="src-receipt-total"><span>Kalkulationsbasis</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div></div></section>' +
+			'<div class="src-result-grid src-result-grid--stack">' +
+				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong><p>Gebiet, Laufzeit und Medien im Überblick.</p></div>' + rightsMarkup + '</section>' +
+				'<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Nur relevante Zusatzinfos für diesen Fall.</p></div><div class="src-result-subsection"><strong>Einordnung</strong>' + renderRouteSummary(routeTrace) + '</div><div class="src-result-subsection"><strong>Hinweise</strong>' + hintMarkup + '</div></section>' +
+				'<section class="src-result-card"><div class="src-result-card-head"><strong>Breakdown & Pakete</strong><p>Kompakte Preisaufschlüsselung.</p></div><div class="src-result-subsection"><strong>Breakdown</strong>' + renderBreakdownSections(breakdownSections) + '</div><div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + packageMarkup + '</div></section>' +
+				'<section class="src-result-card"><div class="src-result-card-head"><strong>Angebotsbasis</strong><p>Positionen für Vorschau und Export.</p></div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '<div class="src-receipt-total"><span>Kalkulationsbasis</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div></div></section>' +
 			'</div>' +
 			'<div class="src-result-stack">' +
 				'<div class="src-inline-dark-panel src-manual-offer"><strong>Finale Angebotssumme</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div></div>' +
