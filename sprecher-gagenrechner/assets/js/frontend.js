@@ -502,14 +502,14 @@
 				return;
 			}
 			var startAt = performance.now();
-			var duration = 280;
+			var duration = 220;
 			if (node.__sgkAnimFrame) {
 				cancelAnimationFrame(node.__sgkAnimFrame);
 			}
 			node.classList.add('is-animating');
 			var step = function (now) {
 				var progress = Math.min(1, (now - startAt) / duration);
-				var eased = 1 - Math.pow(1 - progress, 3);
+				var eased = progress < 0.5 ? (2 * progress * progress) : (1 - Math.pow(-2 * progress + 2, 2) / 2);
 				var current = start + ((end - start) * eased);
 				node.textContent = currency(current);
 				node.setAttribute('data-sgk-count-current', String(current));
@@ -551,13 +551,18 @@
 			return '<div class="src-accordion-item' + (index === 0 ? ' is-open' : '') + '"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>' + htmlEscape(item.title) + '</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content"><p>' + htmlEscape(item.text) + '</p></div></div>';
 		}).join('') + '</div></section>';
 	}
+	function filterProjectHints(notes) {
+		return (notes || []).filter(function (note) {
+			return /(hinweis|sonderfall|zusatz|rechte|lizenz|nutzung|territ|laufzeit|medium)/i.test(String(note || ''));
+		});
+	}
 
 
 	function renderResult(container, payload, formData) {
 		var result = payload.result || {};
 		var totals = result.formatted_totals || {};
 		var positions = Array.isArray(result.offer_positions) ? result.offer_positions : [];
-		var notes = filterRelevantNotes(uniqueItems((result.notes || []).concat(result.warnings || [])));
+		var notes = filterProjectHints(filterRelevantNotes(uniqueItems((result.notes || []).concat(result.warnings || []))));
 		var breakdownSections = Array.isArray(result.breakdown_sections) ? result.breakdown_sections : [];
 		var alternatives = Array.isArray(result.alternatives) ? result.alternatives : [];
 		var manualOffer = result.formatted_manual_offer_total || 'Noch nicht festgelegt';
@@ -568,7 +573,7 @@
 		var extensionItems = uniqueItems(collectExtensions(formData || {}));
 		var breakdownItems = collectBreakdownItems(breakdownSections);
 		var caseLabel = summaryContext.case_label || labelFromKey(result.resolved_case || formData.case_key || 'projekt');
-		var variantLabel = summaryContext.variant_label || 'Standardausprägung';
+		var variantLabel = summaryContext.variant_label || 'Standardauswahl';
 		var positionMarkup = positions.length ? positions.slice(0, 5).map(function (item) {
 			var price = item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : ((item.formatted_prices && item.formatted_prices.mid) || '0,00 €');
 			var priceValue = parseCurrencyToNumber(price);
@@ -590,9 +595,9 @@
 				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong><p>Diese Angaben beeinflussen den Lizenzwert besonders stark.</p></div><div class="src-keyvalue-list"><div class="src-keyvalue-row"><span>Gebiet</span><strong>' + htmlEscape(rightsSummary.territory) + '</strong></div><div class="src-keyvalue-row"><span>Laufzeit</span><strong>' + htmlEscape(rightsSummary.duration) + '</strong></div><div class="src-keyvalue-row"><span>Medien</span><strong>' + htmlEscape(rightsSummary.media) + '</strong></div></div>' + (rightsSummary.chips.length ? '<div class="src-result-micro-badges">' + rightsSummary.chips.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + '</section>' +
 				extensionMarkup +
 				'<section class="src-result-card"><div class="src-result-card-head"><strong>Breakdown & Pakete</strong><p>Die wichtigsten Preisbausteine kompakt und nachvollziehbar.</p></div><div class="src-breakdown-section">' + renderBreakdownRows(breakdownItems) + '</div>' + (alternativesMarkup ? '<div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + alternativesMarkup + '</div>' : '') + '</section>' +
-				'<div class="src-inline-dark-panel src-manual-offer"><strong>Angebots- und Exportaktionen</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '</div></div>' +
-				'<div class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot professionell vorbereiten <span aria-hidden="true">→</span></button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-feedback-label="Zusammenfassung kopiert" data-sgk-action="copy-summary">Zusammenfassung kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-feedback-label="Positionen kopiert" data-sgk-action="copy-positions">Positionen kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-feedback-label="Rechte kopiert" data-sgk-action="copy-rights">Rechte kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-feedback-label="Exportdaten kopiert" data-sgk-action="copy-json">Exportdaten kopieren</button></div></div>' +
-				'<div class="src-storage-panel"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select><div class="src-storage-actions"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung speichern" data-feedback-label="Gespeichert" data-sgk-action="save">Speichern</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung laden" data-feedback-label="Geladen" data-sgk-action="load">Laden</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung löschen" data-feedback-label="Gelöscht" data-sgk-action="delete">Löschen</button></div><div class="src-storage-status" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Kalkulationen werden lokal in diesem Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</div></div>' +
+				'<section class="src-inline-dark-panel src-manual-offer"><strong>Angebot vorbereiten</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '</div></section>' +
+				'<section class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot professionell vorbereiten <span aria-hidden="true">→</span></button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-feedback-label="Zusammenfassung kopiert" data-sgk-action="copy-summary">Zusammenfassung</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-feedback-label="Positionen kopiert" data-sgk-action="copy-positions">Positionen</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-feedback-label="Rechte kopiert" data-sgk-action="copy-rights">Rechte</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-feedback-label="Exportdaten kopiert" data-sgk-action="copy-json">Exportdaten</button></div></section>' +
+				'<section class="src-storage-panel"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select><div class="src-storage-actions"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung speichern" data-feedback-label="Gespeichert" data-sgk-action="save">Speichern</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung laden" data-feedback-label="Geladen" data-sgk-action="load">Laden</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung löschen" data-feedback-label="Gelöscht" data-sgk-action="delete">Löschen</button></div><div class="src-storage-status" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Kalkulationen werden lokal in diesem Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</div></section>' +
 				'<div class="src-result-accordion"><div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Kurz-Zusammenfassung</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div><div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Breakdown für Export</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content"><p>' + htmlEscape(((result.export_text_blocks && result.export_text_blocks.breakdown_block) || 'Der Breakdown wird nach der Berechnung ergänzt.')) + '</p></div></div></div>' +
 				renderKnowledgeAccordion() +
 			'</div>';
@@ -685,6 +690,23 @@
 
 		app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) { button.addEventListener('click', function () { setFieldValue(fieldNode(form, 'case_key'), button.getAttribute('data-sgk-quick-case')); syncUI(); requestCalculation('quick-case'); }); });
 		app.querySelectorAll('[data-sgk-demo]').forEach(function (button) { button.addEventListener('click', function () { fillForm(form, JSON.parse(button.getAttribute('data-sgk-demo') || '{}')); syncUI(); requestCalculation('demo'); }); });
+		app.querySelectorAll('[data-sgk-currency]').forEach(function (button) {
+			button.addEventListener('click', function () {
+				app.querySelectorAll('[data-sgk-currency]').forEach(function (chip) { chip.classList.remove('is-active'); });
+				button.classList.add('is-active');
+			});
+		});
+		var resetButton = app.querySelector('[data-sgk-reset-calculator]');
+		if (resetButton) {
+			resetButton.addEventListener('click', function () {
+				fillForm(form, FIELD_DEFAULTS);
+				setFieldValue(fieldNode(form, 'recording_days'), '1');
+				setFieldValue(fieldNode(form, 'same_day_projects'), '1');
+				syncUI({ skipResets: true });
+				app.__sgkLastPayload = null;
+				resultContainer.innerHTML = DEFAULT_RESULT_MESSAGE;
+			});
+		}
 		app.addEventListener('click', function (event) {
 			var segment = event.target.closest('[data-sgk-segment-value]');
 			var accordion = event.target.closest('[data-sgk-accordion-trigger]');
