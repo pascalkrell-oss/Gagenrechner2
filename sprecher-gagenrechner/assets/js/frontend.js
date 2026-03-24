@@ -396,70 +396,140 @@
 
 
 	function safeCurrency(value, fallback) { var number = Number(value); return isFinite(number) ? currency(number) : (fallback || '—'); }
-	function renderBreakdownSections(sections) {
-		if (!Array.isArray(sections) || !sections.length) { return '<div class="src-result-note">Der Rechenweg wird nach der ersten erfolgreichen Kalkulation aufgebaut.</div>'; }
-		return sections.map(function (section) {
-			var items = Array.isArray(section.items) ? section.items : [];
-			var body = items.length ? items.map(function (item) {
-				var formatted = item.formatted || {};
-				var amounts = formatted.low_mid_high || [formatted.lower, formatted.mid, formatted.upper].filter(Boolean).join(' / ') || '—';
-				return '<div class="src-breakdown-row">' +
-					'<div class="src-breakdown-main"><strong>' + htmlEscape(item.label || 'Position') + '</strong>' +
-					(item.quantity_label ? '<span>' + htmlEscape(item.quantity_label) + '</span>' : '') +
-					(item.note ? '<small>' + htmlEscape(item.note) + '</small>' : '') + '</div>' +
-					'<div class="src-breakdown-amount' + (item.is_credit ? ' is-credit' : '') + (item.is_minimum ? ' is-minimum' : '') + '">' + htmlEscape(amounts) + '</div>' +
-				'</div>';
-			}).join('') : '<div class="src-result-note">Keine zusätzlichen Positionen.</div>';
-			return '<div class="src-breakdown-section"><div class="src-breakdown-head"><strong>' + htmlEscape(section.label || 'Abschnitt') + '</strong>' + (section.description ? '<p>' + htmlEscape(section.description) + '</p>' : '') + '</div>' + body + '</div>';
+	function uniqueItems(items) { return Array.from(new Set((items || []).filter(Boolean))); }
+	function isPositiveValue(value) { var number = normalizeNumber(value); return number != null && number > 0; }
+	function tidyHumanLabel(value) {
+		var raw = String(value || '').trim();
+		if (!raw) { return 'Fallabhängig'; }
+		var normalized = raw.toLowerCase();
+		if (normalized === 'gemäß fallkonfiguration' || normalized === 'projektbezogen') { return 'Fallabhängig'; }
+		if (normalized === 'zeitlich_unbegrenzt') { return 'Unbegrenzt'; }
+		if (normalized === 'unbegrenzt') { return 'Unbegrenzt'; }
+		return optionLabel(raw);
+	}
+	function summarizeRights(rights, formData) {
+		var first = rights[0] || {};
+		var territory = tidyHumanLabel(formData.territory || first.territory || '');
+		var duration = tidyHumanLabel(formData.duration_term || first.duration || '');
+		var media = tidyHumanLabel(formData.medium || first.media || '');
+		if (Array.isArray(first.usage_notes) && first.usage_notes.length) {
+			media = media === 'Fallabhängig' ? tidyHumanLabel(first.usage_notes[0]) : media;
+		}
+		var chips = [];
+		if (isTruthy(formData.unlimited_time)) { chips.push('Zeitlich offen'); }
+		if (isTruthy(formData.unlimited_territory)) { chips.push('Räumlich offen'); }
+		if (isTruthy(formData.unlimited_media)) { chips.push('Medial offen'); }
+		return {
+			territory: territory,
+			duration: duration,
+			media: media,
+			chips: chips
+		};
+	}
+	function collectExtensions(formData) {
+		var items = [];
+		var addYear = Math.max(0, parseInt(formData.additional_year || '0', 10) || 0);
+		var addTerritory = Math.max(0, parseInt(formData.additional_territory || '0', 10) || 0);
+		var addMotif = Math.max(0, parseInt(formData.additional_motif || '0', 10) || 0);
+		if (addYear > 0) { items.push('Zusatzjahre: ' + addYear); }
+		if (addTerritory > 0) { items.push('Zusatzgebiete: ' + addTerritory); }
+		if (addMotif > 0) { items.push('Zusatzmotive: ' + addMotif); }
+		[['archivgage', 'Archivnutzung'], ['reminder', 'Reminder'], ['allongen', 'Allongen'], ['follow_up_usage', 'Nachnutzung'], ['usage_social_media', 'Social Media Zusatznutzung'], ['usage_praesentation', 'Präsentationsnutzung'], ['is_paid_media', 'Paid Media Zusatzkanal']].forEach(function (item) {
+			if (isTruthy(formData[item[0]])) { items.push(item[1]); }
+		});
+		return items;
+	}
+	function collectBreakdownItems(sections) {
+		var simplified = [];
+		(sections || []).forEach(function (section) {
+			if (!section || !Array.isArray(section.items)) { return; }
+			if (section.key === 'context') { return; }
+			section.items.forEach(function (item) {
+				if (!item || !item.label) { return; }
+				var amount = (item.formatted && item.formatted.mid) || (item.formatted && item.formatted.low_mid_high) || '';
+				if (!amount || amount === '—') { return; }
+				simplified.push({
+					label: item.label,
+					amount: amount,
+					note: item.quantity_label || '',
+					is_credit: !!item.is_credit,
+					is_minimum: !!item.is_minimum
+				});
+			});
+		});
+		return simplified.slice(0, 7);
+	}
+	function renderBreakdownRows(items) {
+		if (!items.length) { return '<div class="src-result-note">Die Aufschlüsselung erscheint nach der vollständigen Berechnung.</div>'; }
+		return items.map(function (item) {
+			return '<div class="src-breakdown-row">' +
+				'<div class="src-breakdown-main"><strong>' + htmlEscape(item.label) + '</strong>' + (item.note ? '<span>' + htmlEscape(item.note) + '</span>' : '') + '</div>' +
+				'<div class="src-breakdown-amount' + (item.is_credit ? ' is-credit' : '') + (item.is_minimum ? ' is-minimum' : '') + '">' + htmlEscape(item.amount) + '</div>' +
+			'</div>';
 		}).join('');
 	}
-	function renderRouteSummary(routeTrace) {
-		if (!routeTrace.length) { return '<div class="src-result-note">Die Einordnung folgt nach der Berechnung.</div>'; }
-		return '<ul class="src-route-list">' + routeTrace.slice(0, 2).map(function (item) { return '<li><strong>' + htmlEscape(routeLabel(item.step, item.label)) + ':</strong> ' + htmlEscape(prettifyRouteMessage(item.message)) + '</li>'; }).join('') + '</ul>';
+	function renderPackageAlternatives(alternatives) {
+		if (!alternatives.length) { return '<div class="src-result-note">Derzeit keine alternativen Pakete.</div>'; }
+		return '<div class="src-breakdown-alt-list">' + alternatives.slice(0, 2).map(function (item) {
+			var amount = item.formatted_totals ? (item.formatted_totals.mid || item.formatted_totals.low_mid_high || '—') : '—';
+			return '<div class="src-breakdown-row src-breakdown-row--compact"><div class="src-breakdown-main"><strong>' + htmlEscape(item.label || 'Paket') + '</strong></div><div class="src-breakdown-amount">' + htmlEscape(amount) + '</div></div>';
+		}).join('') + '</div>';
 	}
-	function renderSimpleList(items, emptyText) {
-		return items.length ? '<ul class="src-result-list">' + items.slice(0, 3).map(function (item) { return '<li>' + htmlEscape(item) + '</li>'; }).join('') + '</ul>' : '<div class="src-result-note">' + htmlEscape(emptyText) + '</div>';
-	}
-	function renderMicroBadges(items, emptyText) {
-		return items.length ? '<div class="src-result-micro-badges">' + items.slice(0, 3).map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '<div class="src-result-note">' + htmlEscape(emptyText) + '</div>';
+	function renderKnowledgeAccordion() {
+		var items = [
+			{ title: 'Warum sind Nutzungsrechte so wichtig?', text: 'Die Produktion ist nur ein Teil des Preises. Gebiet, Laufzeit und Medien entscheiden, wie intensiv die Stimme wirtschaftlich genutzt wird.' },
+			{ title: 'Gilt die Gage pro Motiv oder pro Nutzung?', text: 'Je nach Fall beides: Das Grundhonorar deckt die Produktion, zusätzliche Motive oder Versionen werden meist separat kalkuliert.' },
+			{ title: 'Wann ist ein Zusatzjahr sinnvoll?', text: 'Wenn ein Projekt über die vereinbarte Laufzeit hinaus weiterläuft. So bleibt die Nutzung sauber lizenziert und transparent verhandelbar.' },
+			{ title: 'Was bedeutet räumliche Nutzung?', text: 'Sie beschreibt, in welchem Gebiet ausgespielt wird – lokal, national oder international. Mit größerem Gebiet steigt in der Regel der Lizenzwert.' },
+			{ title: 'Wofür gibt es Reminder, Archiv- oder Nachnutzung?', text: 'Das sind eigenständige Verwertungen. Sie werden nur ergänzt, wenn sie tatsächlich gebucht oder später aktiviert werden.' },
+			{ title: 'Warum bleibt die finale Summe verhandelbar?', text: 'Der Rechner liefert eine belastbare Orientierung. Timing, Produktionsumfang und Gesamtpaket können im Angebot dennoch individuell abgestimmt werden.' }
+		];
+		return '<section class="src-result-card src-result-card--knowledge"><div class="src-result-card-head"><strong>Wissenswertes</strong><p>Kompakte Antworten auf häufige Fragen rund um Rechte und Vergütung.</p></div><div class="src-result-accordion">' + items.map(function (item, index) {
+			return '<div class="src-accordion-item' + (index === 0 ? ' is-open' : '') + '"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>' + htmlEscape(item.title) + '</span><i data-lucide="chevron-down" width="16" height="16"></i></button><div class="src-accordion-content"><p>' + htmlEscape(item.text) + '</p></div></div>';
+		}).join('') + '</div></section>';
 	}
 
 	function renderResult(container, payload, formData) {
 		var result = payload.result || {};
 		var totals = result.formatted_totals || {};
-		var rights = Array.isArray(result.rights_overview) ? result.rights_overview : [];
 		var positions = Array.isArray(result.offer_positions) ? result.offer_positions : [];
-		var warnings = Array.isArray(result.warnings) ? result.warnings : [];
-		var notes = Array.isArray(result.offer_notes) ? result.offer_notes : [];
-		var routeTrace = Array.isArray(result.route_summary_offer) ? result.route_summary_offer : [];
+		var notes = uniqueItems((result.notes || []).concat(result.warnings || []));
 		var breakdownSections = Array.isArray(result.breakdown_sections) ? result.breakdown_sections : [];
 		var alternatives = Array.isArray(result.alternatives) ? result.alternatives : [];
 		var manualOffer = result.formatted_manual_offer_total || 'Noch nicht festgelegt';
 		var manualValidation = validateManualOffer(result.manual_offer_total, result);
 		var copyBlocks = buildCopyBlocks(result, formData, {});
-		var rightsMarkup = rights.length ? '<ul class="src-rights-list">' + rights.map(function (item) { return '<li><strong>' + htmlEscape(item.title + (item.variant ? ' · ' + item.variant : '')) + '</strong><span>Laufzeit: ' + htmlEscape(item.duration || '—') + ' · Gebiet: ' + htmlEscape(item.territory || '—') + ' · Medien: ' + htmlEscape(item.media || '—') + '</span></li>'; }).join('') + '</ul>' : '<div class="src-result-note">Die Rechteübersicht wird nach der ersten vollständigen Berechnung ergänzt.</div>';
-		var positionMarkup = positions.length ? positions.map(function (item) { var price = item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : ((item.formatted_prices && item.formatted_prices.mid) || '0,00 €'); return '<div class="src-receipt-item"><div><strong>' + htmlEscape(item.titel) + '</strong><small>' + htmlEscape(item.beschreibung || '') + '</small></div><span>' + htmlEscape(price) + '</span></div>'; }).join('') : '<div class="src-receipt-item"><span>Kalkulationsbasis</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div>';
-		var packageMarkup = alternatives.length ? '<ul class="src-result-list">' + alternatives.slice(0, 2).map(function (item) { return '<li><strong>' + htmlEscape(item.label || 'Paket') + ':</strong> ' + htmlEscape(item.formatted_totals ? item.formatted_totals.low_mid_high || item.formatted_totals.mid : '—'); }).join('') + '</ul>' : '<div class="src-result-note">Keine Paket-Alternativen verfügbar.</div>';
-		var hintMarkup = renderMicroBadges(warnings.concat(notes), 'Keine zusätzlichen Hinweise.');
+		var summaryContext = (result.summary && result.summary.context) || {};
+		var rightsSummary = summarizeRights(Array.isArray(result.rights_overview) ? result.rights_overview : [], formData || {});
+		var extensionItems = uniqueItems(collectExtensions(formData || {}));
+		var breakdownItems = collectBreakdownItems(breakdownSections);
+		var caseLabel = summaryContext.case_label || labelFromKey(result.resolved_case || formData.case_key || 'projekt');
+		var variantLabel = summaryContext.variant_label || 'Standard';
+		var positionMarkup = positions.length ? positions.slice(0, 5).map(function (item) {
+			var price = item.formatted_prices && item.formatted_prices.manual ? item.formatted_prices.manual : ((item.formatted_prices && item.formatted_prices.mid) || '0,00 €');
+			return '<div class="src-receipt-item"><div><strong>' + htmlEscape(item.titel) + '</strong></div><span>' + htmlEscape(price) + '</span></div>';
+		}).join('') : '<div class="src-receipt-item"><span>Angebotspositionen folgen mit der Berechnung.</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div>';
+		var extensionMarkup = extensionItems.length ? '<div class="src-result-micro-badges">' + extensionItems.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '<div class="src-result-note">Aktuell sind keine zusätzlichen Sonderfälle aktiv.</div>';
+		var notesMarkup = notes.length ? '<div class="src-result-micro-badges">' + notes.slice(0, 3).map(function (item) { return '<span class="src-result-micro-badge src-result-micro-badge--soft">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '';
 		container.innerHTML = '' +
 			'<div class="src-result-hero src-result-hero--stack">' +
-				'<section class="src-result-card src-result-card--price"><div class="src-price-block"><div class="src-price-kicker">Preisanker</div><div class="src-price-huge">' + htmlEscape(totals.mid || '0,00 €') + '<span>netto</span></div><div class="src-price-range">Rahmen: ' + htmlEscape((totals.lower || '0,00 €') + ' – ' + (totals.upper || '0,00 €')) + '</div></div></section>' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-block"><div class="src-price-kicker">Preisanker</div><div class="src-price-huge">' + htmlEscape(totals.mid || '0,00 €') + '<span>netto</span></div><div class="src-price-range">Empfohlener Rahmen: ' + htmlEscape((totals.lower || '0,00 €') + ' – ' + (totals.upper || '0,00 €')) + '</div></div></section>' +
 				'<div class="src-result-meta-grid src-result-meta-grid--stack">' +
-					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape((result.summary && result.summary.context && result.summary.context.case_label) || labelFromKey(result.resolved_case)) + '</strong></div>' +
-					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape((result.summary && result.summary.context && result.summary.context.variant_label) || 'Standard') + '</strong></div>' +
+					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
+					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape(variantLabel) + '</strong></div>' +
 				'</div>' +
 			'</div>' +
 			'<div class="src-result-grid src-result-grid--stack">' +
-				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong><p>Gebiet, Laufzeit und Medien im Überblick.</p></div>' + rightsMarkup + '</section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Nur relevante Zusatzinfos für diesen Fall.</p></div><div class="src-result-subsection"><strong>Einordnung</strong>' + renderRouteSummary(routeTrace) + '</div><div class="src-result-subsection"><strong>Hinweise</strong>' + hintMarkup + '</div></section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Breakdown & Pakete</strong><p>Kompakte Preisaufschlüsselung.</p></div><div class="src-result-subsection"><strong>Breakdown</strong>' + renderBreakdownSections(breakdownSections) + '</div><div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + packageMarkup + '</div></section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Angebotsbasis</strong><p>Positionen für Vorschau und Export.</p></div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '<div class="src-receipt-total"><span>Kalkulationsbasis</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div></div></section>' +
+				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong><p>Die zentralen Nutzungsdaten für die aktuelle Konfiguration.</p></div><div class="src-keyvalue-list"><div class="src-keyvalue-row"><span>Gebiet</span><strong>' + htmlEscape(rightsSummary.territory) + '</strong></div><div class="src-keyvalue-row"><span>Laufzeit</span><strong>' + htmlEscape(rightsSummary.duration) + '</strong></div><div class="src-keyvalue-row"><span>Medien</span><strong>' + htmlEscape(rightsSummary.media) + '</strong></div></div>' + (rightsSummary.chips.length ? '<div class="src-result-micro-badges">' + rightsSummary.chips.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + '</section>' +
+				'<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Nur die aktuell aktiven Ergänzungen werden hier gezeigt.</p></div>' + extensionMarkup + notesMarkup + '</section>' +
+				'<section class="src-result-card"><div class="src-result-card-head"><strong>Breakdown & Pakete</strong><p>Die wichtigsten Preisbausteine in kompakter Form.</p></div><div class="src-breakdown-section">' + renderBreakdownRows(breakdownItems) + '</div><div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + renderPackageAlternatives(alternatives) + '</div></section>' +
+				renderKnowledgeAccordion() +
 			'</div>' +
 			'<div class="src-result-stack">' +
-				'<div class="src-inline-dark-panel src-manual-offer"><strong>Finale Angebotssumme</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div></div>' +
+				'<div class="src-inline-dark-panel src-manual-offer"><strong>Angebots-/Export-Aktionen</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '</div></div>' +
 				'<div class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot vorbereiten <span aria-hidden="true">→</span></button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-feedback-label="Zusammenfassung kopiert" data-sgk-action="copy-summary">Zusammenfassung kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-feedback-label="Positionen kopiert" data-sgk-action="copy-positions">Positionen kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-feedback-label="Rechte kopiert" data-sgk-action="copy-rights">Rechte kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-feedback-label="Exportdaten kopiert" data-sgk-action="copy-json">Exportdaten kopieren</button></div></div>' +
 				'<div class="src-storage-panel"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select><div class="src-storage-actions"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung speichern" data-feedback-label="Gespeichert" data-sgk-action="save">Speichern</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung laden" data-feedback-label="Geladen" data-sgk-action="load">Laden</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung löschen" data-feedback-label="Gelöscht" data-sgk-action="delete">Löschen</button></div><div class="src-storage-status" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Kalkulationen werden lokal in diesem Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</div></div>' +
-				'<div class="src-result-accordion"><div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Text-Zusammenfassung</span></button><div class="src-accordion-content"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div><div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Breakdown für Export</span></button><div class="src-accordion-content"><p>' + htmlEscape(((result.export_text_blocks && result.export_text_blocks.breakdown_block) || 'Der Breakdown wird nach der Berechnung ergänzt.')) + '</p></div></div></div>' +
+				'<div class="src-result-accordion"><div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Kurz-Zusammenfassung</span><i data-lucide="chevron-down" width="16" height="16"></i></button><div class="src-accordion-content"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div><div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Breakdown für Export</span><i data-lucide="chevron-down" width="16" height="16"></i></button><div class="src-accordion-content"><p>' + htmlEscape(((result.export_text_blocks && result.export_text_blocks.breakdown_block) || 'Der Breakdown wird nach der Berechnung ergänzt.')) + '</p></div></div></div>' +
 			'</div>';
 	if (window.lucide && window.lucide.createIcons) { window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); }
 	}

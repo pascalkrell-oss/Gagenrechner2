@@ -82,32 +82,31 @@ class SGK_Result_Formatter {
 
 	protected function build_breakdown_sections( array $result ) {
 		$sections      = array();
-		$context       = $this->build_calculation_context( $result );
 		$raw_breakdown = isset( $result['breakdown'] ) ? $result['breakdown'] : array();
 		$schema        = array(
 			'basis' => array(
 				'label'       => 'Basispreis',
-				'description' => 'Ausgangswert aus Hauptfall, Variante und Mengenbasis.',
+				'description' => 'Grundpreis aus Projektart, Variante und Umfang.',
 			),
 			'surcharge' => array(
 				'label'       => 'Sonderzuschläge',
-				'description' => 'Sondernutzungen wie Reminder werden separat ausgewiesen.',
+				'description' => 'Zusätzliche Nutzungsarten wie Reminder.',
 			),
 			'additive' => array(
 				'label'       => 'Zusatzrechte & Erweiterungen',
-				'description' => 'Zusatzmotive, Zusatzjahre, Territorien, Archiv- oder Layoutkomponenten.',
+				'description' => 'Erweiterte Rechte und optionale Zusatzbausteine.',
 			),
 			'multiplier' => array(
 				'label'       => 'Multiplikatoren',
-				'description' => 'Unbegrenzte oder besonders weitreichende Nutzungen.',
+				'description' => 'Aufschläge für besonders weitreichende Nutzung.',
 			),
 			'credit' => array(
 				'label'       => 'Anrechnungen / Credits',
-				'description' => 'Bereits bezahlte Vorleistungen werden separat abgezogen.',
+				'description' => 'Anrechnungen aus bereits vergüteten Vorleistungen.',
 			),
 			'minimum_fee_adjustment' => array(
 				'label'       => 'Mindestgage',
-				'description' => 'Automatischer Ausgleich, wenn eine Mindestgage greift.',
+				'description' => 'Anpassung, wenn eine Mindestgage greift.',
 			),
 		);
 
@@ -138,63 +137,17 @@ class SGK_Result_Formatter {
 			);
 		}
 
-		$context_items = array_filter(
-			array(
-				array(
-					'label' => 'Gewählter Hauptfall',
-					'value' => $context['case_label'],
-				),
-				! empty( $context['variant_label'] ) ? array(
-					'label' => 'Gewählte Untervariante',
-					'value' => $context['variant_label'],
-				) : null,
-				! empty( $context['quantity_basis'] ) ? array(
-					'label' => 'Mengenbasis',
-					'value' => implode( ' · ', $context['quantity_basis'] ),
-				) : null,
-				array(
-					'label' => 'Basispreis low/mid/high',
-					'value' => $context['base_range_label'],
-				),
-			)
-		);
-
-		if ( ! empty( $context_items ) ) {
-			array_unshift(
-				$sections,
-				array(
-					'key'         => 'context',
-					'label'       => 'Kalkulationsgrundlage',
-					'description' => 'So wurde der Fall fachlich eingeordnet, bevor Zuschläge oder Credits hinzukommen.',
-					'items'       => array_map(
-						static function ( $item ) {
-							return array(
-								'label'          => $item['label'],
-								'quantity_label' => '',
-								'formatted'      => array(
-									'low_mid_high' => $item['value'],
-								),
-								'note'           => '',
-								'is_credit'      => false,
-								'is_minimum'     => false,
-							);
-						},
-						$context_items
-					),
-				)
-			);
-		}
 
 		$sections[] = array(
 			'key'         => 'final_totals',
-			'label'       => 'Finale Summen',
-			'description' => 'Abschließender Preisrahmen nach allen Zu- und Abschlägen.',
+			'label'       => 'Gesamtempfehlung',
+			'description' => 'Preisrahmen nach allen Zu- und Abschlägen.',
 			'items'       => array(
 				array(
-					'label'          => 'Final low / mid / high',
+					'label'          => 'Empfohlener Preisrahmen',
 					'quantity_label' => '',
 					'formatted'      => $this->format_amount_triplet( $result['totals'] ),
-					'note'           => null !== $result['manual_offer_total'] ? 'Zusätzlich liegt ein manuell gesetzter Angebotswert vor: ' . $this->format_currency( $result['manual_offer_total'] ) . '.' : 'Die finale Angebotssumme kann bei Bedarf separat gesetzt werden.',
+					'note'           => null !== $result['manual_offer_total'] ? 'Angebotswert hinterlegt: ' . $this->format_currency( $result['manual_offer_total'] ) . '.' : 'Ein finaler Angebotswert kann bei Bedarf ergänzt werden.',
 					'is_credit'      => false,
 					'is_minimum'     => false,
 				),
@@ -354,7 +307,7 @@ class SGK_Result_Formatter {
 		$overview = array();
 		foreach ( $result['licenses'] as $license ) {
 			$territory = isset( $license['territory_rules']['default_scope'] ) ? $license['territory_rules']['default_scope'] : ( isset( $license['territory_rules']['default'] ) ? $license['territory_rules']['default'] : 'projektbezogen' );
-			$media     = isset( $license['media_rules']['default_scope'] ) ? $license['media_rules']['default_scope'] : ( isset( $license['media_rules']['default'] ) ? $license['media_rules']['default'] : 'gemäß Fallkonfiguration' );
+			$media     = isset( $license['media_rules']['default_scope'] ) ? $license['media_rules']['default_scope'] : ( isset( $license['media_rules']['default'] ) ? $license['media_rules']['default'] : 'fallabhängig' );
 			$duration  = isset( $license['duration_rules']['default_term'] ) ? $license['duration_rules']['default_term'] : 'projektbezogen';
 			if ( is_array( $media ) ) {
 				$media = implode( ', ', array_map( 'strval', $media ) );
