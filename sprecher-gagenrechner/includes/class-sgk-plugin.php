@@ -111,22 +111,15 @@ class SGK_Plugin {
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/css/frontend.css',
 			array( 'sgk-fontawesome-local' ),
-			'0.3.0'
+			'0.3.1'
 		);
 
-		wp_register_script(
-			'sgk-lucide-local',
-			SGK_PLUGIN_URL . 'assets/js/lucide-local.js',
-			array(),
-			'0.3.0',
-			true
-		);
 
 		wp_register_script(
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/js/frontend.js',
-			array( 'sgk-lucide-local' ),
-			'0.3.0',
+			array(),
+			'0.3.1',
 			true
 		);
 

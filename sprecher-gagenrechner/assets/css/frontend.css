@@ -70,15 +70,15 @@
     overflow: visible;
     font-family: var(--sgk-font);
     color: var(--src-text-main);
-    background: var(--src-bg-app);
-    padding: 28px 18px 44px;
+    background: radial-gradient(circle at 18% -8%, rgba(46, 132, 223, 0.3), transparent 42%), linear-gradient(180deg, #0b111a 0%, #111a2b 24%, #f4f8fc 24.1%, #f7fbff 100%);
+    padding: 22px 18px 44px;
     font-variant-numeric: tabular-nums;
 }
 .src-app-shell {
-    border: 1px solid rgba(15, 20, 26, 0.08);
-    border-radius: 34px;
-    background: #fcfdff;
-    box-shadow: 0 22px 46px rgba(15, 20, 26, 0.08);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 }
 
 .src-app-backdrop {
@@ -109,21 +109,27 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .src-top-toolbar {
     position: relative;
-    z-index: 2;
-    margin: 4px auto 20px;
+    z-index: 4;
+    margin: 0 auto 18px;
     max-width: 1400px;
     min-height: 44px;
-    padding: 0 4px;
+    padding: 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 12px;
     color: rgba(255,255,255,.92);
 }
+.src-toolbar-left,
+.src-toolbar-right,
 .src-toolbar-group {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     min-width: 0;
+}
+.src-toolbar-left {
+    flex-wrap: wrap;
 }
 .src-toolbar-btn,
 .src-toolbar-chip {
@@ -296,17 +302,20 @@ input[type="number"]::-webkit-inner-spin-button {
 .src-section-copy { font-size: 14px; }
 .src-native-select.src-hidden-select { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
 .src-native-select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: linear-gradient(45deg, transparent 50%, #64748b 50%), linear-gradient(135deg, #64748b 50%, transparent 50%), linear-gradient(180deg, rgba(255,255,255,.98), rgba(248,250,252,.98));
-    background-position: calc(100% - 22px) calc(50% - 3px), calc(100% - 16px) calc(50% - 3px), 0 0;
-    background-size: 6px 6px, 6px 6px, 100% 100%;
-    background-repeat: no-repeat;
-    padding-right: 42px;
+    appearance: auto;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    background: #fff;
+    color: #0f172a;
+    padding-right: 14px;
     min-height: 50px;
     position: relative;
-    z-index: 2;
+    z-index: 1;
+    color-scheme: light;
+}
+.src-native-select option {
+    background: #fff;
+    color: #0f172a;
 }
 .src-native-select:focus {
     outline: none;
@@ -525,8 +534,29 @@ input[type="number"]::-webkit-inner-spin-button {
 .src-foldable-title { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--src-text-main); }
 .src-foldable-content { display: none; padding: 22px; border-top: 1px solid var(--src-border-light); }
 .src-foldable-panel.is-open .src-foldable-content { display: block; }
-.src-foldable-panel.is-open .src-foldable-icon { transform: rotate(180deg); }
 .src-foldable-panel--expert { border-style: solid; }
+
+.src-foldable-icon {
+    font-size: 12px;
+    color: #64748b;
+    transition: transform var(--transition-fast), color var(--transition-fast);
+}
+.src-foldable-panel.is-open .src-foldable-icon {
+    color: var(--src-primary);
+    transform: rotate(45deg);
+}
+.src-stepper button i {
+    font-size: 12px;
+}
+.src-result-btn-grid button i,
+.src-btn-primary i,
+.src-btn-secondary i {
+    margin-right: 6px;
+}
+.src-smart-hint i {
+    font-size: 16px;
+    margin-top: 2px;
+}
 
 .src-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
 .src-form-field label { font-size: 13px; font-weight: 600; color: #334155; }
@@ -644,7 +674,6 @@ input[type="number"]::-webkit-inner-spin-button {
 .src-accordion-item:last-child { border-bottom: 0; }
 .src-accordion-btn { padding: 14px 0; color: var(--src-text-secondary); text-align: left; font-size: 13px; font-weight: 600; }
 .src-accordion-item.is-open .src-accordion-content { display: block; }
-.src-foldable-panel.is-open [data-lucide="chevron-down"] { transform: rotate(180deg); }
 .src-accordion-content { display: none; padding-bottom: 12px; font-size: 13px; }
 .src-accordion-content p { margin: 0; text-align: left; }
 .src-accordion-indicator {
@@ -714,7 +743,9 @@ input[type="number"]::-webkit-inner-spin-button {
     .src-card { min-height: auto; }
     .src-hero-copy h2 { max-width: 100%; }
     .src-top-toolbar,
-    .src-toolbar-group { flex-wrap: wrap; }
+    .src-toolbar-group,
+    .src-toolbar-left,
+    .src-toolbar-right { flex-wrap: wrap; }
 }
 
 
