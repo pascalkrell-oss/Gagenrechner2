@@ -496,30 +496,43 @@
 			if (isNaN(end)) { return; }
 			var key = node.getAttribute('data-sgk-count-key') || node.textContent.trim();
 			var start = previousValues && previousValues.hasOwnProperty(key) ? previousValues[key] : end;
-			if (Math.abs(end - start) < 0.01) { return; }
+			if (Math.abs(end - start) < 0.01) {
+				node.textContent = currency(end);
+				node.setAttribute('data-sgk-count-current', String(end));
+				return;
+			}
 			var startAt = performance.now();
 			var duration = 280;
+			if (node.__sgkAnimFrame) {
+				cancelAnimationFrame(node.__sgkAnimFrame);
+			}
 			node.classList.add('is-animating');
 			var step = function (now) {
 				var progress = Math.min(1, (now - startAt) / duration);
 				var eased = 1 - Math.pow(1 - progress, 3);
 				var current = start + ((end - start) * eased);
 				node.textContent = currency(current);
+				node.setAttribute('data-sgk-count-current', String(current));
 				if (progress < 1) {
-					requestAnimationFrame(step);
+					node.__sgkAnimFrame = requestAnimationFrame(step);
 				} else {
 					node.textContent = currency(end);
+					node.setAttribute('data-sgk-count-current', String(end));
 					node.classList.remove('is-animating');
+					node.__sgkAnimFrame = null;
 				}
 			};
-			requestAnimationFrame(step);
+			node.__sgkAnimFrame = requestAnimationFrame(step);
 		});
 	}
 	function readCurrentCounterValues(container) {
 		var values = {};
 		container.querySelectorAll('[data-sgk-count-value]').forEach(function (node, index) {
 			var key = node.getAttribute('data-sgk-count-key') || ('counter-' + index);
-			var value = parseCurrencyToNumber(node.textContent);
+			var value = normalizeNumber(node.getAttribute('data-sgk-count-current'));
+			if (value === null) {
+				value = parseCurrencyToNumber(node.textContent);
+			}
 			if (value !== null) { values[key] = value; }
 		});
 		return values;
@@ -561,12 +574,13 @@
 			var priceValue = parseCurrencyToNumber(price);
 			return '<div class="src-receipt-item"><div><strong>' + htmlEscape(item.titel) + '</strong></div><span class="src-count-animate"' + (priceValue !== null ? ' data-sgk-count-key="position-' + htmlEscape(item.titel) + '" data-sgk-count-value="' + htmlEscape(priceValue) + '"' : '') + '>' + htmlEscape(price) + '</span></div>';
 		}).join('') : '<div class="src-receipt-item"><span>Angebotspositionen folgen mit der Berechnung.</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div>';
-		var extensionMarkup = extensionItems.length ? '<div class="src-result-micro-badges">' + extensionItems.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '<div class="src-result-note">Derzeit sind keine zusätzlichen Rechte aktiviert – die Kalkulation basiert auf dem gewählten Kernumfang.</div>';
 		var notesMarkup = notes.length ? '<div class="src-result-micro-badges">' + notes.slice(0, 2).map(function (item) { return '<span class="src-result-micro-badge src-result-micro-badge--soft">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '';
+		var hasExtensionContent = extensionItems.length || notes.length;
+		var extensionMarkup = hasExtensionContent ? '<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Es werden nur aktive Zusatzrechte und konkrete Projekthinweise gezeigt.</p></div>' + (extensionItems.length ? '<div class="src-result-micro-badges">' + extensionItems.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + notesMarkup + '</section>' : '';
 		var alternativesMarkup = renderPackageAlternatives(alternatives);
 		container.innerHTML = '' +
 			'<div class="src-result-hero src-result-hero--stack">' +
-				'<section class="src-result-card src-result-card--price"><div class="src-price-block"><div class="src-price-kicker">Preisrahmen & Preisanker</div><div class="src-price-huge"><span class="src-price-huge-value src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span>netto</span></div><div class="src-price-range">Empfohlene Spanne: <strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong></div></div></section>' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-block"><div class="src-price-kicker">Preisrahmen & Preisanker</div><div class="src-price-huge"><span class="src-price-huge-value src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Empfohlene Spanne</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong></div></div></section>' +
 				'<div class="src-result-meta-grid src-result-meta-grid--stack">' +
 					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
 					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape(variantLabel) + '</strong></div>' +
@@ -574,7 +588,7 @@
 			'</div>' +
 			'<div class="src-result-grid src-result-grid--stack">' +
 				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong><p>Diese Angaben beeinflussen den Lizenzwert besonders stark.</p></div><div class="src-keyvalue-list"><div class="src-keyvalue-row"><span>Gebiet</span><strong>' + htmlEscape(rightsSummary.territory) + '</strong></div><div class="src-keyvalue-row"><span>Laufzeit</span><strong>' + htmlEscape(rightsSummary.duration) + '</strong></div><div class="src-keyvalue-row"><span>Medien</span><strong>' + htmlEscape(rightsSummary.media) + '</strong></div></div>' + (rightsSummary.chips.length ? '<div class="src-result-micro-badges">' + rightsSummary.chips.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + '</section>' +
-				'<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Es werden nur aktive Zusatzrechte und konkrete Projekthinweise gezeigt.</p></div>' + extensionMarkup + notesMarkup + '</section>' +
+				extensionMarkup +
 				'<section class="src-result-card"><div class="src-result-card-head"><strong>Breakdown & Pakete</strong><p>Die wichtigsten Preisbausteine kompakt und nachvollziehbar.</p></div><div class="src-breakdown-section">' + renderBreakdownRows(breakdownItems) + '</div>' + (alternativesMarkup ? '<div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + alternativesMarkup + '</div>' : '') + '</section>' +
 				'<div class="src-inline-dark-panel src-manual-offer"><strong>Angebots- und Exportaktionen</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '</div></div>' +
 				'<div class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf">Angebot professionell vorbereiten <span aria-hidden="true">→</span></button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-feedback-label="Zusammenfassung kopiert" data-sgk-action="copy-summary">Zusammenfassung kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-feedback-label="Positionen kopiert" data-sgk-action="copy-positions">Positionen kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-feedback-label="Rechte kopiert" data-sgk-action="copy-rights">Rechte kopieren</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-feedback-label="Exportdaten kopiert" data-sgk-action="copy-json">Exportdaten kopieren</button></div></div>' +

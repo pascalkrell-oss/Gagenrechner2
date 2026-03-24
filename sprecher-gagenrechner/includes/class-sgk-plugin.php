@@ -101,9 +101,16 @@ class SGK_Plugin {
 	 */
 	public function register_assets() {
 		wp_register_style(
+			'sgk-fontawesome-local',
+			'/wp-content/assets/fontawesome/css/all.min.css',
+			array(),
+			'6.5.2'
+		);
+
+		wp_register_style(
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/css/frontend.css',
-			array(),
+			array( 'sgk-fontawesome-local' ),
 			'0.3.0'
 		);
 
