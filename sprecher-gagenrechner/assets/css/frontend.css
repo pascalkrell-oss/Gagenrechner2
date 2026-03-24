@@ -70,14 +70,14 @@
     overflow: visible;
     font-family: var(--sgk-font);
     color: var(--src-text-main);
-    background: radial-gradient(circle at 18% -8%, rgba(46, 132, 223, 0.3), transparent 42%), linear-gradient(180deg, #0b111a 0%, #111a2b 24%, #f4f8fc 24.1%, #f7fbff 100%);
+    background: transparent;
     padding: 22px 18px 44px;
     font-variant-numeric: tabular-nums;
 }
 .src-app-shell {
     border: 0;
     border-radius: 0;
-    background: transparent;
+    background: transparent !important;
     box-shadow: none;
 }
 
@@ -85,7 +85,7 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(26,147,238,0.03), transparent 18%);
+    background: transparent !important;
 }
 
 .sgk-form, .src-config-engine, .src-section, .src-page-header, .src-section-title-wrap, .src-modal-grid, .src-badge-row, .src-tower-result, .src-receipt-list, .src-result-accordion, .src-storage-actions, .src-storage-panel, .src-form-field, .src-hero-copy, .src-hero-highlights, .src-section-header, .src-rights-layout, .src-tower-intro, .src-tower-journey-shell { display: grid; gap: 16px; }
@@ -121,10 +121,10 @@ input[type="number"]::-webkit-inner-spin-button {
     justify-content: space-between;
     gap: 10px;
     color: rgba(255,255,255,.92);
-    background: transparent;
-    border: 0;
+    background: transparent !important;
+    border: 0 !important;
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: none !important;
     backdrop-filter: none;
 }
 .src-toolbar-left,
@@ -1159,15 +1159,15 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* Premium usability pass: toolbar, select stability, steppers, price anchor and sidebar curation */
 .src-app-shell {
-    background: linear-gradient(180deg, #0f141a 0, #0f141a 120px, #fcfdff 120px, #fcfdff 100%);
+    background: transparent !important;
 }
 .src-top-toolbar {
     margin-top: 0;
     padding: 0;
-    border-bottom: 0;
-    background: transparent;
+    border-bottom: 0 !important;
+    background: transparent !important;
     border-radius: 0;
-    box-shadow: none;
+    box-shadow: none !important;
 }
 .src-toolbar-left,
 .src-toolbar-right {
