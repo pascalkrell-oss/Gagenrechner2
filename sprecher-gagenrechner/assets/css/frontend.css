@@ -110,15 +110,19 @@ input[type="number"]::-webkit-inner-spin-button {
 .src-top-toolbar {
     position: relative;
     z-index: 4;
-    margin: 0 auto 18px;
+    margin: 0 auto 16px;
     max-width: 1400px;
-    min-height: 44px;
-    padding: 0;
+    min-height: 0;
+    padding: 0 4px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
     color: rgba(255,255,255,.92);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
 .src-toolbar-left,
 .src-toolbar-right,
@@ -135,9 +139,9 @@ input[type="number"]::-webkit-inner-spin-button {
 .src-toolbar-chip {
     border: 1px solid transparent;
     border-radius: 999px;
-    background: rgba(15,20,26,.26);
+    background: transparent;
     color: rgba(255,255,255,.9);
-    padding: 8px 12px;
+    padding: 7px 10px;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -151,22 +155,22 @@ input[type="number"]::-webkit-inner-spin-button {
 .src-toolbar-label i { font-size: 12px; }
 .src-toolbar-btn:hover,
 .src-toolbar-chip:hover {
-    background: rgba(255,255,255,.12);
-    border-color: rgba(255,255,255,.24);
+    background: rgba(255,255,255,.08);
+    border-color: rgba(255,255,255,.2);
 }
 .src-toolbar-btn--ghost {
-    border-color: rgba(255,255,255,.24);
-    background: rgba(255,255,255,.04);
+    border-color: rgba(255,255,255,.2);
+    background: transparent;
 }
 .src-toolbar-chip {
-    border-color: rgba(255,255,255,.22);
-    min-width: 42px;
+    border-color: transparent;
+    min-width: 38px;
     justify-content: center;
-    padding: 8px 10px;
+    padding: 6px 9px;
 }
 .src-toolbar-chip.is-active {
-    background: rgba(26,147,238,.26);
-    border-color: rgba(143,210,255,.58);
+    background: rgba(26,147,238,.22);
+    border-color: rgba(143,210,255,.45);
     color: #d8f0ff;
 }
 .src-toolbar-label {
@@ -1152,9 +1156,10 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .src-top-toolbar {
     margin-top: 0;
-    padding: 4px 0 14px;
+    padding: 2px 4px 12px;
     border-bottom: 0;
     background: transparent;
+    border-radius: 0;
     box-shadow: none;
 }
 .src-toolbar-left,
@@ -1168,12 +1173,12 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .src-toolbar-btn,
 .src-toolbar-chip {
-    min-height: 34px;
-    padding: 7px 11px;
+    min-height: 30px;
+    padding: 6px 10px;
 }
 .src-toolbar-currency {
     padding: 0;
-    border-radius: 999px;
+    border-radius: 0;
     border: 0;
     background: transparent;
 }
@@ -1182,7 +1187,7 @@ input[type="number"]::-webkit-inner-spin-button {
     background: transparent;
 }
 .src-toolbar-chip.is-active {
-    background: rgba(26,147,238,.36);
+    background: rgba(26,147,238,.24);
 }
 
 .src-native-select {
