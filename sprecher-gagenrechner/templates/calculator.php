@@ -20,13 +20,13 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 			<section class="src-hero-panel src-section--glass" aria-label="Einführung in den Rechner">
 				<div class="src-hero-copy">
 					<p class="src-page-eyebrow"><?php esc_html_e( 'Sprecher Gagenrechner', 'sprecher-gagenrechner' ); ?></p>
-					<h2><?php esc_html_e( 'In wenigen Schritten zu einer belastbaren Preisempfehlung.', 'sprecher-gagenrechner' ); ?></h2>
-					<p class="src-hero-lead"><?php esc_html_e( 'Du wirst klar durch Projektart, Einsatz, Rechte und Umfang geführt. Für die Empfehlung sind vor allem Gebiet, Laufzeit, Medium und zusätzliche Nutzungsrechte entscheidend.', 'sprecher-gagenrechner' ); ?></p>
+					<h2><?php esc_html_e( 'In wenigen Schritten zu einer professionellen Preisempfehlung.', 'sprecher-gagenrechner' ); ?></h2>
+					<p class="src-hero-lead"><?php esc_html_e( 'Du wirst klar durch Projektart, Einsatz, Rechte und Umfang geführt. Besonders prägend sind Gebiet, Laufzeit, Medium und zusätzliche Nutzungsrechte.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
 				<div class="src-hero-highlights" aria-label="So ist der Rechner aufgebaut">
 					<div class="src-hero-stat"><strong><?php esc_html_e( 'So ist der Ablauf', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( '1. Projekt wählen · 2. Nutzung einordnen · 3. Rechte festlegen · 4. Umfang ergänzen · 5. Extras prüfen.', 'sprecher-gagenrechner' ); ?></span></div>
 					<div class="src-hero-stat"><strong><?php esc_html_e( 'Was den Preis besonders prägt', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Vor allem Rechte und Verwertung beeinflussen die Empfehlung: Wo läuft das Projekt, wie lange und über welche Kanäle?', 'sprecher-gagenrechner' ); ?></span></div>
-					<div class="src-hero-stat"><strong><?php esc_html_e( 'Ergebnis', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Preisrahmen, Rechteübersicht und Angebotsvorbereitung aktualisieren sich automatisch, sobald Deine Angaben vollständig sind.', 'sprecher-gagenrechner' ); ?></span></div>
+					<div class="src-hero-stat"><strong><?php esc_html_e( 'Ergebnis', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Preisrahmen, Rechteübersicht und Angebotsbasis aktualisieren sich automatisch, sobald Deine Angaben vollständig sind.', 'sprecher-gagenrechner' ); ?></span></div>
 				</div>
 			</section>
 
@@ -103,7 +103,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					<div class="src-section-header">
 						<div class="src-step-badge">02</div>
 						<div class="src-section-title-wrap">
-							<p class="src-section-title"><?php esc_html_e( 'Wie wird das Projekt eingesetzt?', 'sprecher-gagenrechner' ); ?></p>
+							<p class="src-section-title"><?php esc_html_e( 'Wie wird das Projekt genutzt?', 'sprecher-gagenrechner' ); ?></p>
 							<p class="src-section-copy"><?php esc_html_e( 'Hier legst Du Variante und Nutzung fest. So wird Dein Projekt sauber der passenden Kalkulationsroute zugeordnet.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
@@ -121,7 +121,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<div class="src-panel-row src-panel-row--stack">
 							<div class="src-row-content">
 								<div class="src-row-label"><?php esc_html_e( 'Welche Nutzung liegt vor?', 'sprecher-gagenrechner' ); ?></div>
-								<div class="src-row-desc"><?php esc_html_e( 'Nur dort sichtbar, wo zwischen organischer Nutzung und Paid-Kampagne unterschieden werden muss.', 'sprecher-gagenrechner' ); ?></div>
+								<div class="src-row-desc"><?php esc_html_e( 'Diese Auswahl erscheint nur, wenn zwischen organischer Nutzung und Paid-Kampagne unterschieden wird.', 'sprecher-gagenrechner' ); ?></div>
 							</div>
 							<select id="sgk-usage-type" name="usage_type" class="src-native-select src-hidden-select">
 								<option value="organic_branding"><?php esc_html_e( 'Branding / organisch / nicht paid', 'sprecher-gagenrechner' ); ?></option>
@@ -216,8 +216,8 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					<div class="src-section-header">
 						<div class="src-step-badge">04</div>
 						<div class="src-section-title-wrap">
-							<p class="src-section-title"><?php esc_html_e( 'Wie groß ist der Umfang?', 'sprecher-gagenrechner' ); ?></p>
-							<p class="src-section-copy"><?php esc_html_e( 'Erfasse Minuten, Module, Sessions oder Tage – immer nur so viel, wie Dein Fall wirklich braucht.', 'sprecher-gagenrechner' ); ?></p>
+							<p class="src-section-title"><?php esc_html_e( 'Wie groß ist der Projektumfang?', 'sprecher-gagenrechner' ); ?></p>
+							<p class="src-section-copy"><?php esc_html_e( 'Erfasse Minuten, Module, Sessions oder Tage – genau in dem Umfang, den Dein Fall wirklich braucht.', 'sprecher-gagenrechner' ); ?></p>
 						</div>
 					</div>
 					<div class="src-panel-group">
@@ -236,7 +236,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				<section class="src-section src-section--glass is-disabled" data-step="extras" data-sgk-dependent-step>
 					<div class="src-section-header">
 						<div class="src-step-badge">05</div>
-						<div class="src-section-title-wrap"><p class="src-section-title"><?php esc_html_e( 'Zusatzrechte & Sonderfälle', 'sprecher-gagenrechner' ); ?></p><p class="src-section-copy"><?php esc_html_e( 'Hier ergänzt Du Rechte-Erweiterungen wie Zusatzjahre, weitere Gebiete, zusätzliche Motive oder Sonderfälle. Sichtbar ist nur, was für Deinen Fall relevant ist.', 'sprecher-gagenrechner' ); ?></p></div>
+						<div class="src-section-title-wrap"><p class="src-section-title"><?php esc_html_e( 'Zusatzrechte & Sonderfälle', 'sprecher-gagenrechner' ); ?></p><p class="src-section-copy"><?php esc_html_e( 'Hier ergänzt Du Rechte-Erweiterungen wie Zusatzjahre, weitere Gebiete, zusätzliche Motive oder Sonderfälle. Sichtbar bleibt nur, was für Deinen Fall wirklich relevant ist.', 'sprecher-gagenrechner' ); ?></p></div>
 					</div>
 					<div class="src-rights-layout">
 						<div class="src-panel-group" data-sgk-block="addon_counts">
@@ -303,20 +303,20 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 			<div class="src-tower-main">
 				<div class="src-tower-header">
 					<div>
-						<p class="src-tower-label" id="sgk-result-title"><?php esc_html_e( 'Ergebniszone in Echtzeit', 'sprecher-gagenrechner' ); ?></p>
-						<h3 class="src-tower-headline"><?php esc_html_e( 'Preisanker, Rechte und Angebotsbasis klar priorisiert.', 'sprecher-gagenrechner' ); ?></h3>
+						<p class="src-tower-label" id="sgk-result-title"><?php esc_html_e( 'Premium-Ergebniszone', 'sprecher-gagenrechner' ); ?></p>
+						<h3 class="src-tower-headline"><?php esc_html_e( 'Preisanker, Rechtebild und Angebotsstrecke klar priorisiert.', 'sprecher-gagenrechner' ); ?></h3>
 					</div>
 					<div class="src-live-badge"><span class="src-live-dot"></span><?php esc_html_e( 'Live', 'sprecher-gagenrechner' ); ?></div>
 				</div>
 				<div class="src-tower-intro">
-					<div class="src-inline-dark-panel"><strong><?php esc_html_e( 'Ergebnisstruktur', 'sprecher-gagenrechner' ); ?></strong><?php esc_html_e( 'Preisanker zuerst, Details danach.', 'sprecher-gagenrechner' ); ?></div>
+					<div class="src-inline-dark-panel"><strong><?php esc_html_e( 'So liest Du das Ergebnis', 'sprecher-gagenrechner' ); ?></strong><?php esc_html_e( 'Zuerst Preisrahmen und Kernfall, danach Rechte, Erweiterungen und Angebotsaktionen.', 'sprecher-gagenrechner' ); ?></div>
 				</div>
 				<div class="src-tower-result" data-sgk-result>
 					<div class="src-result-empty"><strong><?php esc_html_e( 'Projekt auswählen', 'sprecher-gagenrechner' ); ?></strong><p><?php esc_html_e( 'Sobald Du links eine Projektart auswählst, erscheint hier der Preisrahmen mit Rechteübersicht, Breakdown und Angebotsaktionen.', 'sprecher-gagenrechner' ); ?></p></div>
 				</div>
 				<div class="src-tower-journey-shell">
 					<div class="src-inline-dark-panel src-inline-dark-panel--subtle">
-						<strong><?php esc_html_e( 'Kernauswahl', 'sprecher-gagenrechner' ); ?></strong>
+						<strong><?php esc_html_e( 'Aktueller Projektstatus', 'sprecher-gagenrechner' ); ?></strong>
 						<div class="src-tower-journey" data-sgk-journey-summary>
 							<div class="src-tower-journey-item"><span>Projekt</span><strong><?php esc_html_e( 'Noch nicht gewählt', 'sprecher-gagenrechner' ); ?></strong></div>
 							<div class="src-tower-journey-item"><span>Rechte</span><strong><?php esc_html_e( 'Folgt nach Projektwahl', 'sprecher-gagenrechner' ); ?></strong></div>
@@ -326,11 +326,11 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				</div>
 			</div>
 			<div class="src-tower-info">
-				<div class="src-tower-info-header"><i data-lucide="info" width="16" height="16"></i><?php esc_html_e( 'Kurzinfos', 'sprecher-gagenrechner' ); ?></div>
+				<div class="src-tower-info-header"><i data-lucide="info" width="16" height="16"></i><?php esc_html_e( 'Wissensanker', 'sprecher-gagenrechner' ); ?></div>
 				<div class="src-badge-row">
-					<span class="src-inline-badge"><?php esc_html_e( 'Rechte beeinflussen den Preis direkt', 'sprecher-gagenrechner' ); ?></span>
-					<span class="src-inline-badge"><?php esc_html_e( 'Motive werden separat bewertet', 'sprecher-gagenrechner' ); ?></span>
-					<span class="src-inline-badge"><?php esc_html_e( 'Unlimited nur bei Sondervereinbarung', 'sprecher-gagenrechner' ); ?></span>
+					<span class="src-inline-badge"><?php esc_html_e( 'Rechte steuern den Lizenzwert', 'sprecher-gagenrechner' ); ?></span>
+					<span class="src-inline-badge"><?php esc_html_e( 'Zusatzmotive werden separat bewertet', 'sprecher-gagenrechner' ); ?></span>
+					<span class="src-inline-badge"><?php esc_html_e( 'Unlimited benötigt eine klare Sondervereinbarung', 'sprecher-gagenrechner' ); ?></span>
 				</div>
 			</div>
 		</aside>
@@ -341,8 +341,8 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 			<div class="src-modal-header">
 				<div>
 					<p class="src-page-eyebrow"><?php esc_html_e( 'Angebot vorbereiten', 'sprecher-gagenrechner' ); ?></p>
-					<h3 id="sgk-offer-modal-title"><?php esc_html_e( 'Angebot vor Export final prüfen', 'sprecher-gagenrechner' ); ?></h3>
-					<p><?php esc_html_e( 'Ergänze nur Angaben für das Kundendokument. Die Vorschau rechts aktualisiert sich sofort.', 'sprecher-gagenrechner' ); ?></p>
+					<h3 id="sgk-offer-modal-title"><?php esc_html_e( 'Angebot vor Versand final abstimmen', 'sprecher-gagenrechner' ); ?></h3>
+					<p><?php esc_html_e( 'Ergänze nur Angaben für das Kundendokument. Die Vorschau rechts zeigt sofort die finale Wirkung.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
 				<button type="button" class="src-btn-secondary" data-sgk-offer-close><?php esc_html_e( 'Schließen', 'sprecher-gagenrechner' ); ?></button>
 			</div>
@@ -357,7 +357,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				</section>
 				<section class="src-modal-panel"><div class="src-offer-preview-shell" data-sgk-offer-preview></div></section>
 			</div>
-			<div class="src-modal-footer"><button type="button" class="src-btn-secondary" data-feedback-label="Mailtext kopiert" data-sgk-offer-action="copy-mail"><?php esc_html_e( 'Angebotstext kopieren', 'sprecher-gagenrechner' ); ?></button><button type="button" class="src-btn-primary" data-feedback-label="Druckdialog geöffnet" data-sgk-offer-action="print"><?php esc_html_e( 'PDF drucken / speichern', 'sprecher-gagenrechner' ); ?></button></div>
+			<div class="src-modal-footer"><button type="button" class="src-btn-secondary" data-feedback-label="Mailtext kopiert" data-sgk-offer-action="copy-mail"><?php esc_html_e( 'Mailtext kopieren', 'sprecher-gagenrechner' ); ?></button><button type="button" class="src-btn-primary" data-feedback-label="Druckdialog geöffnet" data-sgk-offer-action="print"><?php esc_html_e( 'PDF erstellen', 'sprecher-gagenrechner' ); ?></button></div>
 		</div>
 	</div>
 </div>
