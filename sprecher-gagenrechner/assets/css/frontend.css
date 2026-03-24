@@ -108,12 +108,14 @@ input[type="number"]::-webkit-inner-spin-button {
     align-items: start;
 }
 .src-top-toolbar {
-    position: relative;
+    position: absolute;
+    top: 22px;
+    left: 18px;
+    right: 18px;
     z-index: 4;
-    margin: 0 auto 16px;
-    max-width: 1400px;
+    margin: 0;
     min-height: 0;
-    padding: 0 4px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -123,6 +125,7 @@ input[type="number"]::-webkit-inner-spin-button {
     border: 0;
     border-radius: 0;
     box-shadow: none;
+    backdrop-filter: none;
 }
 .src-toolbar-left,
 .src-toolbar-right,
@@ -192,6 +195,10 @@ input[type="number"]::-webkit-inner-spin-button {
 .src-toolbar-spacer { flex: 1 1 auto; min-width: 12px; }
 
 .src-config-engine { gap: 20px; }
+
+.src-layout {
+    margin-top: 52px;
+}
 .src-page-eyebrow, .src-section-title, .src-tower-label, .src-panel-row--header {
     text-transform: uppercase;
     letter-spacing: .12em;
@@ -1156,7 +1163,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .src-top-toolbar {
     margin-top: 0;
-    padding: 2px 4px 12px;
+    padding: 0;
     border-bottom: 0;
     background: transparent;
     border-radius: 0;
@@ -1270,8 +1277,11 @@ input[type="number"]::-webkit-inner-spin-button {
 
 @media (max-width: 860px) {
     .src-top-toolbar {
+        top: 16px;
+        left: 12px;
+        right: 12px;
         gap: 8px;
-        padding-top: 8px;
+        padding-top: 0;
     }
     .src-toolbar-left,
     .src-toolbar-right {
