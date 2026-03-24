@@ -1152,8 +1152,10 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 .src-top-toolbar {
     margin-top: 0;
-    padding: 10px 2px 12px;
-    border-bottom: 1px solid rgba(255,255,255,.09);
+    padding: 4px 0 14px;
+    border-bottom: 0;
+    background: transparent;
+    box-shadow: none;
 }
 .src-toolbar-left,
 .src-toolbar-right {
@@ -1170,10 +1172,10 @@ input[type="number"]::-webkit-inner-spin-button {
     padding: 7px 11px;
 }
 .src-toolbar-currency {
-    padding: 2px;
+    padding: 0;
     border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.22);
-    background: rgba(255,255,255,.04);
+    border: 0;
+    background: transparent;
 }
 .src-toolbar-chip {
     border-color: transparent;
