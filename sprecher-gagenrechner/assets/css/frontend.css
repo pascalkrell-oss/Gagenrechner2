@@ -1114,3 +1114,132 @@ input[type="number"]::-webkit-inner-spin-button {
 .src-result-card--knowledge .src-accordion-indicator::after {
     transition: transform var(--transition-smooth), opacity var(--transition-smooth), background var(--transition-smooth);
 }
+
+/* Premium usability pass: toolbar, select stability, steppers, price anchor and sidebar curation */
+.src-app-shell {
+    background: linear-gradient(180deg, #0f141a 0, #0f141a 120px, #fcfdff 120px, #fcfdff 100%);
+}
+.src-top-toolbar {
+    margin-top: 0;
+    padding: 10px 2px 12px;
+    border-bottom: 1px solid rgba(255,255,255,.09);
+}
+.src-toolbar-left,
+.src-toolbar-right {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.src-toolbar-right {
+    margin-left: auto;
+}
+.src-toolbar-btn,
+.src-toolbar-chip {
+    min-height: 34px;
+    padding: 7px 11px;
+}
+.src-toolbar-currency {
+    padding: 2px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.22);
+    background: rgba(255,255,255,.04);
+}
+.src-toolbar-chip {
+    border-color: transparent;
+    background: transparent;
+}
+.src-toolbar-chip.is-active {
+    background: rgba(26,147,238,.36);
+}
+
+.src-native-select {
+    width: 100%;
+    border: 1px solid rgba(148,163,184,.34);
+    border-radius: 16px;
+    background-color: rgba(255,255,255,.98);
+    background-image: none;
+    color: #0f172a;
+    padding: 13px 42px 13px 15px;
+    line-height: 1.35;
+    color-scheme: light;
+    overflow: visible;
+}
+.src-native-select option {
+    color: #0f172a;
+    background: #ffffff;
+}
+.src-panel-row,
+.src-panel-group,
+.src-section--glass,
+.src-config-engine,
+.src-layout {
+    overflow: visible;
+}
+
+.src-stepper {
+    min-width: 160px;
+}
+.src-stepper button {
+    touch-action: manipulation;
+    user-select: none;
+}
+.src-stepper button:active {
+    background: rgba(226,232,240,.92);
+}
+.src-stepper input {
+    width: 64px;
+}
+
+.src-result-card--price {
+    padding: 34px 32px;
+    background: rgba(255,255,255,.08);
+}
+.src-price-block {
+    gap: 18px;
+}
+.src-price-huge {
+    gap: 8px;
+    font-size: clamp(56px, 7vw, 84px);
+}
+.src-price-netto {
+    margin-top: -6px;
+    font-size: 11px;
+}
+.src-price-range {
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.18);
+}
+.src-price-range strong {
+    font-size: 20px;
+}
+.src-result-actions {
+    gap: 12px;
+    padding: 16px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 18px;
+    background: rgba(255,255,255,.03);
+}
+.src-result-actions .src-btn-primary {
+    min-height: 50px;
+}
+.src-storage-panel {
+    gap: 12px;
+}
+.src-result-card--knowledge {
+    order: 10;
+}
+
+@media (max-width: 860px) {
+    .src-top-toolbar {
+        gap: 8px;
+        padding-top: 8px;
+    }
+    .src-toolbar-left,
+    .src-toolbar-right {
+        flex-wrap: wrap;
+    }
+    .src-toolbar-right {
+        margin-left: 0;
+    }
+}

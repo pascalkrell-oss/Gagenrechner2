@@ -16,19 +16,20 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 <div class="sgk-app src-app-shell" data-sgk-app data-sgk-cases="<?php echo esc_attr( wp_json_encode( $cases ) ); ?>" data-sgk-ui-state="<?php echo esc_attr( wp_json_encode( $ui_state ) ); ?>">
 	<div class="src-app-backdrop"></div>
 	<div class="src-top-toolbar" aria-label="<?php esc_attr_e( 'Werkzeugleiste', 'sprecher-gagenrechner' ); ?>">
-		<div class="src-toolbar-group">
+		<div class="src-toolbar-left">
 			<button type="button" class="src-toolbar-btn"><i class="fa-solid fa-circle-play" aria-hidden="true"></i><span><?php esc_html_e( 'Tutorial starten', 'sprecher-gagenrechner' ); ?></span></button>
 			<button type="button" class="src-toolbar-btn"><i class="fa-solid fa-book-open" aria-hidden="true"></i><span><?php esc_html_e( 'Anleitung', 'sprecher-gagenrechner' ); ?></span></button>
 			<div class="src-toolbar-divider" aria-hidden="true"></div>
 			<span class="src-toolbar-label"><i class="fa-solid fa-coins" aria-hidden="true"></i><?php esc_html_e( 'Währung wählen', 'sprecher-gagenrechner' ); ?></span>
 			<div class="src-toolbar-currency" aria-label="<?php esc_attr_e( 'Währungsauswahl', 'sprecher-gagenrechner' ); ?>">
-				<button type="button" class="src-toolbar-chip is-active">EUR</button>
-				<button type="button" class="src-toolbar-chip">CHF</button>
-				<button type="button" class="src-toolbar-chip">USD</button>
+				<button type="button" class="src-toolbar-chip is-active" data-sgk-currency="EUR">EUR</button>
+				<button type="button" class="src-toolbar-chip" data-sgk-currency="CHF">CHF</button>
+				<button type="button" class="src-toolbar-chip" data-sgk-currency="USD">USD</button>
 			</div>
 		</div>
-		<div class="src-toolbar-spacer" aria-hidden="true"></div>
-		<button type="button" class="src-toolbar-btn src-toolbar-btn--ghost"><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i><span><?php esc_html_e( 'Gagenrechner zurücksetzen', 'sprecher-gagenrechner' ); ?></span></button>
+		<div class="src-toolbar-right">
+			<button type="button" class="src-toolbar-btn src-toolbar-btn--ghost" data-sgk-reset-calculator><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i><span><?php esc_html_e( 'Gagenrechner zurücksetzen', 'sprecher-gagenrechner' ); ?></span></button>
+		</div>
 	</div>
 	<div class="src-layout">
 		<main class="src-config-engine" aria-labelledby="sgk-config-title">
@@ -99,11 +100,11 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Redaktionell / Doku', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Kommentarstimme, Overvoice, Mindestgage', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="audiodeskription">
-							<span class="src-card-icon"><i class="fa-solid fa-universal-access" aria-hidden="true"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-audio-description" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Audiodeskription', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Minutenpreis mit Mindestgage', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="kleinraeumig">
-							<span class="src-card-icon"><i class="fa-solid fa-map-location-dot" aria-hidden="true"></i></span>
+							<span class="src-card-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
 							<span class="src-card-copy"><strong><?php esc_html_e( 'Kleinräumige Nutzung', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Lokal begrenzte Sonderfälle', 'sprecher-gagenrechner' ); ?></small></span>
 						</button>
 						<button type="button" class="src-card" data-sgk-quick-case="session_fee">
