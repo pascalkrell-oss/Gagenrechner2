@@ -79,11 +79,17 @@
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(26,147,238,0.05), transparent 18%);
+    background: linear-gradient(180deg, rgba(26,147,238,0.03), transparent 18%);
 }
 
 .sgk-form, .src-config-engine, .src-section, .src-page-header, .src-section-title-wrap, .src-modal-grid, .src-badge-row, .src-tower-result, .src-receipt-list, .src-result-accordion, .src-storage-actions, .src-storage-panel, .src-form-field, .src-hero-copy, .src-hero-highlights, .src-section-header, .src-rights-layout, .src-tower-intro, .src-tower-journey-shell { display: grid; gap: 16px; }
 button, input, textarea, select { font: inherit; }
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
 .src-layout {
     position: relative;
@@ -175,7 +181,7 @@ button, input, textarea, select { font: inherit; }
     padding: 20px 22px;
     border-radius: 22px;
     border: 1px solid var(--src-border-light);
-    background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.9));
+    background: rgba(248, 250, 252, 0.9);
     display: grid;
     align-content: start;
     gap: 10px;
@@ -261,7 +267,7 @@ button, input, textarea, select { font: inherit; }
     gap: 14px;
     cursor: pointer;
     color: var(--src-text-main);
-    background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(245,247,251,0.92));
+    background: rgba(255,255,255,0.98);
     box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
 }
@@ -272,7 +278,7 @@ button, input, textarea, select { font: inherit; }
 }
 .src-card.is-active {
     border-color: rgba(26,147,238,0.45);
-    background: linear-gradient(180deg, rgba(243, 249, 255, 0.98), rgba(235, 245, 255, 0.94));
+    background: rgba(240, 247, 255, 0.98);
     box-shadow: inset 0 0 0 1px rgba(26,147,238,0.2), 0 18px 40px rgba(26, 147, 238, 0.12);
 }
 .src-card-icon {
@@ -309,15 +315,16 @@ button, input, textarea, select { font: inherit; }
 .src-segmented-control {
     display: inline-flex;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 8px;
+    gap: 6px;
+    padding: 6px;
     border-radius: 18px;
-    background: rgba(226, 232, 240, 0.8);
+    background: rgba(226, 232, 240, 0.62);
+    border: 1px solid rgba(148, 163, 184, 0.28);
     width: fit-content;
 }
 .src-segmented-control--wrap { display: flex; }
 .src-segment-btn {
-    border: 0;
+    border: 1px solid transparent;
     background: transparent;
     color: #334155;
     padding: 11px 15px;
@@ -325,13 +332,23 @@ button, input, textarea, select { font: inherit; }
     cursor: pointer;
     font-size: 13px;
     font-weight: 600;
-    transition: var(--transition-fast);
+    transition: var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast);
 }
-.src-segment-btn:hover, .src-segment-btn:focus-visible { color: var(--src-hover); outline: none; }
+.src-segment-btn:hover {
+    color: #0f172a;
+    background: rgba(255,255,255,0.72);
+}
+.src-segment-btn:focus-visible {
+    color: #0f172a;
+    outline: none;
+    border-color: rgba(26,147,238,.44);
+    box-shadow: var(--shadow-focus);
+}
 .src-segment-btn.is-active {
-    background: #fff;
-    color: var(--src-primary);
-    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+    background: var(--src-primary);
+    border-color: var(--src-primary);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(26, 147, 238, 0.28);
 }
 
 .src-stepper {
@@ -363,6 +380,12 @@ button, input, textarea, select { font: inherit; }
     color: var(--src-text-main);
     font-size: 15px;
     font-weight: 600;
+    -moz-appearance: textfield;
+}
+.src-stepper input::-webkit-outer-spin-button,
+.src-stepper input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 .src-stepper input:focus { outline: none; }
 .src-stepper:focus-within { border-color: rgba(26,147,238,.42); box-shadow: var(--shadow-focus); }
@@ -467,13 +490,13 @@ button, input, textarea, select { font: inherit; }
     gap: 24px;
 }
 .src-tower-main {
-    background: var(--src-bg-dark);
+    background: #111a28;
     color: #fff;
     border-radius: 30px;
     padding: 24px 22px;
     box-shadow: var(--shadow-float);
     display: grid;
-    gap: 18px;
+    gap: 16px;
     border: 1px solid rgba(255,255,255,.06);
 }
 .src-tower-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding-bottom: 4px; }
@@ -497,8 +520,8 @@ button, input, textarea, select { font: inherit; }
 .src-receipt-total { padding-top: 14px; margin-top: 4px; border-top: 1px solid rgba(148,163,184,.16); color: #fff; font-size: 14px; font-weight: 700; }
 .src-rights-box, .src-inline-dark-panel, .src-storage-panel {
     gap: 14px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
     border-radius: 18px;
     padding: 18px;
     color: rgba(255,255,255,.72);
@@ -541,8 +564,45 @@ button, input, textarea, select { font: inherit; }
 .src-accordion-item:last-child { border-bottom: 0; }
 .src-accordion-btn { padding: 14px 0; color: var(--src-text-secondary); text-align: left; font-size: 13px; font-weight: 600; }
 .src-accordion-item.is-open .src-accordion-content { display: block; }
-.src-accordion-item.is-open [data-lucide="chevron-down"], .src-foldable-panel.is-open [data-lucide="chevron-down"] { transform: rotate(180deg); }
+.src-foldable-panel.is-open [data-lucide="chevron-down"] { transform: rotate(180deg); }
 .src-accordion-content { display: none; padding-bottom: 12px; font-size: 13px; }
+.src-accordion-content p { margin: 0; text-align: left; }
+.src-accordion-indicator {
+    margin-left: auto;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(100,116,139,.42);
+    position: relative;
+    transition: var(--transition-fast), transform var(--transition-fast);
+    flex: 0 0 auto;
+}
+.src-accordion-indicator::before,
+.src-accordion-indicator::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 8px;
+    height: 1.5px;
+    background: #334155;
+    border-radius: 2px;
+    transform: translate(-50%, -50%);
+    transition: var(--transition-fast);
+}
+.src-accordion-indicator::after {
+    width: 1.5px;
+    height: 8px;
+}
+.src-accordion-item.is-open .src-accordion-indicator {
+    border-color: rgba(26,147,238,.5);
+    background: rgba(26,147,238,.12);
+}
+.src-accordion-item.is-open .src-accordion-indicator::before { background: var(--src-primary); }
+.src-accordion-item.is-open .src-accordion-indicator::after {
+    transform: translate(-50%, -50%) scaleY(0);
+    opacity: 0;
+}
 
 .src-modal-backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.45); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 24px; z-index: 1000; opacity: 0; pointer-events: none; transition: var(--transition-smooth); }
 .src-modal-backdrop.is-open { opacity: 1; pointer-events: auto; }
@@ -609,7 +669,7 @@ button, input, textarea, select { font: inherit; }
 }
 .src-result-card--priority {
     border-color: rgba(26,147,238,.24);
-    background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(246,250,255,.96));
+    background: rgba(248,251,255,.98);
 }
 .src-result-card-head p,
 .src-breakdown-head p,
@@ -618,7 +678,13 @@ button, input, textarea, select { font: inherit; }
 .src-route-list,
 .src-result-list,
 .src-breakdown-main span,
-.src-breakdown-main small { color: #64748b; font-size: 13px; line-height: 1.55; margin: 0; }
+.src-breakdown-main small { color: #64748b; font-size: 13px; line-height: 1.55; margin: 0; text-align: left; }
+.src-result-note,
+.src-result-card-head p,
+.src-breakdown-main,
+.src-storage-status,
+.src-inline-dark-panel,
+.src-manual-offer-status { text-align: left; }
 .src-result-meta-card {
     padding: 12px 14px;
     border-radius: 14px;
@@ -704,11 +770,11 @@ button, input, textarea, select { font: inherit; }
     padding: 18px 20px;
     border-radius: 22px;
     border: 1px solid var(--src-border-light);
-    background: linear-gradient(180deg, rgba(248,250,252,.95), rgba(241,245,249,.92));
+    background: rgba(247, 250, 252, 0.96);
 }
 .src-rights-intro-card--primary {
     border-color: rgba(26,147,238,.28);
-    background: linear-gradient(180deg, rgba(232,244,255,.95), rgba(244,248,255,.98));
+    background: rgba(236, 246, 255, 0.96);
 }
 .src-rights-intro-card strong,
 .src-tower-journey-item strong { display:block; font-size:15px; margin-bottom:6px; }
