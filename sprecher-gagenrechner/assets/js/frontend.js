@@ -343,6 +343,7 @@
 		status.className = 'src-actions-hint ' + (validation.valid ? 'is-valid' : 'is-invalid');
 		button.disabled = !validation.valid;
 		button.setAttribute('aria-disabled', validation.valid ? 'false' : 'true');
+		button.textContent = validation.valid ? 'Ergebnis live aktualisieren' : 'Eingaben vervollständigen';
 	}
 
 	function configureRuleSelects(form, ui) {
@@ -477,10 +478,14 @@
 	}
 	function renderPackageAlternatives(alternatives) {
 		if (!alternatives.length) { return ''; }
-		return '<div class="src-breakdown-alt-list">' + alternatives.slice(0, 2).map(function (item) {
+		return '<div class="src-package-card-stack">' + alternatives.slice(0, 3).map(function (item, index) {
 			var amount = item.formatted_totals ? (item.formatted_totals.mid || item.formatted_totals.low_mid_high || '—') : '—';
 			var amountValue = parseCurrencyToNumber(amount);
-			return '<div class="src-breakdown-row src-breakdown-row--compact"><div class="src-breakdown-main"><strong>' + htmlEscape(item.label || 'Paket') + '</strong></div><div class="src-breakdown-amount src-count-animate"' + (amountValue !== null ? ' data-sgk-count-value="' + htmlEscape(amountValue) + '"' : '') + '>' + htmlEscape(amount) + '</div></div>';
+			var packageLabel = item.label || ('Paketoption ' + (index + 1));
+			return '<article class="src-package-card">' +
+				'<div class="src-package-card-top"><strong>' + htmlEscape(packageLabel) + '</strong><span class="src-package-card-price src-count-animate"' + (amountValue !== null ? ' data-sgk-count-value="' + htmlEscape(amountValue) + '"' : '') + '>' + htmlEscape(amount) + '</span></div>' +
+				'<p>' + htmlEscape('Alternative für erweiterten Einsatz oder abweichende Projektkonstellationen.') + '</p>' +
+			'</article>';
 		}).join('') + '</div>';
 	}
 	function filterRelevantNotes(notes) {
@@ -548,7 +553,9 @@
 			{ title: 'Warum ist die finale Angebotssumme trotzdem verhandelbar?', text: 'Die Empfehlung gibt einen belastbaren Rahmen. Timing, Produktionssituation, Paketumfang und Beziehung zum Kunden können den finalen Angebotswert beeinflussen.' }
 		];
 		return '<section class="src-result-card src-result-card--knowledge"><div class="src-result-card-head"><strong>Wissenswertes</strong><p>Kompakte Orientierung für Rechte, Nutzung und Angebotspraxis.</p></div><div class="src-result-accordion">' + items.map(function (item, index) {
-			return '<div class="src-accordion-item' + (index === 0 ? ' is-open' : '') + '"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>' + htmlEscape(item.title) + '</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content"><p>' + htmlEscape(item.text) + '</p></div></div>';
+			var accordionId = 'sgk-knowledge-' + index;
+			var isOpen = index === 0;
+			return '<div class="src-accordion-item' + (isOpen ? ' is-open' : '') + '"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger aria-expanded="' + (isOpen ? 'true' : 'false') + '" aria-controls="' + accordionId + '"><span>' + htmlEscape(item.title) + '</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content" id="' + accordionId + '"' + (isOpen ? '' : ' hidden') + '><p>' + htmlEscape(item.text) + '</p></div></div>';
 		}).join('') + '</div></section>';
 	}
 	function filterProjectHints(notes) {
@@ -590,7 +597,7 @@
 		var alternativesMarkup = renderPackageAlternatives(alternatives);
 		container.innerHTML = '' +
 			'<div class="src-result-hero src-result-hero--stack">' +
-				'<section class="src-result-card src-result-card--price"><div class="src-price-block"><div class="src-price-kicker">Preisrahmen & Preisanker</div><div class="src-price-huge"><span class="src-price-huge-value src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Empfohlene Spanne</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong></div></div></section>' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><p class="src-price-panel-kicker">Dein Ergebnisbereich</p><strong>Live-Preisempfehlung</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Empfohlene Spanne</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong><p>Orientierungswert für die Angebotsvorbereitung. Finale Summe kann projektspezifisch angepasst werden.</p></div></div></section>' +
 				'<div class="src-result-meta-grid src-result-meta-grid--stack">' +
 					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
 					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape(variantLabel) + '</strong></div>' +
@@ -603,7 +610,7 @@
 				'<section class="src-inline-dark-panel src-manual-offer"><strong>Angebot vorbereiten</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '</div></section>' +
 				'<section class="src-result-actions"><button type="button" class="src-btn-primary" data-sgk-action="open-pdf"><i class="fa-solid fa-file-signature" aria-hidden="true"></i> Angebot professionell vorbereiten</button><div class="src-result-btn-grid"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Zusammenfassung kopieren" data-feedback-label="Zusammenfassung kopiert" data-sgk-action="copy-summary"><i class="fa-solid fa-align-left" aria-hidden="true"></i> Zusammenfassung</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Positionen kopieren" data-feedback-label="Positionen kopiert" data-sgk-action="copy-positions"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Positionen</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Rechte kopieren" data-feedback-label="Rechte kopiert" data-sgk-action="copy-rights"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> Rechte</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Exportdaten kopieren" data-feedback-label="Exportdaten kopiert" data-sgk-action="copy-json"><i class="fa-solid fa-file-export" aria-hidden="true"></i> Exportdaten</button></div></section>' +
 				'<section class="src-storage-panel"><label for="sgk-saved-calculations">Gespeicherte Kalkulationen</label><select id="sgk-saved-calculations" data-sgk-saved-list><option value="">Bitte auswählen</option></select><div class="src-storage-actions"><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung speichern" data-feedback-label="Gespeichert" data-sgk-action="save"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> Speichern</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung laden" data-feedback-label="Geladen" data-sgk-action="load"><i class="fa-solid fa-folder-open" aria-hidden="true"></i> Laden</button><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-label="Berechnung löschen" data-feedback-label="Gelöscht" data-sgk-action="delete"><i class="fa-solid fa-trash" aria-hidden="true"></i> Löschen</button></div><div class="src-storage-status" data-sgk-storage-status>' + htmlEscape(storageAvailable() ? 'Kalkulationen werden lokal in diesem Browser gespeichert.' : 'Lokales Speichern ist in dieser Umgebung nicht verfügbar.') + '</div></section>' +
-				'<div class="src-result-accordion"><div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Projektkompass</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div><div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger><span>Breakdown für Angebot & Export</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content"><p>' + htmlEscape(((result.export_text_blocks && result.export_text_blocks.breakdown_block) || 'Der Breakdown wird nach der Berechnung ergänzt.')) + '</p></div></div></div>' +
+				'<div class="src-result-accordion"><div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger aria-expanded="true" aria-controls="sgk-project-compass"><span>Projektkompass</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content" id="sgk-project-compass"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div><div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger aria-expanded="false" aria-controls="sgk-project-breakdown"><span>Breakdown für Angebot & Export</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content" id="sgk-project-breakdown" hidden><p>' + htmlEscape(((result.export_text_blocks && result.export_text_blocks.breakdown_block) || 'Der Breakdown wird nach der Berechnung ergänzt.')) + '</p></div></div></div>' +
 				renderKnowledgeAccordion() +
 			'</div>';
 	}
@@ -716,7 +723,26 @@
 			var foldable = event.target.closest('[data-sgk-foldable-trigger]');
 			var stepButton = event.target.closest('[data-sgk-step]');
 			if (segment) { var control = segment.parentElement; var select = control.hasAttribute('data-sgk-variant-control') ? fieldNode(form, 'case_variant') : fieldNode(form, 'usage_type'); if (select) { select.value = segment.getAttribute('data-sgk-segment-value'); syncSegmentedControl(control, select.value); syncUI(); requestCalculation('segment'); } return; }
-			if (accordion) { var item = accordion.closest('.src-accordion-item'); var parent = item.parentElement; if (parent) { parent.querySelectorAll('.src-accordion-item').forEach(function (node) { if (node !== item) { node.classList.remove('is-open'); } }); } item.classList.toggle('is-open'); return; }
+			if (accordion) {
+				var item = accordion.closest('.src-accordion-item');
+				var content = item && item.querySelector('.src-accordion-content');
+				var parent = item && item.parentElement;
+				if (parent) {
+					parent.querySelectorAll('.src-accordion-item').forEach(function (node) {
+						if (node === item) { return; }
+						node.classList.remove('is-open');
+						var otherButton = node.querySelector('[data-sgk-accordion-trigger]');
+						var otherContent = node.querySelector('.src-accordion-content');
+						if (otherButton) { otherButton.setAttribute('aria-expanded', 'false'); }
+						if (otherContent) { otherContent.hidden = true; }
+					});
+				}
+				var willOpen = !item.classList.contains('is-open');
+				item.classList.toggle('is-open', willOpen);
+				accordion.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+				if (content) { content.hidden = !willOpen; }
+				return;
+			}
 			if (foldable) { foldable.closest('.src-foldable-panel').classList.toggle('is-open'); return; }
 			if (stepButton) { var stepper = stepButton.closest('[data-sgk-stepper]'); var input = stepper && stepper.querySelector('input'); if (!input) { return; } var step = parseFloat(input.getAttribute('step') || '1'); var min = parseFloat(input.getAttribute('min') || '0'); var current = parseFloat(input.value || '0'); if (isNaN(current)) { current = min || 0; } current += stepButton.getAttribute('data-sgk-step') === 'up' ? step : -step; if (!isNaN(min)) { current = Math.max(min, current); } input.value = String(Math.round(current * 100) / 100); input.dispatchEvent(new Event('input', { bubbles: true })); }
 		});
