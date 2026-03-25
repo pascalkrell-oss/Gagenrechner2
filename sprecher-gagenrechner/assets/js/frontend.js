@@ -123,7 +123,12 @@
 		});
 		if (activeRightsToggles.length) { rightsParts.push(activeRightsToggles.join(' · ')); }
 		if (rightsNode) {
-			rightsNode.innerHTML = '<strong>Rechtekompass</strong><p>' + htmlEscape(rightsParts.length ? rightsParts.join(' · ') : 'Sobald Projekt und Variante gewählt sind, fassen wir hier Gebiet, Laufzeit, Medien und aktive Erweiterungen kompakt zusammen.') + '</p>';
+			rightsNode.innerHTML = '<strong>Rechtekompass</strong><div class="src-rights-summary-list">' +
+				'<div class="src-rights-summary-row"><span>Gebiet</span><strong>' + htmlEscape(summarizeSelection(formData.territory)) + '</strong></div>' +
+				'<div class="src-rights-summary-row"><span>Laufzeit</span><strong>' + htmlEscape(summarizeSelection(formData.duration_term)) + '</strong></div>' +
+				'<div class="src-rights-summary-row"><span>Medium</span><strong>' + htmlEscape(summarizeSelection(formData.medium)) + '</strong></div>' +
+				(rightsParts.length ? '<div class="src-rights-summary-row"><span>Aktiv</span><strong>' + htmlEscape(rightsParts.slice(3).join(' · ') || '—') + '</strong></div>' : '') +
+				'</div>';
 		}
 		if (journeyNode) {
 			var scopeSummary = 'Noch offen';
@@ -572,20 +577,7 @@
 		});
 		return values;
 	}
-	function renderKnowledgeAccordion() {
-		var items = [
-			{ title: 'Berechnungsgrundlage', copy: 'Projektart, Rechte und Umfang ergeben gemeinsam den Honorarrahmen.' },
-			{ title: 'Textlänge & Dauer', copy: 'Minuten, Module oder Sessions wirken direkt auf die Produktionsbasis.' },
-			{ title: 'Buyouts & Unlimited', copy: 'Unbegrenzte Rechte müssen klar vereinbart werden und erhöhen den Lizenzwert.' },
-			{ title: 'Studio & Technik', copy: 'Studioanforderungen und Technik-Setup können zusätzlichen Aufwand erzeugen.' },
-			{ title: 'Korrekturen & Revisionen', copy: 'Korrekturschleifen sollten früh abgestimmt werden, um den Aufwand planbar zu halten.' },
-			{ title: 'Exklusivität & Konkurrenzschutz', copy: 'Exklusivität braucht klare Laufzeit, Gebiet und Nutzungsumfang.' }
-		];
-		return '<section class="src-result-card src-result-card--knowledge"><div class="src-result-card-head"><strong>Wissenswertes</strong><p>Kurz erklärt – nur das Wesentliche.</p></div><div class="src-knowledge-accordion">' + items.map(function (item, index) {
-			var id = 'sgk-result-knowledge-' + index;
-			return '<div class="src-accordion-item' + (index === 0 ? ' is-open' : '') + '"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger aria-expanded="' + (index === 0 ? 'true' : 'false') + '" aria-controls="' + id + '"><span>' + htmlEscape(item.title) + '</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content" id="' + id + '"' + (index === 0 ? '' : ' hidden') + '><p>' + htmlEscape(item.copy) + '</p></div></div>';
-		}).join('') + '</div></section>';
-	}
+	function renderKnowledgeAccordion() { return ''; }
 	function filterProjectHints(notes) {
 		return (notes || []).filter(function (note) {
 			return /(hinweis|sonderfall|zusatz|rechte|lizenz|nutzung|territ|laufzeit|medium)/i.test(String(note || ''));
@@ -621,19 +613,19 @@
 		}).join('') : '<div class="src-receipt-item"><span>Angebotspositionen folgen mit der Berechnung.</span><span>' + htmlEscape(totals.mid || '0,00 €') + '</span></div>';
 		var notesMarkup = notes.length ? '<div class="src-result-micro-badges">' + notes.slice(0, 2).map(function (item) { return '<span class="src-result-micro-badge src-result-micro-badge--soft">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '';
 		var hasExtensionContent = extensionItems.length || notes.length;
-		var extensionMarkup = hasExtensionContent ? '<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Nur wirklich aktive Erweiterungen und konkrete Projekthinweise.</p></div>' + (extensionItems.length ? '<div class="src-result-micro-badges">' + extensionItems.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + notesMarkup + '</section>' : '';
+		var extensionMarkup = hasExtensionContent ? '<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong></div>' + (extensionItems.length ? '<div class="src-result-micro-badges">' + extensionItems.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + notesMarkup + '</section>' : '';
 		var alternativesMarkup = renderPackageAlternatives(alternatives);
 		container.classList.remove('sgk-result-flash');
 		container.innerHTML = '' +
 			'<div class="src-result-hero src-result-hero--stack">' +
-				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><p class="src-price-panel-kicker">Ergebnis</p><strong>Live-Preisempfehlung</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value sgk-price src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Range</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong><p>Ø Preisempfehlung für die Angebotsvorbereitung. </p></div></div></section>' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><strong>Live-Preisempfehlung</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value sgk-price src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Range</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong><p>Ø Preisempfehlung für die Angebotsvorbereitung. </p></div></div></section>' +
 				'<div class="src-result-meta-grid src-result-meta-grid--stack">' +
 					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
 					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape(variantLabel) + '</strong></div>' +
 				'</div>' +
 			'</div>' +
 			'<div class="src-result-grid src-result-grid--stack">' +
-				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong><p>Diese Angaben beeinflussen den Lizenzwert besonders stark.</p></div><div class="src-keyvalue-list"><div class="src-keyvalue-row"><span>Gebiet</span><strong>' + htmlEscape(rightsSummary.territory) + '</strong></div><div class="src-keyvalue-row"><span>Laufzeit</span><strong>' + htmlEscape(rightsSummary.duration) + '</strong></div><div class="src-keyvalue-row"><span>Medien</span><strong>' + htmlEscape(rightsSummary.media) + '</strong></div></div>' + (rightsSummary.chips.length ? '<div class="src-result-micro-badges">' + rightsSummary.chips.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + '</section>' +
+				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Rechte & Verwertung</strong></div><div class="src-keyvalue-list"><div class="src-keyvalue-row"><span>Gebiet</span><strong>' + htmlEscape(rightsSummary.territory) + '</strong></div><div class="src-keyvalue-row"><span>Laufzeit</span><strong>' + htmlEscape(rightsSummary.duration) + '</strong></div><div class="src-keyvalue-row"><span>Medien</span><strong>' + htmlEscape(rightsSummary.media) + '</strong></div></div>' + (rightsSummary.chips.length ? '<div class="src-result-micro-badges">' + rightsSummary.chips.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + '</section>' +
 				extensionMarkup +
 				'<section class="src-result-card"><div class="src-result-card-head"><strong>Breakdown & Pakete</strong><p>Die wichtigsten Preisbausteine kompakt und nachvollziehbar.</p></div><div class="src-breakdown-section">' + renderBreakdownRows(breakdownItems) + '</div>' + (alternativesMarkup ? '<div class="src-result-subsection"><strong>Paket-Alternativen</strong>' + alternativesMarkup + '</div>' : '') + '</section>' +
 				'<section class="src-inline-dark-panel src-manual-offer"><strong>Angebot vorbereiten</strong><div class="src-manual-offer-row"><input type="number" min="0" step="0.01" value="' + htmlEscape(result.manual_offer_total || '') + '" placeholder="z. B. 2450.00" data-sgk-manual-offer /><button type="button" class="src-btn-secondary src-btn-secondary--dark" data-sgk-sync-manual-offer>Als Angebotswert übernehmen</button></div><div class="src-manual-offer-status ' + (manualValidation.valid ? 'is-valid' : 'is-invalid') + '">' + htmlEscape(manualValidation.message) + '</div><div class="src-storage-status">Aktuell hinterlegt: ' + htmlEscape(manualOffer) + '</div><div class="src-receipt-list src-receipt-list--detailed">' + positionMarkup + '</div></section>' +
@@ -696,12 +688,16 @@
 		function requestCalculation(reason) {
 			var state = app.__sgkState;
 			if (!state.normalizedPayload || !state.normalizedPayload.case_key) { resultContainer.innerHTML = DEFAULT_RESULT_MESSAGE; return; }
-			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.innerHTML = '<div class="src-result-state src-result-state--progress"><span class="src-result-state-label">Status</span><strong>In Vorbereitung</strong><p>Projekt: ' + htmlEscape(summarizeSelection(state.normalizedPayload.case_key)) + '</p><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
+			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.classList.remove('is-updating'); resultContainer.innerHTML = '<div class="src-result-state src-result-state--progress"><span class="src-result-state-label">Status</span><strong>In Vorbereitung</strong><p>Projekt: ' + htmlEscape(summarizeSelection(state.normalizedPayload.case_key)) + '</p><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
 			abortPendingRequest();
 			requestSequence += 1;
 			state.activeRequestId = requestSequence;
 			activeController = typeof AbortController === 'function' ? new AbortController() : null;
-			resultContainer.innerHTML = LOADING_RESULT_MESSAGE;
+			if (!app.__sgkLastPayload) {
+				resultContainer.innerHTML = LOADING_RESULT_MESSAGE;
+			} else {
+				resultContainer.classList.add('is-updating');
+			}
 			var payload = clone(state.normalizedPayload);
 			payload.client_request_id = String(requestSequence);
 			payload.client_reason = reason || 'change';
@@ -714,6 +710,7 @@
 					app.__sgkLastPayload = json;
 					state.result = json.result;
 					renderResult(resultContainer, json, payload);
+					resultContainer.classList.remove('is-updating');
 					animatePriceCounters(resultContainer, previousCounterValues);
 					updateExpertBadges(app, json.ui_state || {});
 					updateRedirectBanner(app, json);
@@ -723,6 +720,7 @@
 					if (error && error.name === 'AbortError') { return; }
 					if (String(state.activeRequestId) !== String(payload.client_request_id)) { return; }
 					updateRedirectBanner(app, error && error.payload ? error.payload : null);
+					resultContainer.classList.remove('is-updating');
 					resultContainer.innerHTML = ERROR_RESULT_MESSAGE;
 				});
 		}
