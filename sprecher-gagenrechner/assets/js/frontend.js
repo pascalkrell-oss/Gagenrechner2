@@ -4,7 +4,7 @@
 	var STORAGE_VERSION = 2;
 	var STORAGE_KEY = 'sgk_calculations_v' + STORAGE_VERSION;
 	var APP_STATE_VERSION = 2;
-	var DEFAULT_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Projekt auswählen</strong><p>Starte links mit der Projektart. Danach entsteht hier schrittweise Deine kuratierte Ergebnis- und Angebotszone.</p></div>';
+	var DEFAULT_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Noch keine Berechnung</strong><p>Wähle links zuerst ein Projekt. Danach führen wir dich Schritt für Schritt zu einer Live-Preisempfehlung.</p></div>';
 	var LOADING_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Ergebnis wird aktualisiert</strong><p>Preisrahmen, Rechtebild und Angebotsbasis werden neu aufgebaut.</p></div>';
 	var ERROR_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Berechnung derzeit nicht verfügbar</strong><p>Bitte prüfe Deine Angaben zu Projekt, Rechten und Umfang und starte die Berechnung erneut.</p></div>';
 	var CASE_UI = {
@@ -343,7 +343,7 @@
 		status.className = 'src-actions-hint ' + (validation.valid ? 'is-valid' : 'is-invalid');
 		button.disabled = !validation.valid;
 		button.setAttribute('aria-disabled', validation.valid ? 'false' : 'true');
-		button.textContent = validation.valid ? 'Ergebnis live aktualisieren' : 'Eingaben vervollständigen';
+		button.textContent = validation.valid ? 'Angebot erstellen' : 'Eingaben vervollständigen';
 	}
 
 	function configureRuleSelects(form, ui) {
@@ -544,18 +544,12 @@
 	}
 	function renderKnowledgeAccordion() {
 		var items = [
-			{ title: 'Warum sind Nutzungsrechte so wichtig?', text: 'Die Aufnahme ist nur ein Teil der Leistung. Erst Gebiet, Laufzeit und Medien definieren den wirtschaftlichen Nutzungswert der Stimme.' },
-			{ title: 'Gilt die Gage pro Motiv oder pro Nutzung?', text: 'Beides kann relevant sein: Das Grundhonorar deckt den Produktionsfall, zusätzliche Motive, Versionen oder Verwertungen werden separat ergänzt.' },
-			{ title: 'Wann werden Zusatzjahre oder Zusatzgebiete wichtig?', text: 'Sobald ein Projekt länger oder in weiteren Märkten läuft als ursprünglich geplant. So bleibt die Lizenz sauber, nachvollziehbar und verhandelbar.' },
-			{ title: 'Was bedeutet räumliche Nutzung in der Praxis?', text: 'Räumliche Nutzung beschreibt den tatsächlichen Ausspielraum – lokal, national, DACH, EU oder international. Mit Reichweite steigt üblicherweise der Lizenzwert.' },
-			{ title: 'Was ist mit Reminder, Archivnutzung oder Nachnutzung gemeint?', text: 'Das sind eigenständige Nutzungsfälle außerhalb der Basiskonfiguration. Sie werden nur ergänzt, wenn sie wirklich vereinbart oder später aktiviert werden.' },
-			{ title: 'Wann ist eine Unlimited-Nutzung sinnvoll?', text: 'Wenn Kunde und Produktion bewusst dauerhaft und breit investieren wollen. Wegen der Reichweite sollte diese Option immer klar separat vereinbart werden.' },
-			{ title: 'Warum ist die finale Angebotssumme trotzdem verhandelbar?', text: 'Die Empfehlung gibt einen belastbaren Rahmen. Timing, Produktionssituation, Paketumfang und Beziehung zum Kunden können den finalen Angebotswert beeinflussen.' }
+			'Rechte steuern den Lizenzwert',
+			'Zusatzmotive werden separat bewertet',
+			'Unlimited braucht Vereinbarung'
 		];
-		return '<section class="src-result-card src-result-card--knowledge"><div class="src-result-card-head"><strong>Wissenswertes</strong><p>Kompakte Orientierung für Rechte, Nutzung und Angebotspraxis.</p></div><div class="src-result-accordion">' + items.map(function (item, index) {
-			var accordionId = 'sgk-knowledge-' + index;
-			var isOpen = index === 0;
-			return '<div class="src-accordion-item' + (isOpen ? ' is-open' : '') + '"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger aria-expanded="' + (isOpen ? 'true' : 'false') + '" aria-controls="' + accordionId + '"><span>' + htmlEscape(item.title) + '</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content" id="' + accordionId + '"' + (isOpen ? '' : ' hidden') + '><p>' + htmlEscape(item.text) + '</p></div></div>';
+		return '<section class="src-result-card src-result-card--knowledge"><div class="src-result-card-head"><strong>Wissenswertes</strong><p>Kompakte Orientierung für Rechte, Nutzung und Angebotspraxis.</p></div><div class="sgk-hints">' + items.map(function (item) {
+			return '<span class="sgk-hint-pill">' + htmlEscape(item) + '</span>';
 		}).join('') + '</div></section>';
 	}
 	function filterProjectHints(notes) {
@@ -595,9 +589,10 @@
 		var hasExtensionContent = extensionItems.length || notes.length;
 		var extensionMarkup = hasExtensionContent ? '<section class="src-result-card"><div class="src-result-card-head"><strong>Erweiterungen & Sonderfälle</strong><p>Nur wirklich aktive Erweiterungen und konkrete Projekthinweise.</p></div>' + (extensionItems.length ? '<div class="src-result-micro-badges">' + extensionItems.map(function (item) { return '<span class="src-result-micro-badge">' + htmlEscape(item) + '</span>'; }).join('') + '</div>' : '') + notesMarkup + '</section>' : '';
 		var alternativesMarkup = renderPackageAlternatives(alternatives);
+		container.classList.remove('sgk-result-flash');
 		container.innerHTML = '' +
 			'<div class="src-result-hero src-result-hero--stack">' +
-				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><p class="src-price-panel-kicker">Dein Ergebnisbereich</p><strong>Live-Preisempfehlung</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Empfohlene Spanne</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong><p>Orientierungswert für die Angebotsvorbereitung. Finale Summe kann projektspezifisch angepasst werden.</p></div></div></section>' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><p class="src-price-panel-kicker">Dein Ergebnisbereich</p><strong>Live-Preisempfehlung</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value sgk-price src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Range</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong><p>Ø Preisempfehlung für die Angebotsvorbereitung. Finale Summe kann projektspezifisch angepasst werden.</p></div></div></section>' +
 				'<div class="src-result-meta-grid src-result-meta-grid--stack">' +
 					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
 					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape(variantLabel) + '</strong></div>' +
@@ -613,6 +608,7 @@
 				'<div class="src-result-accordion"><div class="src-accordion-item is-open"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger aria-expanded="true" aria-controls="sgk-project-compass"><span>Projektkompass</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content" id="sgk-project-compass"><p>' + htmlEscape(copyBlocks.summary) + '</p></div></div><div class="src-accordion-item"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger aria-expanded="false" aria-controls="sgk-project-breakdown"><span>Breakdown für Angebot & Export</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content" id="sgk-project-breakdown" hidden><p>' + htmlEscape(((result.export_text_blocks && result.export_text_blocks.breakdown_block) || 'Der Breakdown wird nach der Berechnung ergänzt.')) + '</p></div></div></div>' +
 				renderKnowledgeAccordion() +
 			'</div>';
+		window.requestAnimationFrame(function () { container.classList.add('sgk-result-flash'); });
 	}
 	function hydrateOfferModal(app, result, formData) { var modal = app.querySelector('[data-sgk-offer-modal]'); var preview = modal.querySelector('[data-sgk-offer-preview]'); var status = modal.querySelector('[data-sgk-offer-status]'); var offerDate = modal.querySelector('[data-sgk-offer-meta="offer_date"]'); if (offerDate && !offerDate.value) { offerDate.value = todayIso(); } var meta = getOfferMeta(app, formData); var offerPreview = renderOfferPreview(result, formData, meta); preview.innerHTML = offerPreview.html; status.textContent = offerPreview.validation.message; status.className = 'src-field-hint src-manual-offer-status ' + (offerPreview.validation.valid ? 'is-valid' : 'is-invalid'); app.__sgkOfferPreview = offerPreview; }
 
@@ -666,7 +662,7 @@
 		function requestCalculation(reason) {
 			var state = app.__sgkState;
 			if (!state.normalizedPayload || !state.normalizedPayload.case_key) { resultContainer.innerHTML = DEFAULT_RESULT_MESSAGE; return; }
-			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.innerHTML = '<div class="src-result-empty"><strong>Für das Ergebnis fehlen noch Angaben</strong><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
+			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.innerHTML = '<div class="src-result-empty"><strong>Berechnung in Vorbereitung</strong><p>Projekt: ' + htmlEscape(summarizeSelection(state.normalizedPayload.case_key)) + ' · Gebiet: ' + htmlEscape(summarizeSelection(state.normalizedPayload.territory)) + ' · Laufzeit: ' + htmlEscape(summarizeSelection(state.normalizedPayload.duration_term)) + '</p><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
 			abortPendingRequest();
 			requestSequence += 1;
 			state.activeRequestId = requestSequence;
