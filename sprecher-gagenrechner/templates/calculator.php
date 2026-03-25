@@ -36,13 +36,13 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 			<section class="src-hero-panel src-section--glass" aria-label="Einführung in den Rechner">
 				<div class="src-hero-copy">
 					<p class="src-page-eyebrow"><?php esc_html_e( 'Sprecher Gagenrechner', 'sprecher-gagenrechner' ); ?></p>
-					<h2><?php esc_html_e( 'In wenigen Schritten zu einer professionellen Preisempfehlung.', 'sprecher-gagenrechner' ); ?></h2>
-					<p class="src-hero-lead"><?php esc_html_e( 'Du wirst klar durch Projektart, Einsatz, Rechte und Umfang geführt. Besonders prägend sind Gebiet, Laufzeit, Medium und zusätzliche Nutzungsrechte.', 'sprecher-gagenrechner' ); ?></p>
+					<h2><?php esc_html_e( 'Lizenzwert und Preis live im Blick.', 'sprecher-gagenrechner' ); ?></h2>
+					<p class="src-hero-lead"><?php esc_html_e( 'Wähle Projekt und Nutzung, ergänze Rechte und Umfang – der Ergebnisbereich rechts aktualisiert sich fortlaufend.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
-				<div class="src-hero-highlights" aria-label="So ist der Rechner aufgebaut">
-					<div class="src-hero-stat"><strong><?php esc_html_e( 'So ist der Ablauf', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( '1. Projekt wählen · 2. Nutzung einordnen · 3. Rechte festlegen · 4. Umfang ergänzen · 5. Extras prüfen.', 'sprecher-gagenrechner' ); ?></span></div>
-					<div class="src-hero-stat"><strong><?php esc_html_e( 'Was den Preis besonders prägt', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Vor allem Rechte und Verwertung beeinflussen die Empfehlung: Wo läuft das Projekt, wie lange und über welche Kanäle?', 'sprecher-gagenrechner' ); ?></span></div>
-					<div class="src-hero-stat"><strong><?php esc_html_e( 'Ergebnis', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Preisrahmen, Rechteübersicht und Angebotsbasis aktualisieren sich automatisch, sobald Deine Angaben vollständig sind.', 'sprecher-gagenrechner' ); ?></span></div>
+				<div class="src-hero-highlights" aria-label="Kompakter Ablauf">
+					<div class="src-hero-stat"><strong><?php esc_html_e( '1. Projekt wählen', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Falltyp und Variante festlegen.', 'sprecher-gagenrechner' ); ?></span></div>
+					<div class="src-hero-stat"><strong><?php esc_html_e( '2. Nutzung definieren', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Rechte, Medien und Umfang präzisieren.', 'sprecher-gagenrechner' ); ?></span></div>
+					<div class="src-hero-stat"><strong><?php esc_html_e( '3. Preis live sehen', 'sprecher-gagenrechner' ); ?></strong><span><?php esc_html_e( 'Spanne, Hinweise und nächste Schritte direkt rechts.', 'sprecher-gagenrechner' ); ?></span></div>
 				</div>
 			</section>
 
@@ -310,7 +310,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				</section>
 
 				<div class="src-actions">
-					<button type="submit" class="src-btn-primary" data-sgk-submit><?php esc_html_e( 'Preisempfehlung berechnen', 'sprecher-gagenrechner' ); ?></button>
+					<button type="submit" class="src-btn-primary" data-sgk-submit><?php esc_html_e( 'Ergebnis aktualisieren & nächsten Schritt starten', 'sprecher-gagenrechner' ); ?></button>
 					<p class="src-actions-hint" data-sgk-validation-status><?php esc_html_e( 'Bitte starte mit einer Projektart und ergänze danach die benötigten Pflichtfelder.', 'sprecher-gagenrechner' ); ?></p>
 				</div>
 			</form>
