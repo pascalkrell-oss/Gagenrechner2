@@ -4,8 +4,8 @@
 	var STORAGE_VERSION = 2;
 	var STORAGE_KEY = 'sgk_calculations_v' + STORAGE_VERSION;
 	var APP_STATE_VERSION = 2;
-	var DEFAULT_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Noch keine Berechnung</strong><p>Wähle links zuerst ein Projekt. Danach führen wir dich Schritt für Schritt zu einer Live-Preisempfehlung.</p></div>';
-	var LOADING_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Ergebnis wird aktualisiert</strong><p>Preisrahmen, Rechtebild und Angebotsbasis werden neu aufgebaut.</p></div>';
+	var DEFAULT_RESULT_MESSAGE = '<div class="src-result-state src-result-state--empty"><span class="src-result-state-label">Status</span><strong>Noch keine Auswahl</strong><p>Starte mit einem Projekt, um den Preis live zu berechnen.</p></div>';
+	var LOADING_RESULT_MESSAGE = '<div class="src-result-state src-result-state--progress"><span class="src-result-state-label">Status</span><strong>In Vorbereitung</strong><p>Deine Eingaben werden geprüft und der Preis wird aktualisiert.</p></div>';
 	var ERROR_RESULT_MESSAGE = '<div class="src-result-empty"><strong>Berechnung derzeit nicht verfügbar</strong><p>Bitte prüfe Deine Angaben zu Projekt, Rechten und Umfang und starte die Berechnung erneut.</p></div>';
 	var CASE_UI = {
 		werbung_mit_bild: { variantOptions: [['online_video_paid_media', 'Online Video Paid Media'], ['atv_ctv_video_spot', 'ATV / CTV Video Spot'], ['linear_tv_spot_national', 'Linear TV Spot national'], ['linear_tv_spot_regional', 'Linear TV Spot regional'], ['tv_patronat', 'TV Patronat'], ['atv_ctv_patronat', 'ATV / CTV Patronat'], ['kino_spot_national', 'Kino Spot national'], ['kino_spot_regional', 'Kino Spot regional'], ['pos_event_messe', 'POS / Event / Messe'], ['layout_animatic_moodfilm_scribble', 'Layout / Animatic / Moodfilm / Scribble']], show: ['variant', 'usage_type', 'duration_term', 'territory', 'medium', 'addon_counts', 'rights_toggles'], scopeCopy: 'Bei Werbefällen stehen Spot-Ausprägung, Rechte-Erweiterungen und Zusatzmotive im Fokus.' },
@@ -249,7 +249,16 @@
 		if (variantRule && Array.isArray(variantRule.required)) {
 			variantRule.required.forEach(function (field) { if (requiredFields.indexOf(field) === -1) { requiredFields.push(field); } });
 		}
-		return { selectedCase: selectedCase, effectiveCase: effectiveCase, caseConfig: resolvedCaseConfig, visibleBlocks: visibleBlocks, requiredFields: requiredFields };
+		var usageBlocks = ['variant', 'usage_type'];
+		var rightsBlocks = ['territory', 'duration_term', 'medium'];
+		var visibleUsageBlocks = usageBlocks.filter(function (block) { return visibleBlocks.indexOf(block) !== -1; });
+		var visibleRightsBlocks = rightsBlocks.filter(function (block) { return visibleBlocks.indexOf(block) !== -1; }).filter(function (block) {
+			if (block === 'territory') { return (resolvedCaseConfig.allowed_territories || []).length > 0; }
+			if (block === 'duration_term') { return (resolvedCaseConfig.allowed_durations || []).length > 0; }
+			if (block === 'medium') { return (resolvedCaseConfig.allowed_media || []).length > 0; }
+			return false;
+		});
+		return { selectedCase: selectedCase, effectiveCase: effectiveCase, caseConfig: resolvedCaseConfig, visibleBlocks: visibleBlocks, requiredFields: requiredFields, visibleUsageBlocks: visibleUsageBlocks, visibleRightsBlocks: visibleRightsBlocks };
 	}
 
 	function isCaseFieldAllowed(ui, fieldName, formData) {
@@ -364,6 +373,27 @@
 		if (expertShell) { expertShell.classList.toggle('is-disabled', !hasSelection); }
 		var scopeCopy = form.querySelector('[data-sgk-scope-copy]');
 		if (scopeCopy) { scopeCopy.textContent = hasSelection ? buildScopeGuidance(serializeForm(form), ui) : 'Wähle zuerst eine Projektart. Danach zeigen wir die passenden Umfangsangaben.'; }
+		var usageStep = form.querySelector('[data-sgk-step-shell="usage"]');
+		if (usageStep) {
+			var showUsageStep = hasSelection && (ui.visibleUsageBlocks || []).length > 0;
+			usageStep.hidden = !showUsageStep;
+			usageStep.classList.toggle('sgk-hidden', !showUsageStep);
+		}
+		var rightsStep = form.querySelector('[data-sgk-step-shell="rights"]');
+		if (rightsStep) {
+			var showRightsStep = hasSelection && (ui.visibleRightsBlocks || []).length > 0;
+			rightsStep.hidden = !showRightsStep;
+			rightsStep.classList.toggle('sgk-hidden', !showRightsStep);
+		}
+		var rightsCore = form.querySelector('[data-sgk-rights-core]');
+		if (rightsCore) {
+			var rightsCount = (ui.visibleRightsBlocks || []).length;
+			rightsCore.classList.toggle('is-cols-1', rightsCount <= 1);
+			rightsCore.classList.toggle('is-cols-2', rightsCount === 2);
+			rightsCore.classList.toggle('is-cols-3', rightsCount >= 3);
+		}
+		var rightsIntro = form.querySelector('[data-sgk-rights-intro]');
+		if (rightsIntro) { rightsIntro.hidden = !hasSelection || !(ui.visibleRightsBlocks || []).length; }
 	}
 
 	function resetInvisibleBlockFields(form, visibleBlocks) {
@@ -544,12 +574,16 @@
 	}
 	function renderKnowledgeAccordion() {
 		var items = [
-			'Rechte steuern den Lizenzwert',
-			'Zusatzmotive werden separat bewertet',
-			'Unlimited braucht Vereinbarung'
+			{ title: 'Berechnungsgrundlage', copy: 'Projektart, Rechte und Umfang ergeben gemeinsam den Honorarrahmen.' },
+			{ title: 'Textlänge & Dauer', copy: 'Minuten, Module oder Sessions wirken direkt auf die Produktionsbasis.' },
+			{ title: 'Buyouts & Unlimited', copy: 'Unbegrenzte Rechte müssen klar vereinbart werden und erhöhen den Lizenzwert.' },
+			{ title: 'Studio & Technik', copy: 'Studioanforderungen und Technik-Setup können zusätzlichen Aufwand erzeugen.' },
+			{ title: 'Korrekturen & Revisionen', copy: 'Korrekturschleifen sollten früh abgestimmt werden, um den Aufwand planbar zu halten.' },
+			{ title: 'Exklusivität & Konkurrenzschutz', copy: 'Exklusivität braucht klare Laufzeit, Gebiet und Nutzungsumfang.' }
 		];
-		return '<section class="src-result-card src-result-card--knowledge"><div class="src-result-card-head"><strong>Wissenswertes</strong><p>Kompakte Orientierung für Rechte, Nutzung und Angebotspraxis.</p></div><div class="sgk-hints">' + items.map(function (item) {
-			return '<span class="sgk-hint-pill">' + htmlEscape(item) + '</span>';
+		return '<section class="src-result-card src-result-card--knowledge"><div class="src-result-card-head"><strong>Wissenswertes</strong><p>Kurz erklärt – nur das Wesentliche.</p></div><div class="src-knowledge-accordion">' + items.map(function (item, index) {
+			var id = 'sgk-result-knowledge-' + index;
+			return '<div class="src-accordion-item' + (index === 0 ? ' is-open' : '') + '"><button type="button" class="src-accordion-btn" data-sgk-accordion-trigger aria-expanded="' + (index === 0 ? 'true' : 'false') + '" aria-controls="' + id + '"><span>' + htmlEscape(item.title) + '</span><span class="src-accordion-indicator" aria-hidden="true"></span></button><div class="src-accordion-content" id="' + id + '"' + (index === 0 ? '' : ' hidden') + '><p>' + htmlEscape(item.copy) + '</p></div></div>';
 		}).join('') + '</div></section>';
 	}
 	function filterProjectHints(notes) {
@@ -592,7 +626,7 @@
 		container.classList.remove('sgk-result-flash');
 		container.innerHTML = '' +
 			'<div class="src-result-hero src-result-hero--stack">' +
-				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><p class="src-price-panel-kicker">Dein Ergebnisbereich</p><strong>Live-Preisempfehlung</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value sgk-price src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Range</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong><p>Ø Preisempfehlung für die Angebotsvorbereitung. Finale Summe kann projektspezifisch angepasst werden.</p></div></div></section>' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><p class="src-price-panel-kicker">Ergebnis</p><strong>Live-Preisempfehlung</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value sgk-price src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Range</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong><p>Ø Preisempfehlung für die Angebotsvorbereitung. </p></div></div></section>' +
 				'<div class="src-result-meta-grid src-result-meta-grid--stack">' +
 					'<div class="src-result-meta-card"><span>Hauptfall</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
 					'<div class="src-result-meta-card"><span>Untervariante</span><strong>' + htmlEscape(variantLabel) + '</strong></div>' +
@@ -662,7 +696,7 @@
 		function requestCalculation(reason) {
 			var state = app.__sgkState;
 			if (!state.normalizedPayload || !state.normalizedPayload.case_key) { resultContainer.innerHTML = DEFAULT_RESULT_MESSAGE; return; }
-			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.innerHTML = '<div class="src-result-empty"><strong>Berechnung in Vorbereitung</strong><p>Projekt: ' + htmlEscape(summarizeSelection(state.normalizedPayload.case_key)) + ' · Gebiet: ' + htmlEscape(summarizeSelection(state.normalizedPayload.territory)) + ' · Laufzeit: ' + htmlEscape(summarizeSelection(state.normalizedPayload.duration_term)) + '</p><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
+			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.innerHTML = '<div class="src-result-state src-result-state--progress"><span class="src-result-state-label">Status</span><strong>In Vorbereitung</strong><p>Projekt: ' + htmlEscape(summarizeSelection(state.normalizedPayload.case_key)) + '</p><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
 			abortPendingRequest();
 			requestSequence += 1;
 			state.activeRequestId = requestSequence;
