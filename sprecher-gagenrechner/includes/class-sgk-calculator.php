@@ -49,7 +49,11 @@ class SGK_Calculator {
 		$result['expert_options']   = ! empty( $case['expert_options'] ) ? $case['expert_options'] : array();
 
 		$this->calculate_case( $result, $case, $normalized );
-		$this->apply_follow_up_credit_logic( $result, $normalized, $case );
+		if ( '1' === $normalized['is_nachgage'] ) {
+			$this->calculate_nachgage( $result, $case, $normalized );
+		} else {
+			$this->apply_follow_up_credit_logic( $result, $normalized, $case );
+		}
 		$this->apply_unlimited_usage_rules( $result, $normalized, $case );
 		$this->build_package_alternatives( $result, $case, $normalized );
 		$this->ensure_consistent_totals( $result );
@@ -362,7 +366,9 @@ class SGK_Calculator {
 		$hours        = max( 1, (float) $input['recording_hours'] );
 		$days         = max( 1, (int) $input['recording_days'] );
 		$projects     = max( 1, (int) $input['same_day_projects'] );
+		// Erste Stunde fällt an: 1× pro Aufnahmetag + 1× für jedes weitere Projekt am selben Tag.
 		$first_hours  = $days + max( 0, $projects - 1 );
+		// Folgestunden: (Aufnahmestunden - 1) × Aufnahmetage.
 		$follow_hours = max( 0, (int) ceil( $hours - 1 ) ) * $days;
 		$first_amount = $this->multiply_amounts( $case['pricing']['erste_stunde'], $first_hours );
 
@@ -450,6 +456,20 @@ class SGK_Calculator {
 		$note         = 'Einmalige Anrechnung einer zuvor vereinbarten Layout-/Vorstufenvergütung.';
 		$this->add_breakdown_item( $result, 'credit', $this->build_breakdown_entry( 'layout_credit', 'Anrechnung vorheriges Layout-Honorar', 'credit', 1, 'Anrechnung', $negative, $note ) );
 		$this->add_line_item( $result, $this->build_line_item( 'layout_credit', 'Anrechnung vorheriges Layout-Honorar', 'credit', 1, 'Anrechnung', $negative, $case['case_key'], $note, false, false, true ) );
+	}
+
+	protected function calculate_nachgage( array &$result, array $case, array $input ) {
+		$result['notes'][] = 'Nachbuchung / Lizenzverlängerung: volle Verwertungsgage ohne Anrechnung bereits geleisteter Zahlungen.';
+		$result['breakdown']['credit'] = array();
+		$result['credits']             = array();
+		$result['line_items']          = array_values(
+			array_filter(
+				$result['line_items'],
+				static function ( $item ) {
+					return empty( $item['is_credit'] );
+				}
+			)
+		);
 	}
 
 	protected function apply_unlimited_usage_rules( array &$result, array $input, array $case ) {

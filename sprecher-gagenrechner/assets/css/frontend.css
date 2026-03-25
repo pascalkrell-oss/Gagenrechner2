@@ -1291,3 +1291,66 @@ input[type="number"]::-webkit-inner-spin-button {
         margin-left: 0;
     }
 }
+
+/* Phase 7 Premium UI refresh */
+:root {
+    --src-primary-strong: #137ecf;
+    --src-hover: #0066b3;
+    --src-bg-app: #f1f6ff;
+    --src-bg-card: #ffffff;
+    --src-bg-panel: #f8fafc;
+    --src-border-light: #e2e8f0;
+}
+.sgk-app {
+    background: linear-gradient(180deg, #f1f6ff 0%, #f8fafc 100%);
+    border-radius: 28px;
+    padding: 28px 24px 48px;
+}
+.src-top-toolbar {
+    position: static;
+    background: #0f141a !important;
+    border: 1px solid rgba(255,255,255,.1) !important;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(15,20,26,.25) !important;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+}
+.src-layout { margin-top: 0; }
+.src-section--glass,
+.src-panel-group,
+.src-foldable-panel,
+.src-context-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 16px;
+    border: 1px solid var(--src-border-light);
+}
+.src-input-text,
+.src-native-select,
+.src-stepper,
+.src-segmented-control {
+    min-height: 48px;
+    border-radius: 10px;
+}
+.src-control-tower-wrapper .src-tower-header,
+.src-tower-info-header {
+    background: #0f141a;
+    color: #fff;
+    border-radius: 14px;
+    padding: 12px 14px;
+}
+.src-live-badge {
+    background: rgba(26,147,238,.15);
+    color: #8fd2ff;
+    border: 1px solid rgba(143,210,255,.35);
+}
+.src-tower-main,
+.src-tower-info {
+    border: 1px solid var(--src-border-light);
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--shadow-soft);
+}
+.src-btn-primary {
+    border-radius: 999px;
+    background: linear-gradient(90deg, #1a93ee, #137ecf);
+}
