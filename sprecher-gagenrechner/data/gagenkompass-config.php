@@ -101,7 +101,6 @@ return array(
 					'kino_spot_national',
 					'kino_spot_regional',
 					'pos_event_messe',
-					'reminder',
 					'layout_animatic_moodfilm_scribble',
 				),
 				'allowed_media' => array( 'tv', 'ctv', 'online_video', 'kino', 'pos', 'event', 'messe' ),
@@ -119,7 +118,6 @@ return array(
 						'kino_spot_national'               => $money_range( 600, 700, 800 ),
 						'kino_spot_regional'               => $money_range( 500, 550, 600 ),
 						'pos_event_messe'                  => $money_range( 600, 700, 800 ),
-						'reminder'                         => $money_range( 250, 300, 350 ),
 						'layout_animatic_moodfilm_scribble'=> $money_range( 250, 300, 350 ),
 					),
 				),
@@ -134,7 +132,6 @@ return array(
 						'kino_spot_national'               => $money_range( 600, 700, 800 ),
 						'kino_spot_regional'               => $money_range( 500, 550, 600 ),
 						'pos_event_messe'                  => $money_range( 600, 700, 800 ),
-						'reminder'                         => $money_range( 250, 300, 350 ),
 						'layout_animatic_moodfilm_scribble'=> $money_range( 250, 300, 350 ),
 					),
 				),
@@ -155,7 +152,7 @@ return array(
 					'additional_territory' => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzterritorium' ),
 					'additional_motif'     => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzmotiv' ),
 					'reminder'             => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.50, 0.75, 1 ), 'label' => 'Reminder' ),
-					'archivgage'           => array( 'mode' => 'base_percent', 'percentage' => $money_range( 325 / 600, 385 / 700, 450 / 800 ), 'label' => 'Archivgage', 'allowed_variants' => array( 'online_video_paid_media', 'atv_ctv_video_spot', 'linear_tv_spot_national', 'linear_tv_spot_regional', 'kino_spot_national', 'kino_spot_regional', 'pos_event_messe' ) ),
+					'archivgage'           => array( 'mode' => 'fixed_amount', 'amount' => $money_range( 325, 385, 450 ), 'label' => 'Archivgage', 'allowed_variants' => array( 'online_video_paid_media', 'atv_ctv_video_spot', 'linear_tv_spot_national', 'linear_tv_spot_regional', 'kino_spot_national', 'kino_spot_regional', 'pos_event_messe' ) ),
 				),
 				'package_rules' => array(
 					'dach_paket'     => array( 'label' => 'DACH Paket', 'multiplier_range' => $money_range( 2.5, 2.65, 2.8 ), 'variants' => array( 'linear_tv_spot_national', 'online_video_paid_media', 'atv_ctv_video_spot', 'kino_spot_national', 'pos_event_messe', 'tv_patronat', 'atv_ctv_patronat' ) ),
@@ -200,8 +197,8 @@ return array(
 					'funk_spot_regional',
 					'funk_spot_lokal',
 					'ladenfunk',
+					'ladenfunk_regional',
 					'telefon_werbespot',
-					'reminder',
 				),
 				'allowed_media' => array( 'radio', 'online_audio', 'ladenfunk', 'telefon' ),
 				'allowed_territories' => array( 'lokal', 'regional', 'de', 'dach' ),
@@ -214,8 +211,8 @@ return array(
 						'funk_spot_regional'      => $money_range( 350, 400, 450 ),
 						'funk_spot_lokal'         => $money_range( 60, 75, 100 ),
 						'ladenfunk'               => $money_range( 350, 400, 450 ),
+						'ladenfunk_regional'      => $money_range( 250, 300, 350 ),
 						'telefon_werbespot'       => $money_range( 250, 275, 300 ),
-						'reminder'                => $money_range( 40, 110, 180 ),
 					),
 				),
 				'range_values' => array(
@@ -225,8 +222,8 @@ return array(
 						'funk_spot_regional'      => $money_range( 350, 400, 450 ),
 						'funk_spot_lokal'         => $money_range( 60, 75, 100 ),
 						'ladenfunk'               => $money_range( 350, 400, 450 ),
+						'ladenfunk_regional'      => $money_range( 250, 300, 350 ),
 						'telefon_werbespot'       => $money_range( 250, 275, 300 ),
-						'reminder'                => $money_range( 40, 110, 180 ),
 					),
 				),
 				'duration_rules' => array( 'default_term' => '1_jahr', 'options' => array( '1_jahr', '2_jahre', 'unbegrenzt' ) ),
@@ -245,22 +242,22 @@ return array(
 					'additional_year'      => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzjahr' ),
 					'additional_territory' => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzterritorium' ),
 					'additional_motif'     => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzmotiv' ),
-					'reminder'             => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.50, 0.75, 1 ), 'label' => 'Reminder', 'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'telefon_werbespot' ) ),
-					'allongen'             => array( 'mode' => 'fixed_amount', 'amount' => $money_range( 40, 110, 180 ), 'label' => 'Allongen', 'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'telefon_werbespot' ) ),
+					'reminder'             => array( 'mode' => 'base_percent', 'percentage' => $money_range( 0.50, 0.75, 1 ), 'label' => 'Reminder', 'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'ladenfunk_regional', 'telefon_werbespot' ) ),
+					'allongen'             => array( 'mode' => 'fixed_amount', 'amount' => $money_range( 40, 110, 180 ), 'label' => 'Allongen', 'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'ladenfunk_regional', 'telefon_werbespot' ) ),
 				),
 				'package_rules' => array(
 					'funk_online' => array( 'label' => 'Funk & Online', 'multiplier_range' => $money_range( 1.5, 1.65, 1.8 ), 'variants' => array( 'funk_spot_national', 'online_audio_paid_media', 'funk_spot_lokal' ) ),
 				),
 				'unlimited_usage_rules' => array(
 					'allowed' => true,
-					'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'telefon_werbespot' ),
+					'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'ladenfunk_regional', 'telefon_werbespot' ),
 					'time_multiplier' => 3,
 					'territory_multiplier' => 4,
 					'media_multiplier' => 4,
 				),
 				'follow_up_credit_rules' => array(
 					'allowed' => true,
-					'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'telefon_werbespot' ),
+					'allowed_variants' => array( 'online_audio_paid_media', 'funk_spot_national', 'funk_spot_regional', 'funk_spot_lokal', 'ladenfunk', 'ladenfunk_regional', 'telefon_werbespot' ),
 				),
 				'notes' => array( 'Reine Telefonansagen gehören nicht in diesen Block und werden gesondert behandelt.' ),
 				'breakdown_schema' => array( 'base', 'additive', 'credit', 'notes' ),
@@ -288,7 +285,7 @@ return array(
 				),
 				'pricing' => array(
 					'tiers' => array(
-						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 350, 400 ) ),
+						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 400, 450 ) ),
 						'bis_5_min' => array( 'up_to' => 5, 'amount' => $money_range( 450, 500, 550 ) ),
 						'je_weitere_5' => array( 'block' => 5, 'amount' => $money_range( 50, 100, 150 ) ),
 					),
@@ -299,7 +296,7 @@ return array(
 				),
 				'range_values' => array(
 					'tiers' => array(
-						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 350, 400 ) ),
+						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 400, 450 ) ),
 						'bis_5_min' => array( 'up_to' => 5, 'amount' => $money_range( 450, 500, 550 ) ),
 						'je_weitere_5' => array( 'block' => 5, 'amount' => $money_range( 50, 100, 150 ) ),
 					),
@@ -325,14 +322,14 @@ return array(
 				'allowed_durations' => array( 'zeitlich_unbegrenzt' ),
 				'pricing' => array(
 					'tiers' => array(
-						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 350, 400 ) ),
+						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 400, 450 ) ),
 						'bis_5_min' => array( 'up_to' => 5, 'amount' => $money_range( 500, 550, 600 ) ),
 						'je_weitere_5' => array( 'block' => 5, 'amount' => $money_range( 100, 125, 150 ) ),
 					),
 				),
 				'range_values' => array(
 					'tiers' => array(
-						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 350, 400 ) ),
+						'bis_2_min' => array( 'up_to' => 2, 'amount' => $money_range( 300, 400, 450 ) ),
 						'bis_5_min' => array( 'up_to' => 5, 'amount' => $money_range( 500, 550, 600 ) ),
 						'je_weitere_5' => array( 'block' => 5, 'amount' => $money_range( 100, 125, 150 ) ),
 					),
@@ -493,6 +490,9 @@ return array(
 					'additional_year' => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzjahr' ),
 					'additional_motif' => array( 'mode' => 'base_percent', 'percentage' => $money_range( 1, 1, 1 ), 'label' => 'Zusatzmotiv' ),
 				),
+				'notes' => array(
+					'Die kleinräumige Nutzung gilt ausschließlich für kleine Online/Internet Paid Media Auswertungen bis zu einem Mediabudget von 5.000 Euro für 3 Monate für Kleinst-, Klein- und Mittlere Unternehmen (KMU). Kein gelistetes Hosting, keine Unpaid-Media-Nutzung. Media-Auswertungsbelege müssen ungefragt vorgelegt werden.',
+				),
 			)
 		),
 		'session_fee' => $case_builder(
@@ -536,6 +536,9 @@ return array(
 		),
 		'legal_notice' => array(
 			'Dieses Ergebnis ist eine fachliche Kalkulationshilfe und ersetzt keine vertragliche oder juristische Prüfung.',
+			'Leistungen eines Tonstudios (Audioproduktion, Castings, Handlungskosten) sowie aktuelle Künstlersozialabgaben werden durch die genannten Sprechergagen nicht abgedeckt und bedürfen einer zusätzlichen Vergütung.',
+			'Für jedwede künstlerische Leistungen ist nach §24 KSVG vom Auftraggeber selbstständig eine Künstlersozialabgabe an die KSK abzuführen.',
+			'Alle Preise verstehen sich zuzüglich der gesetzlichen Umsatzsteuer. Alle Preise sind freibleibend.',
 		),
 	),
 	'demo_cases' => array(

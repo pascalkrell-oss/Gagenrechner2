@@ -138,6 +138,7 @@ class SGK_Resolver {
 			'archivgage',
 			'layout_fee',
 			'follow_up_usage',
+			'is_nachgage',
 			'is_paid_media',
 			'usage_social_media',
 			'usage_praesentation',
