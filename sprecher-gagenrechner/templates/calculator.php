@@ -66,9 +66,20 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 		<!-- LEFT COLUMN: Setup Wizard -->
 		<aside class="sgk-setup-column">
 			<form class="sgk-form" data-sgk-form>
-				<!-- Hidden Fields -->
+				<!-- Hidden Fields – alle FIELD_DEFAULTS müssen als Input existieren -->
 				<input type="hidden" name="case_key" data-sgk-primary-field value="" />
 				<input type="hidden" name="manual_offer_total" value="" />
+				<input type="hidden" name="case_variant" value="" />
+				<input type="hidden" name="usage_type" value="organic_branding" />
+				<input type="hidden" name="duration_term" value="" />
+				<input type="hidden" name="territory" value="" />
+				<input type="hidden" name="medium" value="" />
+				<input type="hidden" name="package_key" value="" />
+				<input type="hidden" name="project_title" value="" />
+				<input type="hidden" name="customer_name" value="" />
+				<input type="hidden" name="internal_notes" value="" />
+				<input type="hidden" name="needs_cutdown" value="0" />
+				<input type="hidden" name="layout_fee" value="0" />
 
 				<!-- STEP 1: Project Selection -->
 				<section class="sgk-step-section" data-sgk-step="1">
