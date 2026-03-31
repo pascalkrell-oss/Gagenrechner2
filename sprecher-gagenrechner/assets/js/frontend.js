@@ -807,5 +807,326 @@
 		setModalState(false);
 		syncUI();
 		refreshSavedList(resultContainer, cases);
+
+		/* =====================================================
+		   NEW UI HANDLERS FOR TWO-COLUMN LAYOUT
+		   ===================================================== */
+
+		/* Project Card Handler (Step 1) */
+		app.querySelectorAll('[data-sgk-case]').forEach(function (button) {
+			button.addEventListener('click', function () {
+				var caseKey = button.getAttribute('data-sgk-case');
+				setFieldValue(fieldNode(form, 'case_key'), caseKey);
+				app.querySelectorAll('[data-sgk-case]').forEach(function (card) {
+					card.classList.toggle('is-active', card === button);
+				});
+				syncUI();
+				requestCalculation('project-select');
+			});
+		});
+
+		/* Update variant pills and territories dynamically */
+		function rebuildVariantPills() {
+			var caseKey = fieldNode(form, 'case_key').value;
+			var variantControl = app.querySelector('[data-sgk-variant-pills]');
+			var variantStep = app.querySelector('[data-sgk-step="2"]');
+			if (!variantControl || !caseKey) { return; }
+			var config = CASE_UI[caseKey];
+			if (!config || !config.variantOptions) {
+				if (variantStep) { variantStep.hidden = true; }
+				return;
+			}
+			if (variantStep) { variantStep.hidden = false; }
+			variantControl.innerHTML = '';
+			config.variantOptions.forEach(function (option) {
+				var variantKey = option[0];
+				var variantLabel = option[1];
+				var button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'sgk-pill';
+				button.setAttribute('data-sgk-variant-value', variantKey);
+				button.textContent = variantLabel;
+				button.addEventListener('click', function () {
+					setFieldValue(fieldNode(form, 'case_variant'), variantKey);
+					updateVariantHelp(caseKey, variantKey);
+					syncUI();
+					requestCalculation('variant-select');
+				});
+				variantControl.appendChild(button);
+			});
+			updateVariantHelp(caseKey, fieldNode(form, 'case_variant').value);
+			syncVariantPills(caseKey);
+		}
+
+		function updateVariantHelp(caseKey, variantKey) {
+			var config = CASE_UI[caseKey];
+			var helpText = '';
+			if (config && config.variantOptions) {
+				var option = config.variantOptions.find(function (opt) { return opt[0] === variantKey; });
+				helpText = option && option[2] ? option[2] : '';
+			}
+			var helpNode = app.querySelector('[data-sgk-variant-help]');
+			if (helpNode) { helpNode.textContent = helpText; }
+		}
+
+		function syncVariantPills(caseKey) {
+			var variantValue = fieldNode(form, 'case_variant').value;
+			app.querySelectorAll('[data-sgk-variant-value]').forEach(function (pill) {
+				pill.classList.toggle('is-active', pill.getAttribute('data-sgk-variant-value') === variantValue);
+			});
+		}
+
+		/* Territory Pills */
+		function rebuildTerritoryPills() {
+			var caseKey = fieldNode(form, 'case_key').value;
+			var territoryControl = app.querySelector('[data-sgk-territory-pills]');
+			var territoryGroup = app.querySelector('[data-sgk-block="territory"]');
+			if (!territoryControl || !caseKey) { return; }
+			var config = CASE_UI[caseKey];
+			var showTerritory = config && config.show && config.show.indexOf('territory') !== -1;
+			if (territoryGroup) { territoryGroup.hidden = !showTerritory; }
+			if (!showTerritory) { return; }
+			var territories = ['lokal', 'regional', 'de', 'dach', 'eu', 'weltweit'];
+			territoryControl.innerHTML = '';
+			territories.forEach(function (territory) {
+				var button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'sgk-pill';
+				button.setAttribute('data-sgk-territory-value', territory);
+				button.textContent = optionLabel(territory);
+				button.addEventListener('click', function () {
+					setFieldValue(fieldNode(form, 'territory'), territory);
+					syncTerritorPills();
+					syncUI();
+					requestCalculation('territory-select');
+				});
+				territoryControl.appendChild(button);
+			});
+			syncTerritorPills();
+		}
+
+		function syncTerritorPills() {
+			var territoryValue = fieldNode(form, 'territory').value;
+			app.querySelectorAll('[data-sgk-territory-value]').forEach(function (pill) {
+				pill.classList.toggle('is-active', pill.getAttribute('data-sgk-territory-value') === territoryValue);
+			});
+		}
+
+		/* Duration Term Pills */
+		function rebuildDurationPills() {
+			var caseKey = fieldNode(form, 'case_key').value;
+			var durationControl = app.querySelector('[data-sgk-duration-pills]');
+			var durationGroup = app.querySelector('[data-sgk-block="duration_term"]');
+			if (!durationControl || !caseKey) { return; }
+			var config = CASE_UI[caseKey];
+			var showDuration = config && config.show && config.show.indexOf('duration_term') !== -1;
+			if (durationGroup) { durationGroup.hidden = !showDuration; }
+			if (!showDuration) { return; }
+			var durations = ['1_jahr', '2_jahre', 'archiv', 'unbegrenzt'];
+			durationControl.innerHTML = '';
+			durations.forEach(function (duration) {
+				var button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'sgk-pill';
+				button.setAttribute('data-sgk-duration-value', duration);
+				button.textContent = optionLabel(duration);
+				button.addEventListener('click', function () {
+					setFieldValue(fieldNode(form, 'duration_term'), duration);
+					syncDurationPills();
+					syncUI();
+					requestCalculation('duration-select');
+				});
+				durationControl.appendChild(button);
+			});
+			syncDurationPills();
+		}
+
+		function syncDurationPills() {
+			var durationValue = fieldNode(form, 'duration_term').value;
+			app.querySelectorAll('[data-sgk-duration-value]').forEach(function (pill) {
+				pill.classList.toggle('is-active', pill.getAttribute('data-sgk-duration-value') === durationValue);
+			});
+		}
+
+		/* Medium Pills */
+		function rebuildMediumPills() {
+			var caseKey = fieldNode(form, 'case_key').value;
+			var mediumControl = app.querySelector('[data-sgk-medium-pills]');
+			var mediumGroup = app.querySelector('[data-sgk-block="medium"]');
+			if (!mediumControl || !caseKey) { return; }
+			var config = CASE_UI[caseKey];
+			var showMedium = config && config.show && config.show.indexOf('medium') !== -1;
+			if (mediumGroup) { mediumGroup.hidden = !showMedium; }
+			if (!showMedium) { return; }
+			var mediums = ['tv', 'ctv', 'online_video', 'kino', 'pos', 'event', 'messe', 'radio', 'online_audio', 'ladenfunk', 'telefon'];
+			mediumControl.innerHTML = '';
+			mediums.forEach(function (medium) {
+				var button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'sgk-pill';
+				button.setAttribute('data-sgk-medium-value', medium);
+				button.textContent = optionLabel(medium);
+				button.addEventListener('click', function () {
+					setFieldValue(fieldNode(form, 'medium'), medium);
+					syncMediumPills();
+					syncUI();
+					requestCalculation('medium-select');
+				});
+				mediumControl.appendChild(button);
+			});
+			syncMediumPills();
+		}
+
+		function syncMediumPills() {
+			var mediumValue = fieldNode(form, 'medium').value;
+			app.querySelectorAll('[data-sgk-medium-value]').forEach(function (pill) {
+				pill.classList.toggle('is-active', pill.getAttribute('data-sgk-medium-value') === mediumValue);
+			});
+		}
+
+		/* Usage Type Pills */
+		function rebuildUsagePills() {
+			var caseKey = fieldNode(form, 'case_key').value;
+			var usageControl = app.querySelector('[data-sgk-usage-pills]');
+			var usageGroup = app.querySelector('[data-sgk-block="usage_type"]');
+			if (!usageControl || !caseKey) { return; }
+			var config = CASE_UI[caseKey];
+			var showUsage = config && config.show && config.show.indexOf('usage_type') !== -1;
+			if (usageGroup) { usageGroup.hidden = !showUsage; }
+			if (!showUsage) { return; }
+			var usages = ['organic_branding', 'paid_advertising'];
+			usageControl.innerHTML = '';
+			usages.forEach(function (usage) {
+				var button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'sgk-pill';
+				button.setAttribute('data-sgk-usage-value', usage);
+				button.textContent = optionLabel(usage);
+				button.addEventListener('click', function () {
+					setFieldValue(fieldNode(form, 'usage_type'), usage);
+					syncUsagePills();
+					syncUI();
+					requestCalculation('usage-select');
+				});
+				usageControl.appendChild(button);
+			});
+			syncUsagePills();
+		}
+
+		function syncUsagePills() {
+			var usageValue = fieldNode(form, 'usage_type').value;
+			app.querySelectorAll('[data-sgk-usage-value]').forEach(function (pill) {
+				pill.classList.toggle('is-active', pill.getAttribute('data-sgk-usage-value') === usageValue);
+			});
+		}
+
+		/* Range Slider Display Updates */
+		function updateRangeDisplays() {
+			app.querySelectorAll('[data-sgk-range]').forEach(function (slider) {
+				var fieldName = slider.getAttribute('data-sgk-range');
+				var displayNode = app.querySelector('[data-sgk-range-display="' + fieldName + '"]');
+				if (!displayNode) { return; }
+				var value = parseFloat(slider.value || 0);
+				var min = parseFloat(slider.getAttribute('min') || 1);
+				var max = parseFloat(slider.getAttribute('max') || 100);
+				var percentage = ((value - min) / (max - min)) * 100;
+				slider.style.setProperty('--slider-percentage', percentage + '%');
+				var displayValue = value;
+				if (fieldName === 'duration_minutes') {
+					if (value === 1) { displayValue = '1 Minute'; }
+					else { displayValue = displayValue.toString().replace('.', ',') + ' Minuten'; }
+				}
+				displayNode.textContent = displayValue;
+			});
+		}
+
+		/* Stepper Handlers */
+		app.querySelectorAll('[data-sgk-stepper]').forEach(function (stepper) {
+			var minusBtn = stepper.querySelector('[data-sgk-stepper-direction="down"]');
+			var plusBtn = stepper.querySelector('[data-sgk-stepper-direction="up"]');
+			var input = stepper.querySelector('input[data-sgk-stepper-input]');
+			if (!minusBtn || !plusBtn || !input) { return; }
+			function updateValue(direction) {
+				var step = parseFloat(input.getAttribute('step') || '1');
+				var min = parseFloat(input.getAttribute('min') || '0');
+				var current = parseFloat(input.value || min);
+				current += direction === 'up' ? step : -step;
+				current = Math.max(min, current);
+				input.value = String(Math.round(current * 100) / 100);
+				input.dispatchEvent(new Event('input', { bubbles: true }));
+			}
+			minusBtn.addEventListener('click', function () { updateValue('down'); });
+			plusBtn.addEventListener('click', function () { updateValue('up'); });
+		});
+
+		/* Progress Indicator Updates */
+		function updateProgressIndicator() {
+			var caseKey = fieldNode(form, 'case_key').value;
+			var variantKey = fieldNode(form, 'case_variant').value;
+			var config = CASE_UI[caseKey];
+			var step1Complete = !!caseKey;
+			var step2Complete = step1Complete && (!config || !config.variantOptions || !!variantKey);
+			var step3Complete = step2Complete; // Complexity: when first parameter is filled
+			var step4Complete = step3Complete; // Complexity: when optional extensions are added
+			app.querySelectorAll('[data-sgk-progress]').forEach(function (dot, index) {
+				var stepNum = parseInt(dot.getAttribute('data-sgk-progress'));
+				dot.classList.remove('is-active', 'is-complete');
+				if (stepNum === 1 && step1Complete) { dot.classList.add('is-complete'); }
+				if (stepNum === 2 && step2Complete) { dot.classList.add('is-complete'); }
+				if (stepNum === 3 && step3Complete) { dot.classList.add('is-complete'); }
+				if (stepNum === 4 && step4Complete) { dot.classList.add('is-complete'); }
+			});
+		}
+
+		/* Master UI Rebuild - called whenever case_key changes */
+		var originalSyncUI = syncUI;
+		syncUI = function () {
+			originalSyncUI.apply(this, arguments);
+			rebuildVariantPills();
+			rebuildTerritoryPills();
+			rebuildDurationPills();
+			rebuildMediumPills();
+			rebuildUsagePills();
+			updateRangeDisplays();
+			updateProgressIndicator();
+			showHideStepSections();
+		};
+
+		/* Show/hide step sections based on form state */
+		function showHideStepSections() {
+			var caseKey = fieldNode(form, 'case_key').value;
+			var variantKey = fieldNode(form, 'case_variant').value;
+			var config = CASE_UI[caseKey];
+			var hasVariants = config && config.variantOptions && config.variantOptions.length > 0;
+			var hasUsageFields = config && config.show && (config.show.length > 0 || config.show.some(function (field) {
+				return ['territory', 'duration_term', 'duration_minutes', 'net_minutes', 'module_count', 'fah', 'recording_hours', 'recording_days', 'same_day_projects', 'session_hours', 'medium', 'media_toggles', 'usage_type'].indexOf(field) !== -1;
+			}));
+			var hasExtensions = config && config.show && config.show.some(function (field) {
+				return ['addon_counts', 'rights_toggles', 'prior_layout_fee', 'unlimited_usage'].indexOf(field) !== -1;
+			});
+			var step2 = app.querySelector('[data-sgk-step="2"]');
+			var step3 = app.querySelector('[data-sgk-step="3"]');
+			var step4 = app.querySelector('[data-sgk-step="4"]');
+			if (step2) { step2.hidden = !hasVariants; }
+			if (step3) { step3.hidden = !hasUsageFields; }
+			if (step4) { step4.hidden = !hasExtensions; }
+		}
+
+		/* Range slider input event for live display */
+		app.querySelectorAll('[data-sgk-range]').forEach(function (slider) {
+			slider.addEventListener('input', function () {
+				updateRangeDisplays();
+			});
+		});
+
+		/* Initialize UI */
+		rebuildVariantPills();
+		rebuildTerritoryPills();
+		rebuildDurationPills();
+		rebuildMediumPills();
+		rebuildUsagePills();
+		updateRangeDisplays();
+		updateProgressIndicator();
+		showHideStepSections();
 	});
 })();
