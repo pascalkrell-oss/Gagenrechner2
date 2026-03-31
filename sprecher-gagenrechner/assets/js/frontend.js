@@ -197,6 +197,7 @@
 
 	function populateVariants(form, effectiveCase, caseConfig) {
 		var select = fieldNode(form, 'case_variant');
+		if (!select) { return; }
 		var hint = form.querySelector('[data-sgk-variant-hint]');
 		var config = CASE_UI[effectiveCase] || {};
 		var options = config.variantOptions || [];
