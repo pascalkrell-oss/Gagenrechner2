@@ -33,6 +33,31 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				<span><?php esc_html_e( 'Zurücksetzen', 'sprecher-gagenrechner' ); ?></span>
 			</button>
 		</div>
+
+		<!-- Offer Modal -->
+		<div class="src-modal-backdrop" data-sgk-offer-modal hidden aria-hidden="true">
+			<div class="src-modal-content" role="dialog" aria-modal="true" aria-labelledby="sgk-offer-modal-title" tabindex="-1">
+				<div class="src-modal-header">
+					<div>
+						<p class="src-page-eyebrow"><?php esc_html_e( 'Angebot vorbereiten', 'sprecher-gagenrechner' ); ?></p>
+						<h3 id="sgk-offer-modal-title"><?php esc_html_e( 'Angebot vor Versand final abstimmen', 'sprecher-gagenrechner' ); ?></h3>
+					</div>
+					<button type="button" class="src-btn-secondary" data-sgk-offer-close><?php esc_html_e( 'Schließen', 'sprecher-gagenrechner' ); ?></button>
+				</div>
+				<div class="src-modal-body src-modal-grid">
+					<section class="src-modal-panel">
+						<div class="src-form-grid"><div class="src-form-field"><label for="sgk-offer-number"><?php esc_html_e( 'Angebotsnummer', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-number" type="text" class="src-input-text" data-sgk-offer-meta="offer_number" placeholder="z. B. ANG-2026-001" /></div><div class="src-form-field"><label for="sgk-offer-date"><?php esc_html_e( 'Angebotsdatum', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-date" type="date" class="src-input-text" data-sgk-offer-meta="offer_date" /></div></div>
+						<div class="src-form-grid"><div class="src-form-field"><label for="sgk-offer-contact"><?php esc_html_e( 'Ansprechpartner', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-contact" type="text" class="src-input-text" data-sgk-offer-meta="contact_name" /></div><div class="src-form-field"><label for="sgk-offer-company"><?php esc_html_e( 'Absender oder Studio', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-company" type="text" class="src-input-text" data-sgk-offer-meta="sender_company" /></div></div>
+						<div class="src-form-grid"><div class="src-form-field"><label for="sgk-offer-email"><?php esc_html_e( 'Kontakt-E-Mail', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-email" type="email" class="src-input-text" data-sgk-offer-meta="sender_email" /></div><div class="src-form-field"><label for="sgk-offer-phone"><?php esc_html_e( 'Telefon', 'sprecher-gagenrechner' ); ?></label><input id="sgk-offer-phone" type="text" class="src-input-text" data-sgk-offer-meta="sender_phone" /></div></div>
+						<div class="src-form-field"><label for="sgk-offer-intro"><?php esc_html_e( 'Einleitungstext', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-offer-intro" rows="4" class="src-input-text" data-sgk-offer-meta="intro_text"></textarea></div>
+						<div class="src-form-field"><label for="sgk-offer-footer"><?php esc_html_e( 'Fußzeile / Kontaktdaten', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-offer-footer" rows="3" class="src-input-text" data-sgk-offer-meta="footer_text"></textarea></div>
+						<div class="src-form-field"><label for="sgk-offer-internal"><?php esc_html_e( 'Interne Notiz', 'sprecher-gagenrechner' ); ?></label><textarea id="sgk-offer-internal" rows="3" class="src-input-text" data-sgk-offer-meta="internal_note"></textarea><p class="src-field-hint" data-sgk-offer-status><?php esc_html_e( 'Für den Export sollte eine finale Angebotssumme hinterlegt sein.', 'sprecher-gagenrechner' ); ?></p></div>
+					</section>
+					<section class="src-modal-panel"><div class="src-offer-preview-shell" data-sgk-offer-preview></div></section>
+				</div>
+				<div class="src-modal-footer"><button type="button" class="src-btn-secondary" data-feedback-label="Mailtext kopiert" data-sgk-offer-action="copy-mail"><?php esc_html_e( 'Mailtext kopieren', 'sprecher-gagenrechner' ); ?></button><button type="button" class="src-btn-primary" data-feedback-label="Druckdialog geöffnet" data-sgk-offer-action="print"><?php esc_html_e( 'PDF erstellen', 'sprecher-gagenrechner' ); ?></button></div>
+			</div>
+		</div>
 	</div>
 
 	<!-- Main Two-Column Layout -->
@@ -397,98 +422,10 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 		<!-- RIGHT COLUMN: Result Panel (sticky) -->
 		<aside class="sgk-result-column">
 			<div class="sgk-result-panel" data-sgk-result>
-				<!-- Default Message -->
-				<div class="sgk-result-empty">
-					<div class="sgk-empty-icon"><i class="fa-solid fa-calculator" aria-hidden="true"></i></div>
-					<h3><?php esc_html_e( 'Bereit zum Berechnen?', 'sprecher-gagenrechner' ); ?></h3>
-					<p><?php esc_html_e( 'Wähle ein Projekt, um Dein Honorar live zu berechnen.', 'sprecher-gagenrechner' ); ?></p>
-				</div>
-
-				<!-- Loading State -->
-				<div class="sgk-result-loading" hidden>
-					<div class="sgk-spinner"></div>
-					<p><?php esc_html_e( 'Berechnung läuft...', 'sprecher-gagenrechner' ); ?></p>
-				</div>
-
-				<!-- Result Content -->
-				<div class="sgk-result-content" hidden>
-					<!-- Price Range -->
-					<div class="sgk-result-header">
-						<div class="sgk-result-badge" data-sgk-result-badge></div>
-						<div class="sgk-price-range">
-							<div class="sgk-price-item">
-								<span class="sgk-price-label"><?php esc_html_e( 'Von', 'sprecher-gagenrechner' ); ?></span>
-								<span class="sgk-price-value" data-sgk-price-lower>— EUR</span>
-							</div>
-							<div class="sgk-price-sep">–</div>
-							<div class="sgk-price-item">
-								<span class="sgk-price-label"><?php esc_html_e( 'Bis', 'sprecher-gagenrechner' ); ?></span>
-								<span class="sgk-price-value" data-sgk-price-upper>— EUR</span>
-							</div>
-						</div>
-						<div class="sgk-price-average">
-							<span class="sgk-avg-label"><?php esc_html_e( 'Empfohlener Richtwert', 'sprecher-gagenrechner' ); ?></span>
-							<span class="sgk-avg-value" data-sgk-price-average>— EUR</span>
-						</div>
-					</div>
-
-					<!-- Breakdown Accordion -->
-					<div class="sgk-breakdown">
-						<details class="sgk-breakdown-item">
-							<summary class="sgk-breakdown-title"><?php esc_html_e( 'Basisgage', 'sprecher-gagenrechner' ); ?></summary>
-							<div class="sgk-breakdown-content" data-sgk-breakdown-base></div>
-						</details>
-						<details class="sgk-breakdown-item">
-							<summary class="sgk-breakdown-title"><?php esc_html_e( 'Zuschläge', 'sprecher-gagenrechner' ); ?></summary>
-							<div class="sgk-breakdown-content" data-sgk-breakdown-addons></div>
-						</details>
-						<details class="sgk-breakdown-item">
-							<summary class="sgk-breakdown-title"><?php esc_html_e( 'Erweiterungen', 'sprecher-gagenrechner' ); ?></summary>
-							<div class="sgk-breakdown-content" data-sgk-breakdown-extensions></div>
-						</details>
-						<details class="sgk-breakdown-item">
-							<summary class="sgk-breakdown-title"><?php esc_html_e( 'Credits', 'sprecher-gagenrechner' ); ?></summary>
-							<div class="sgk-breakdown-content" data-sgk-breakdown-credits></div>
-						</details>
-					</div>
-
-					<!-- Rights Overview -->
-					<div class="sgk-rights-overview">
-						<h4 class="sgk-overview-title"><?php esc_html_e( 'Deine Rechte', 'sprecher-gagenrechner' ); ?></h4>
-						<div class="sgk-rights-badges" data-sgk-rights-badges></div>
-					</div>
-
-					<!-- Manual Offer Total -->
-					<div class="sgk-manual-offer">
-						<label class="sgk-field-label"><?php esc_html_e( 'Angebotssumme anpassen', 'sprecher-gagenrechner' ); ?></label>
-						<div class="sgk-manual-offer-input">
-							<input type="number" name="manual_offer_override" class="sgk-input" placeholder="z.B. 5000 EUR" step="0.01" />
-							<button type="button" class="sgk-btn sgk-btn-secondary" data-sgk-apply-manual-offer><?php esc_html_e( 'Übernehmen', 'sprecher-gagenrechner' ); ?></button>
-						</div>
-					</div>
-
-					<!-- Action Buttons -->
-					<div class="sgk-result-actions">
-						<button type="button" class="sgk-btn sgk-btn-primary" data-sgk-action="save">
-							<i class="fa-solid fa-floppy-disk" aria-hidden="true"></i>
-							<span><?php esc_html_e( 'Speichern', 'sprecher-gagenrechner' ); ?></span>
-						</button>
-						<button type="button" class="sgk-btn sgk-btn-secondary" data-sgk-action="copy">
-							<i class="fa-solid fa-copy" aria-hidden="true"></i>
-							<span><?php esc_html_e( 'Kopieren', 'sprecher-gagenrechner' ); ?></span>
-						</button>
-						<button type="button" class="sgk-btn sgk-btn-secondary" data-sgk-action="print">
-							<i class="fa-solid fa-print" aria-hidden="true"></i>
-							<span><?php esc_html_e( 'Drucken', 'sprecher-gagenrechner' ); ?></span>
-						</button>
-					</div>
-				</div>
-
-				<!-- Error State -->
-				<div class="sgk-result-error" hidden>
-					<div class="sgk-error-icon"><i class="fa-solid fa-exclamation-triangle" aria-hidden="true"></i></div>
-					<h3><?php esc_html_e( 'Berechnung nicht möglich', 'sprecher-gagenrechner' ); ?></h3>
-					<p><?php esc_html_e( 'Bitte prüfe Deine Angaben und versuche es erneut.', 'sprecher-gagenrechner' ); ?></p>
+				<div class="sgk-default-state">
+					<div class="sgk-default-price-label"><?php esc_html_e( 'Empfohlene Gage (Netto)', 'sprecher-gagenrechner' ); ?></div>
+					<div class="sgk-default-price-value">0,00 €</div>
+					<div class="sgk-default-hint"><?php esc_html_e( 'Bitte Projekt wählen..', 'sprecher-gagenrechner' ); ?><span><?php esc_html_e( 'Alle Preise zzgl. MwSt.', 'sprecher-gagenrechner' ); ?></span></div>
 				</div>
 			</div>
 
