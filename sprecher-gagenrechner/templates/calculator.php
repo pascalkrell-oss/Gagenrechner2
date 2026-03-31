@@ -62,7 +62,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 							</span>
 						</button>
 						<button type="button" class="sgk-project-card" data-sgk-case="werbung_ohne_bild" title="<?php esc_attr_e( 'Werbung ohne Bild – Radio, Audio Ads, Ladenfunk', 'sprecher-gagenrechner' ); ?>">
-							<span class="sgk-card-icon"><i class="fa-solid fa-waveform-lines" aria-hidden="true"></i></span>
+							<span class="sgk-card-icon"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></span>
 							<span class="sgk-card-text">
 								<strong><?php esc_html_e( 'Werbung ohne Bild', 'sprecher-gagenrechner' ); ?></strong>
 								<small><?php esc_html_e( 'Radio, Audio Ads, Ladenfunk', 'sprecher-gagenrechner' ); ?></small>

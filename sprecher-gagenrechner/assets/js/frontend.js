@@ -812,6 +812,15 @@
 		   NEW UI HANDLERS FOR TWO-COLUMN LAYOUT
 		   ===================================================== */
 
+		/* Helper: Show step section by number */
+		function showStep(n) {
+			var section = app.querySelector('[data-sgk-step="' + n + '"]');
+			if (section) { section.hidden = false; }
+		}
+
+		/* Helper: Alias for visibility management (defined later in code) */
+		var rebuildFieldVisibility;
+
 		/* Project Card Handler (Step 1) */
 		app.querySelectorAll('[data-sgk-case]').forEach(function (button) {
 			button.addEventListener('click', function () {
@@ -820,6 +829,14 @@
 				app.querySelectorAll('[data-sgk-case]').forEach(function (card) {
 					card.classList.toggle('is-active', card === button);
 				});
+				// Trigger UI rebuild for Steps 2-3
+				rebuildVariantPills();
+				rebuildTerritoryPills();
+				rebuildDurationPills();
+				rebuildMediumPills();
+				rebuildUsagePills();
+				rebuildFieldVisibility();
+				showStep(3);
 				syncUI();
 				requestCalculation('project-select');
 			});
@@ -829,14 +846,16 @@
 		function rebuildVariantPills() {
 			var caseKey = fieldNode(form, 'case_key').value;
 			var variantControl = app.querySelector('[data-sgk-variant-pills]');
-			var variantStep = app.querySelector('[data-sgk-step="2"]');
 			if (!variantControl || !caseKey) { return; }
 			var config = CASE_UI[caseKey];
 			if (!config || !config.variantOptions) {
-				if (variantStep) { variantStep.hidden = true; }
+				// No variant options: hide Step 2
+				var step2 = app.querySelector('[data-sgk-step="2"]');
+				if (step2) { step2.hidden = true; }
 				return;
 			}
-			if (variantStep) { variantStep.hidden = false; }
+			// Has variant options: show Step 2
+			showStep(2);
 			variantControl.innerHTML = '';
 			config.variantOptions.forEach(function (option) {
 				var variantKey = option[0];
@@ -1111,6 +1130,9 @@
 			if (step3) { step3.hidden = !hasUsageFields; }
 			if (step4) { step4.hidden = !hasExtensions; }
 		}
+
+		/* Alias for rebuildFieldVisibility */
+		rebuildFieldVisibility = showHideStepSections;
 
 		/* Range slider input event for live display */
 		app.querySelectorAll('[data-sgk-range]').forEach(function (slider) {

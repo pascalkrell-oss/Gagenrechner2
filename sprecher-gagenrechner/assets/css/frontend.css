@@ -4,26 +4,25 @@
 
 /* CSS Custom Properties */
 :root {
-	--sgk-bg: #0f141a;
-	--sgk-surface: #161d27;
-	--sgk-surface-raised: #1e2a38;
-	--sgk-border: rgba(255, 255, 255, 0.08);
-	--sgk-border-subtle: rgba(255, 255, 255, 0.04);
-	--sgk-accent: #1a93ee;
-	--sgk-accent-hover: #2aa3ff;
-	--sgk-accent-dark: #0f6fd4;
-	--sgk-text: #e8f0fa;
-	--sgk-text-muted: #8899aa;
-	--sgk-text-muted-darker: #667788;
-	--sgk-success: #22c55e;
-	--sgk-warning: #f59e0b;
-	--sgk-error: #ef4444;
+	--sgk-bg: #f0f4f8;
+	--sgk-surface: #ffffff;
+	--sgk-surface-raised: #f7f9fc;
+	--sgk-border: rgba(0, 0, 0, 0.09);
+	--sgk-border-subtle: rgba(0, 0, 0, 0.04);
+	--sgk-accent: #1a6fd4;
+	--sgk-accent-hover: #1558b0;
+	--sgk-accent-rgb: 26, 111, 212;
+	--sgk-text: #0f1923;
+	--sgk-text-muted: #556070;
+	--sgk-text-muted-darker: #3d4451;
+	--sgk-success: #16a34a;
+	--sgk-warning: #d97706;
+	--sgk-error: #dc2626;
 	--sgk-radius: 16px;
 	--sgk-radius-sm: 10px;
 	--sgk-radius-xs: 6px;
-	--sgk-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.12);
-	--sgk-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.16);
-	--sgk-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.24);
+	--sgk-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+	--sgk-shadow-hover: 0 6px 24px rgba(0, 0, 0, 0.13);
 	--sgk-transition: all 0.2s ease-out;
 	--sgk-spacing-xs: 4px;
 	--sgk-spacing-sm: 8px;
@@ -50,6 +49,11 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.sgk-app {
+	background: var(--sgk-bg);
+	color: var(--sgk-text);
+}
+
 /* =====================================================
    Main App Container
    ===================================================== */
@@ -67,8 +71,8 @@ body {
 	justify-content: space-between;
 	align-items: center;
 	padding: var(--sgk-spacing-lg) var(--sgk-spacing-xl);
-	border-bottom: 1px solid var(--sgk-border-subtle);
-	background-color: var(--sgk-surface);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+	background-color: #ffffff;
 	position: sticky;
 	top: 0;
 	z-index: 100;
@@ -87,28 +91,28 @@ body {
 	gap: var(--sgk-spacing-sm);
 	padding: var(--sgk-spacing-sm) var(--sgk-spacing-md);
 	background-color: transparent;
-	border: 1px solid var(--sgk-border);
+	border: 1px solid rgba(0, 0, 0, 0.08);
 	border-radius: var(--sgk-radius-sm);
-	color: var(--sgk-text);
+	color: #0f1923;
 	font-size: 14px;
 	cursor: pointer;
 	transition: var(--sgk-transition);
 }
 
 .sgk-toolbar-btn:hover {
-	background-color: var(--sgk-surface-raised);
-	border-color: var(--sgk-accent);
-	color: var(--sgk-accent);
+	background-color: rgba(0, 0, 0, 0.05);
+	border-color: #1a6fd4;
+	color: #1a6fd4;
 }
 
 .sgk-toolbar-btn--secondary {
-	background-color: var(--sgk-surface-raised);
-	border-color: var(--sgk-border);
+	background-color: rgba(0, 0, 0, 0.03);
+	border-color: rgba(0, 0, 0, 0.08);
 }
 
 .sgk-toolbar-btn--secondary:hover {
-	background-color: var(--sgk-surface-raised);
-	border-color: var(--sgk-text-muted);
+	background-color: rgba(0, 0, 0, 0.06);
+	border-color: #1a6fd4;
 }
 
 /* =====================================================
@@ -153,8 +157,8 @@ body {
 
 /* Step Section */
 .sgk-step-section {
-	background-color: var(--sgk-surface);
-	border: 1px solid var(--sgk-border);
+	background-color: #ffffff;
+	border: 1px solid rgba(0, 0, 0, 0.08);
 	border-radius: var(--sgk-radius);
 	padding: var(--sgk-spacing-xl);
 	animation: fadeIn 0.3s ease-out;
@@ -210,26 +214,27 @@ body {
 	align-items: flex-start;
 	gap: var(--sgk-spacing-md);
 	padding: var(--sgk-spacing-md);
-	background-color: var(--sgk-surface-raised);
-	border: 2px solid var(--sgk-border);
+	background-color: #ffffff;
+	border: 1.5px solid rgba(0, 0, 0, 0.09);
 	border-radius: var(--sgk-radius-sm);
 	cursor: pointer;
 	transition: var(--sgk-transition);
 	text-align: left;
 	font-size: inherit;
-	color: inherit;
+	color: #0f1923;
 }
 
 .sgk-project-card:hover {
-	border-color: var(--sgk-accent);
-	background-color: rgba(26, 147, 238, 0.05);
+	border-color: #1a6fd4;
+	background-color: #ffffff;
+	box-shadow: var(--sgk-shadow-hover);
 	transform: translateY(-2px);
 }
 
 .sgk-project-card.is-active {
-	border-color: var(--sgk-accent);
-	background-color: rgba(26, 147, 238, 0.1);
-	box-shadow: 0 0 0 3px rgba(26, 147, 238, 0.15);
+	border-color: #1a6fd4;
+	background-color: #eef4fd;
+	box-shadow: 0 0 0 3px rgba(26, 111, 212, 0.1);
 }
 
 .sgk-card-icon {
@@ -238,11 +243,16 @@ body {
 	justify-content: center;
 	width: 44px;
 	height: 44px;
-	background-color: var(--sgk-surface);
+	background-color: #eef4fd;
 	border-radius: var(--sgk-radius-sm);
-	color: var(--sgk-accent);
+	color: #1a6fd4;
 	font-size: 20px;
 	flex-shrink: 0;
+}
+
+.sgk-project-card.is-active .sgk-card-icon {
+	background-color: #1a6fd4;
+	color: #ffffff;
 }
 
 .sgk-card-text {
@@ -597,6 +607,8 @@ input[type='text']:focus {
 	height: fit-content;
 	max-height: calc(100vh - 100px);
 	overflow-y: auto;
+	background: #0f141a;
+	color: #e8f0fa;
 }
 
 @media (max-width: 768px) {
@@ -608,8 +620,8 @@ input[type='text']:focus {
 }
 
 .sgk-result-panel {
-	background-color: var(--sgk-surface);
-	border: 1px solid var(--sgk-border);
+	background-color: #0f141a;
+	border: 1px solid rgba(255, 255, 255, 0.08);
 	border-radius: var(--sgk-radius);
 	padding: var(--sgk-spacing-xl);
 	min-height: 500px;
@@ -617,6 +629,43 @@ input[type='text']:focus {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	color: #e8f0fa;
+}
+
+.sgk-result-panel .sgk-field-label,
+.sgk-result-panel .sgk-overview-title,
+.sgk-result-panel .sgk-price-label,
+.sgk-result-panel .sgk-avg-label,
+.sgk-result-panel p,
+.sgk-result-panel h3,
+.sgk-result-panel h4 {
+	color: #8899aa;
+}
+
+.sgk-result-panel .sgk-price-value,
+.sgk-result-panel .sgk-avg-value,
+.sgk-result-panel strong {
+	color: #ffffff;
+}
+
+.sgk-result-panel .sgk-btn-primary {
+	background: #1a93ee;
+	color: #fff;
+}
+
+.sgk-result-panel .sgk-btn-primary:hover {
+	background: #2aa3ff;
+}
+
+.sgk-result-panel .sgk-btn-secondary {
+	background: rgba(255, 255, 255, 0.07);
+	color: #e8f0fa;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.sgk-result-panel .sgk-btn-secondary:hover {
+	background: rgba(255, 255, 255, 0.12);
+	border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Empty State */
