@@ -123,11 +123,11 @@
 		});
 		if (activeRightsToggles.length) { rightsParts.push(activeRightsToggles.join(' · ')); }
 		if (rightsNode) {
-			rightsNode.innerHTML = '<strong>Rechtekompass</strong><div class="src-rights-summary-list">' +
-				'<div class="src-rights-summary-row"><span>Gebiet</span><strong>' + htmlEscape(summarizeSelection(formData.territory)) + '</strong></div>' +
-				'<div class="src-rights-summary-row"><span>Laufzeit</span><strong>' + htmlEscape(summarizeSelection(formData.duration_term)) + '</strong></div>' +
-				'<div class="src-rights-summary-row"><span>Medium</span><strong>' + htmlEscape(summarizeSelection(formData.medium)) + '</strong></div>' +
-				(rightsParts.length ? '<div class="src-rights-summary-row"><span>Aktiv</span><strong>' + htmlEscape(rightsParts.slice(3).join(' · ') || '—') + '</strong></div>' : '') +
+			rightsNode.innerHTML = '<h4 class="sgk-guidance-title">Rechtekompass</h4><div class="src-rights-summary-list">' +
+				'<div class="src-rights-summary-row"><span>Gebiet:</span><strong>' + htmlEscape(summarizeSelection(formData.territory)) + '</strong></div>' +
+				'<div class="src-rights-summary-row"><span>Laufzeit:</span><strong>' + htmlEscape(summarizeSelection(formData.duration_term)) + '</strong></div>' +
+				'<div class="src-rights-summary-row"><span>Medium:</span><strong>' + htmlEscape(summarizeSelection(formData.medium)) + '</strong></div>' +
+				'<div class="src-rights-summary-row"><span>Aktiv:</span><strong>' + htmlEscape(rightsParts.slice(3).join(' · ') || '—') + '</strong></div>' +
 				'</div>';
 		}
 		if (journeyNode) {
@@ -140,9 +140,10 @@
 				}
 				return false;
 			});
-			journeyNode.innerHTML = '<div class="src-tower-journey-item"><span>Projekt</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
-				'<div class="src-tower-journey-item"><span>Rechte</span><strong>' + htmlEscape(rightsParts.length ? rightsParts.slice(0, 3).join(' · ') : 'Wird nach den Rechteeingaben ergänzt') + '</strong></div>' +
-				'<div class="src-tower-journey-item"><span>Umfang</span><strong>' + htmlEscape(scopeSummary) + '</strong></div>';
+			journeyNode.innerHTML = '<h4 class="sgk-guidance-title">Projektstatus</h4>' +
+				'<div class="src-tower-journey-item"><span>Projekt:</span><strong>' + htmlEscape(caseLabel) + '</strong></div>' +
+				'<div class="src-tower-journey-item"><span>Rechte:</span><strong>' + htmlEscape(rightsParts.length ? rightsParts.slice(0, 3).join(' · ') : 'Wird nach den Rechteeingaben ergänzt') + '</strong></div>' +
+				'<div class="src-tower-journey-item"><span>Umfang:</span><strong>' + htmlEscape(scopeSummary) + '</strong></div>';
 		}
 	}
 
@@ -355,7 +356,7 @@
 		var button = app.querySelector('[data-sgk-submit]');
 		if (!status || !button) { return; }
 		status.textContent = validation.message || '';
-		status.className = 'src-actions-hint ' + (validation.valid ? 'is-valid' : 'is-invalid');
+		status.className = 'sgk-validation-status ' + (validation.valid ? 'is-valid' : 'is-invalid');
 		button.disabled = !validation.valid;
 		button.setAttribute('aria-disabled', validation.valid ? 'false' : 'true');
 		button.textContent = validation.valid ? 'Angebot als PDF erstellen' : 'Bitte fülle noch aus';
@@ -516,7 +517,7 @@
 		return items.map(function (item) {
 			var amountValue = parseCurrencyToNumber(item.amount);
 			return '<div class="src-breakdown-row">' +
-				'<div class="src-breakdown-main"><strong>' + htmlEscape(item.label) + '</strong>' + (item.note ? '<span>' + htmlEscape(normalizeQuantityLabel(item.note)) + '</span>' : '') + '</div>' +
+				'<div class="src-breakdown-main"><strong>' + htmlEscape(item.label) + '</strong>' + (item.note ? '<span>· ' + htmlEscape(normalizeQuantityLabel(item.note)) + '</span>' : '') + '</div>' +
 				'<div class="src-breakdown-amount src-count-animate' + (item.is_credit ? ' is-credit' : '') + (item.is_minimum ? ' is-minimum' : '') + '"' + (amountValue !== null ? ' data-sgk-count-value="' + htmlEscape(amountValue) + '"' : '') + '>' + htmlEscape(item.amount) + '</div>' +
 			'</div>';
 		}).join('');
@@ -624,8 +625,8 @@
 		container.classList.remove('sgk-result-flash');
 		container.innerHTML = '' +
 			'<div class="src-result-hero src-result-hero--stack">' +
-				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><strong>Deine Gage</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value sgk-price src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><span>Empfohlener Rahmen</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong> – <strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong><p>Ø Empfehlung für Dein Angebot</p></div></div></section>' +
-				'<div class="src-result-meta-grid src-result-meta-grid--stack"><div class="src-result-meta-card"><span>Projekt</span><strong>' + htmlEscape(caseLabel) + '</strong></div><div class="src-result-meta-card"><span>Variante</span><strong>' + htmlEscape(variantLabel) + '</strong></div></div>' +
+				'<section class="src-result-card src-result-card--price"><div class="src-price-panel-head"><div><strong>Deine Gage</strong></div><span class="src-live-badge src-live-badge--panel"><span class="src-live-dot"></span>Live</span></div><div class="src-price-block"><div class="src-price-huge"><span class="src-price-huge-value sgk-price src-count-animate" data-sgk-count-key="price-anchor" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.mid ? result.totals.mid : 0) + '">' + htmlEscape(totals.mid || '0,00 €') + '</span><span class="src-price-netto">netto</span></div><div class="src-price-range"><div class="src-price-range-row"><span>Empfohlener Rahmen:</span><strong class="src-count-animate" data-sgk-count-key="price-lower" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.lower ? result.totals.lower : 0) + '">' + htmlEscape(totals.lower || '0,00 €') + '</strong><span>–</span><strong class="src-count-animate" data-sgk-count-key="price-upper" data-sgk-count-value="' + htmlEscape(result.totals && result.totals.upper ? result.totals.upper : 0) + '">' + htmlEscape(totals.upper || '0,00 €') + '</strong></div><span>Ø Empfehlung für Dein Angebot</span></div></div></section>' +
+				'<div class="src-result-meta-grid src-result-meta-grid--stack"><div class="src-result-meta-card"><span class="src-meta-label">Projekt:</span><strong>' + htmlEscape(caseLabel) + '</strong></div><div class="src-result-meta-card"><span class="src-meta-label">Variante:</span><strong>' + htmlEscape(variantLabel) + '</strong></div></div>' +
 			'</div>' +
 			'<div class="src-result-grid src-result-grid--stack">' +
 				'<section class="src-result-card src-result-card--priority"><div class="src-result-card-head"><strong>Nutzungsrechte</strong></div><div class="src-keyvalue-list"><div class="src-keyvalue-row"><span>Region</span><strong>' + htmlEscape(rightsSummary.territory) + '</strong></div><div class="src-keyvalue-row"><span>Laufzeit</span><strong>' + htmlEscape(rightsSummary.duration) + '</strong></div><div class="src-keyvalue-row"><span>Kanal</span><strong>' + htmlEscape(rightsSummary.media) + '</strong></div></div></section>' +
@@ -731,8 +732,26 @@
 		}
 		function scheduleCalculation(reason, delay) { clearTimeout(debounceTimer); debounceTimer = setTimeout(function () { syncUI(); requestCalculation(reason); }, delay); }
 
-		app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) { button.addEventListener('click', function () { setFieldValue(fieldNode(form, 'case_key'), button.getAttribute('data-sgk-quick-case')); syncUI(); requestCalculation('quick-case'); }); });
-		app.querySelectorAll('[data-sgk-demo]').forEach(function (button) { button.addEventListener('click', function () { fillForm(form, JSON.parse(button.getAttribute('data-sgk-demo') || '{}')); syncUI(); requestCalculation('demo'); }); });
+		app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) {
+			button.addEventListener('click', function () {
+				var demoPayload = parseJsonAttribute(button, 'data-sgk-demo');
+				if (demoPayload && typeof demoPayload === 'object' && Object.keys(demoPayload).length) {
+					fillForm(form, demoPayload);
+					if (!demoPayload.case_key && button.getAttribute('data-sgk-quick-case')) {
+						setFieldValue(fieldNode(form, 'case_key'), button.getAttribute('data-sgk-quick-case'));
+					}
+					syncUI();
+					requestCalculation('demo');
+					return;
+				}
+				var quickCase = button.getAttribute('data-sgk-quick-case');
+				if (quickCase) {
+					setFieldValue(fieldNode(form, 'case_key'), quickCase);
+					syncUI();
+					requestCalculation('quick-case');
+				}
+			});
+		});
 		app.querySelectorAll('[data-sgk-currency]').forEach(function (button) {
 			button.addEventListener('click', function () {
 				app.querySelectorAll('[data-sgk-currency]').forEach(function (chip) { chip.classList.remove('is-active'); });
