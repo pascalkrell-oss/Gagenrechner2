@@ -17,10 +17,11 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 	<header class="sgk-top-toolbar" aria-label="<?php esc_attr_e( 'Werkzeugleiste', 'sprecher-gagenrechner' ); ?>">
 		<div class="sgk-toolbar-brand">
 			<strong><?php esc_html_e( 'Sprecher Gagenrechner', 'sprecher-gagenrechner' ); ?></strong>
-			<span><?php esc_html_e( 'Live Kalkulation für professionelle Angebotsplanung', 'sprecher-gagenrechner' ); ?></span>
+			<span><?php esc_html_e( 'Premium Pricing Control für Voiceover-Angebote', 'sprecher-gagenrechner' ); ?></span>
 		</div>
 		<div class="sgk-toolbar-right">
-			<button type="button" class="sgk-toolbar-btn" data-sgk-tutorial><i class="fa-solid fa-circle-play" aria-hidden="true"></i><span><?php esc_html_e( 'Tutorial', 'sprecher-gagenrechner' ); ?></span></button>
+			<button type="button" class="sgk-toolbar-btn" data-sgk-action="save"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span><?php esc_html_e( 'Speichern', 'sprecher-gagenrechner' ); ?></span></button>
+			<button type="button" class="sgk-toolbar-btn" data-sgk-action="load"><i class="fa-solid fa-folder-open" aria-hidden="true"></i><span><?php esc_html_e( 'Laden', 'sprecher-gagenrechner' ); ?></span></button>
 			<button type="button" class="sgk-toolbar-btn" data-sgk-guide><i class="fa-solid fa-book-open" aria-hidden="true"></i><span><?php esc_html_e( 'Anleitung', 'sprecher-gagenrechner' ); ?></span></button>
 			<button type="button" class="sgk-toolbar-btn sgk-toolbar-btn--secondary" data-sgk-reset-calculator><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i><span><?php esc_html_e( 'Reset', 'sprecher-gagenrechner' ); ?></span></button>
 		</div>
@@ -81,11 +82,11 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 
 				<section class="sgk-step-section" data-sgk-step="2" data-sgk-dependent-step hidden>
 					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '2. Variante', 'sprecher-gagenrechner' ); ?></h2></div>
-					<div class="sgk-field-group" data-sgk-block="variant"><div class="sgk-variants-control" data-sgk-variant-pills data-sgk-variant-control></div><p class="sgk-variant-help" data-sgk-variant-help data-sgk-variant-hint></p></div>
+					<div class="sgk-field-group" data-sgk-block="variant"><label class="sgk-field-label"><?php esc_html_e( 'Verfügbare Varianten', 'sprecher-gagenrechner' ); ?></label><div class="sgk-variants-control" data-sgk-variant-pills data-sgk-variant-control></div><p class="sgk-variant-help" data-sgk-variant-help data-sgk-variant-hint></p></div>
 				</section>
 
 				<section class="sgk-step-section" data-sgk-step="3" data-sgk-step-shell="usage" data-sgk-dependent-step hidden>
-					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '3–9. Nutzung, Rechte & Umfang', 'sprecher-gagenrechner' ); ?></h2></div>
+					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '3–9. Nutzung, Rechte & Umfang', 'sprecher-gagenrechner' ); ?></h2><p class="sgk-step-subtitle"><?php esc_html_e( 'Segmentierte Rechteauswahl, Counter und Zusatzoptionen', 'sprecher-gagenrechner' ); ?></p></div>
 					<div class="sgk-field-group" data-sgk-block="usage_type" hidden><label class="sgk-field-label"><?php esc_html_e( 'Nutzungsart', 'sprecher-gagenrechner' ); ?></label><div class="sgk-usage-pills" data-sgk-usage-pills data-sgk-usage-type-control></div></div>
 					<div class="sgk-field-group" data-sgk-block="duration_minutes" hidden><label class="sgk-field-label"><?php esc_html_e( 'Minuten', 'sprecher-gagenrechner' ); ?></label><input type="range" name="duration_minutes" min="1" max="120" step="0.5" data-sgk-range="duration_minutes" /><div class="sgk-range-value" data-sgk-range-display="duration_minutes"></div></div>
 					<div class="sgk-field-group" data-sgk-block="net_minutes" hidden><label class="sgk-field-label"><?php esc_html_e( 'Sendeminuten (netto)', 'sprecher-gagenrechner' ); ?></label><div class="sgk-stepper-container"><button type="button" class="sgk-stepper-btn" data-sgk-stepper="net_minutes" data-sgk-stepper-direction="down">−</button><input type="number" name="net_minutes" data-sgk-stepper-input="net_minutes" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper="net_minutes" data-sgk-stepper-direction="up">+</button></div></div>
@@ -106,10 +107,12 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<div class="sgk-field-group" data-sgk-block="medium" hidden><label class="sgk-field-label"><?php esc_html_e( 'Medien', 'sprecher-gagenrechner' ); ?></label><div data-sgk-medium-pills></div></div>
 					</div>
 					<div class="sgk-field-group" data-sgk-block="addon_counts" hidden>
-						<label class="sgk-field-label"><?php esc_html_e( 'Add-ons', 'sprecher-gagenrechner' ); ?></label>
-						<div class="sgk-stepper-container" data-sgk-stepper="additional_year"><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down">−</button><input type="number" name="additional_year" data-sgk-stepper-input="additional_year" min="0" step="1" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up">+</button></div>
-						<div class="sgk-stepper-container" data-sgk-stepper="additional_territory"><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down">−</button><input type="number" name="additional_territory" data-sgk-stepper-input="additional_territory" min="0" step="1" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up">+</button></div>
-						<div class="sgk-stepper-container" data-sgk-stepper="additional_motif"><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down">−</button><input type="number" name="additional_motif" data-sgk-stepper-input="additional_motif" min="0" step="1" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up">+</button></div>
+						<label class="sgk-field-label"><?php esc_html_e( '6. Add-ons', 'sprecher-gagenrechner' ); ?></label>
+						<div class="sgk-addon-grid">
+							<div class="sgk-stepper-container" data-sgk-stepper="additional_year"><span class="sgk-stepper-caption"><?php esc_html_e( 'Zusätzliche Jahre', 'sprecher-gagenrechner' ); ?></span><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down">−</button><input type="number" name="additional_year" data-sgk-stepper-input="additional_year" min="0" step="1" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up">+</button></div>
+							<div class="sgk-stepper-container" data-sgk-stepper="additional_territory"><span class="sgk-stepper-caption"><?php esc_html_e( 'Zusätzliche Regionen', 'sprecher-gagenrechner' ); ?></span><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down">−</button><input type="number" name="additional_territory" data-sgk-stepper-input="additional_territory" min="0" step="1" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up">+</button></div>
+							<div class="sgk-stepper-container" data-sgk-stepper="additional_motif"><span class="sgk-stepper-caption"><?php esc_html_e( 'Zusätzliche Motive', 'sprecher-gagenrechner' ); ?></span><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down">−</button><input type="number" name="additional_motif" data-sgk-stepper-input="additional_motif" min="0" step="1" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up">+</button></div>
+						</div>
 					</div>
 					<div class="sgk-field-group" data-sgk-block="rights_toggles" hidden data-sgk-rights-toggles>
 						<label class="sgk-toggle-item"><input type="checkbox" name="archivgage" value="1" /><span class="sgk-toggle-label"><?php esc_html_e( 'Archivgage', 'sprecher-gagenrechner' ); ?></span></label>
@@ -132,7 +135,10 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 				</section>
 
 				<div class="sgk-case-context" data-sgk-case-context hidden></div>
-				<section class="sgk-guidance-panel" data-sgk-expert-shell><div data-sgk-rights-summary></div><div data-sgk-journey-summary></div><div class="sgk-expert-badges" data-sgk-expert-badges></div><div data-sgk-scope-copy class="sgk-scope-copy"></div></section>
+				<section class="sgk-guidance-panel" data-sgk-expert-shell>
+					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '10–15. Summary, Breakdown & Hinweise', 'sprecher-gagenrechner' ); ?></h2></div>
+					<div data-sgk-rights-summary></div><div data-sgk-journey-summary></div><div class="sgk-expert-badges" data-sgk-expert-badges></div><div data-sgk-scope-copy class="sgk-scope-copy"></div>
+				</section>
 				<div class="sgk-actions-bar"><p class="sgk-validation-status" data-sgk-validation-status></p><button type="submit" class="sgk-btn-submit" data-sgk-submit disabled><?php esc_html_e( 'Angebot erstellen', 'sprecher-gagenrechner' ); ?></button></div>
 			</form>
 		</aside>
@@ -152,15 +158,15 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 			<div class="src-modal-header"><h3 id="sgk-offer-modal-title"><?php esc_html_e( 'Angebot konfigurieren', 'sprecher-gagenrechner' ); ?></h3><button type="button" class="src-btn-secondary" data-sgk-offer-close><?php esc_html_e( 'Schließen', 'sprecher-gagenrechner' ); ?></button></div>
 			<div class="src-modal-body src-modal-grid">
 				<section class="src-modal-panel">
-					<input type="text" class="src-input-text" data-sgk-offer-meta="offer_number" placeholder="ANG-2026-001" />
-					<input type="date" class="src-input-text" data-sgk-offer-meta="offer_date" />
-					<input type="text" class="src-input-text" data-sgk-offer-meta="contact_name" placeholder="Ansprechpartner" />
-					<input type="text" class="src-input-text" data-sgk-offer-meta="sender_company" placeholder="Firma" />
-					<input type="email" class="src-input-text" data-sgk-offer-meta="sender_email" placeholder="E-Mail" />
-					<input type="text" class="src-input-text" data-sgk-offer-meta="sender_phone" placeholder="Telefon" />
-					<textarea class="src-input-text" data-sgk-offer-meta="intro_text" placeholder="Einleitung"></textarea>
-					<textarea class="src-input-text" data-sgk-offer-meta="footer_text" placeholder="Footer"></textarea>
-					<textarea class="src-input-text" data-sgk-offer-meta="internal_note" placeholder="Interne Notiz"></textarea>
+					<label class="sgk-field-label"><?php esc_html_e( 'Angebotsnummer', 'sprecher-gagenrechner' ); ?></label><input type="text" class="src-input-text" data-sgk-offer-meta="offer_number" placeholder="ANG-2026-001" />
+					<label class="sgk-field-label"><?php esc_html_e( 'Datum', 'sprecher-gagenrechner' ); ?></label><input type="date" class="src-input-text" data-sgk-offer-meta="offer_date" />
+					<label class="sgk-field-label"><?php esc_html_e( 'Ansprechpartner', 'sprecher-gagenrechner' ); ?></label><input type="text" class="src-input-text" data-sgk-offer-meta="contact_name" placeholder="Ansprechpartner" />
+					<label class="sgk-field-label"><?php esc_html_e( 'Absenderfirma', 'sprecher-gagenrechner' ); ?></label><input type="text" class="src-input-text" data-sgk-offer-meta="sender_company" placeholder="Firma" />
+					<label class="sgk-field-label"><?php esc_html_e( 'E-Mail', 'sprecher-gagenrechner' ); ?></label><input type="email" class="src-input-text" data-sgk-offer-meta="sender_email" placeholder="E-Mail" />
+					<label class="sgk-field-label"><?php esc_html_e( 'Telefon', 'sprecher-gagenrechner' ); ?></label><input type="text" class="src-input-text" data-sgk-offer-meta="sender_phone" placeholder="Telefon" />
+					<label class="sgk-field-label"><?php esc_html_e( 'Einleitung', 'sprecher-gagenrechner' ); ?></label><textarea class="src-input-text" data-sgk-offer-meta="intro_text" placeholder="Einleitung"></textarea>
+					<label class="sgk-field-label"><?php esc_html_e( 'Footer', 'sprecher-gagenrechner' ); ?></label><textarea class="src-input-text" data-sgk-offer-meta="footer_text" placeholder="Footer"></textarea>
+					<label class="sgk-field-label"><?php esc_html_e( 'Interne Notiz', 'sprecher-gagenrechner' ); ?></label><textarea class="src-input-text" data-sgk-offer-meta="internal_note" placeholder="Interne Notiz"></textarea>
 					<p class="src-field-hint" data-sgk-offer-status></p>
 				</section>
 				<section class="src-modal-panel"><div class="src-offer-preview-shell" data-sgk-offer-preview></div></section>
