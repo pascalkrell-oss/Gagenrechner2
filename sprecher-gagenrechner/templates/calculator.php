@@ -72,11 +72,17 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<button type="button" class="sgk-project-card" data-sgk-case="kleinraeumig"><span class="sgk-card-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Kleinräumige Nutzung', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Lokale bis regionale Einsätze', 'sprecher-gagenrechner' ); ?></small></span></button>
 						<button type="button" class="sgk-project-card" data-sgk-case="session_fee"><span class="sgk-card-icon"><i class="fa-solid fa-stopwatch" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Session Fee', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Reine Studiozeit', 'sprecher-gagenrechner' ); ?></small></span></button>
 					</div>
-					<div class="sgk-quick-cases">
+					<div class="sgk-quick-cases-shell">
+						<div class="sgk-quick-cases-head">
+							<span class="sgk-quick-cases-title"><?php esc_html_e( 'Schnellstarts', 'sprecher-gagenrechner' ); ?></span>
+							<small><?php esc_html_e( 'Vorgefertigte Beispiel-Fälle', 'sprecher-gagenrechner' ); ?></small>
+						</div>
+						<div class="sgk-quick-cases">
 						<?php foreach ( $demo_cases as $demo_case ) : ?>
-							<?php $demo_label = is_array( $demo_case ) && isset( $demo_case['label'] ) ? $demo_case['label'] : (string) $demo_case; $demo_input = is_array( $demo_case ) && isset( $demo_case['input'] ) && is_array( $demo_case['input'] ) ? $demo_case['input'] : array( 'case_key' => (string) $demo_case ); ?>
-							<button type="button" class="sgk-quick-case" data-sgk-demo="<?php echo esc_attr( wp_json_encode( $demo_input ) ); ?>"><?php echo esc_html( $demo_label ); ?></button>
+							<?php $demo_label = is_array( $demo_case ) && isset( $demo_case['label'] ) ? $demo_case['label'] : (string) $demo_case; $demo_input = is_array( $demo_case ) && isset( $demo_case['input'] ) && is_array( $demo_case['input'] ) ? $demo_case['input'] : array( 'case_key' => (string) $demo_case ); $demo_case_key = isset( $demo_input['case_key'] ) ? (string) $demo_input['case_key'] : ''; ?>
+							<button type="button" class="sgk-quick-case" data-sgk-demo="<?php echo esc_attr( wp_json_encode( $demo_input ) ); ?>" data-sgk-quick-case="<?php echo esc_attr( $demo_case_key ); ?>"><?php echo esc_html( $demo_label ); ?></button>
 						<?php endforeach; ?>
+						</div>
 					</div>
 				</section>
 
@@ -136,7 +142,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 
 				<div class="sgk-case-context" data-sgk-case-context hidden></div>
 				<section class="sgk-guidance-panel" data-sgk-expert-shell>
-					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '10–15. Summary, Breakdown & Hinweise', 'sprecher-gagenrechner' ); ?></h2></div>
+					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( 'Ergebnisübersicht', 'sprecher-gagenrechner' ); ?></h2></div>
 					<div data-sgk-rights-summary></div><div data-sgk-journey-summary></div><div class="sgk-expert-badges" data-sgk-expert-badges></div><div data-sgk-scope-copy class="sgk-scope-copy"></div>
 				</section>
 				<div class="sgk-actions-bar"><p class="sgk-validation-status" data-sgk-validation-status></p><button type="submit" class="sgk-btn-submit" data-sgk-submit disabled><?php esc_html_e( 'Angebot erstellen', 'sprecher-gagenrechner' ); ?></button></div>
@@ -146,7 +152,21 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 		<aside class="sgk-result-column">
 			<div class="sgk-result-panel" data-sgk-result>
 				<div class="src-redirect-banner" data-sgk-redirect-banner hidden></div>
-				<div class="sgk-default-state"><div class="sgk-default-price-label"><?php esc_html_e( 'LIVE Rechnung', 'sprecher-gagenrechner' ); ?></div><div class="sgk-default-price-value">0,00 €</div><div class="sgk-default-hint"><?php esc_html_e( 'Wähle links Dein Projekt – rechts erscheint sofort Dein Control Tower.', 'sprecher-gagenrechner' ); ?><span><?php esc_html_e( 'Alle Preise zzgl. MwSt.', 'sprecher-gagenrechner' ); ?></span></div></div>
+				<div class="sgk-default-tower">
+					<div class="sgk-default-state"><div class="sgk-default-price-label"><?php esc_html_e( 'LIVE Rechnung', 'sprecher-gagenrechner' ); ?></div><div class="sgk-default-price-value">0,00 €</div><div class="sgk-default-hint"><?php esc_html_e( 'Wähle links Dein Projekt – rechts erscheint sofort Dein Control Tower.', 'sprecher-gagenrechner' ); ?><span><?php esc_html_e( 'Alle Preise zzgl. MwSt.', 'sprecher-gagenrechner' ); ?></span></div></div>
+					<div class="sgk-default-card">
+						<span><?php esc_html_e( 'Finales Angebot', 'sprecher-gagenrechner' ); ?></span>
+						<strong><?php esc_html_e( 'Noch nicht gesetzt', 'sprecher-gagenrechner' ); ?></strong>
+					</div>
+					<div class="sgk-default-card">
+						<span><?php esc_html_e( 'Summary', 'sprecher-gagenrechner' ); ?></span>
+						<strong><?php esc_html_e( 'Projekt, Rechte und Umfang folgen nach Auswahl.', 'sprecher-gagenrechner' ); ?></strong>
+					</div>
+					<div class="sgk-default-card sgk-default-card--actions">
+						<span><?php esc_html_e( 'Actions', 'sprecher-gagenrechner' ); ?></span>
+						<strong><?php esc_html_e( 'Export-, Copy- und Speicherfunktionen werden hier aktiviert.', 'sprecher-gagenrechner' ); ?></strong>
+					</div>
+				</div>
 			</div>
 			<select data-sgk-saved-list hidden><option value=""></option></select><div data-sgk-storage-status hidden></div>
 			<div class="sgk-progress-indicator"><div class="sgk-progress-dot" data-sgk-progress="1"></div><div class="sgk-progress-dot" data-sgk-progress="2"></div><div class="sgk-progress-dot" data-sgk-progress="3"></div><div class="sgk-progress-dot" data-sgk-progress="4"></div></div>
