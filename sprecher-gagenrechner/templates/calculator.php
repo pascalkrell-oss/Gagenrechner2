@@ -61,9 +61,20 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<button type="button" class="sgk-project-card" data-sgk-case="kleinraeumig" title="<?php esc_attr_e( 'Lokale Nutzung', 'sprecher-gagenrechner' ); ?>"><span class="sgk-card-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Lokale Nutzung', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Kleinunternehmen, regionale Werbung', 'sprecher-gagenrechner' ); ?></small></span></button>
 						<button type="button" class="sgk-project-card" data-sgk-case="session_fee" title="<?php esc_attr_e( 'Studiozeit buchen', 'sprecher-gagenrechner' ); ?>"><span class="sgk-card-icon"><i class="fa-solid fa-stopwatch" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Studiozeit buchen', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Aufnahmezeit ohne Nutzungsrechte', 'sprecher-gagenrechner' ); ?></small></span></button>
 					</div>
-					<div class="sgk-quick-cases" data-sgk-demo>
+					<div class="sgk-quick-cases">
 						<?php foreach ( $demo_cases as $demo_case ) : ?>
-							<button type="button" class="sgk-quick-case" data-sgk-quick-case="<?php echo esc_attr( $demo_case ); ?>"><?php echo esc_html( $demo_case ); ?></button>
+							<?php
+							$demo_label = '';
+							$demo_input = array();
+							if ( is_array( $demo_case ) ) {
+								$demo_label = isset( $demo_case['label'] ) ? $demo_case['label'] : '';
+								$demo_input = isset( $demo_case['input'] ) && is_array( $demo_case['input'] ) ? $demo_case['input'] : array();
+							} else {
+								$demo_label = (string) $demo_case;
+								$demo_input = array( 'case_key' => (string) $demo_case );
+							}
+							?>
+							<button type="button" class="sgk-quick-case" data-sgk-demo="<?php echo esc_attr( wp_json_encode( $demo_input ) ); ?>"><?php echo esc_html( $demo_label ); ?></button>
 						<?php endforeach; ?>
 					</div>
 				</section>
@@ -84,7 +95,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					<div class="sgk-field-group" data-sgk-block="recording_days" hidden><label class="sgk-field-label"><?php esc_html_e( 'Tage im Studio', 'sprecher-gagenrechner' ); ?></label><div class="sgk-stepper-container"><button type="button" class="sgk-stepper-btn" data-sgk-stepper="recording_days" data-sgk-stepper-direction="down">−</button><input type="number" name="recording_days" data-sgk-stepper-input="recording_days" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper="recording_days" data-sgk-stepper-direction="up">+</button></div></div>
 					<div class="sgk-field-group" data-sgk-block="same_day_projects" hidden><label class="sgk-field-label"><?php esc_html_e( 'Weitere Projekte am selben Tag', 'sprecher-gagenrechner' ); ?></label><div class="sgk-stepper-container"><button type="button" class="sgk-stepper-btn" data-sgk-stepper="same_day_projects" data-sgk-stepper-direction="down">−</button><input type="number" name="same_day_projects" data-sgk-stepper-input="same_day_projects" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper="same_day_projects" data-sgk-stepper-direction="up">+</button></div></div>
 					<div class="sgk-field-group" data-sgk-block="session_hours" hidden><label class="sgk-field-label"><?php esc_html_e( 'Stunden Studiozeit', 'sprecher-gagenrechner' ); ?></label><div class="sgk-stepper-container"><button type="button" class="sgk-stepper-btn" data-sgk-stepper="session_hours" data-sgk-stepper-direction="down">−</button><input type="number" name="session_hours" data-sgk-stepper-input="session_hours" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper="session_hours" data-sgk-stepper-direction="up">+</button></div></div>
-					<div class="sgk-field-group" data-sgk-rights-intro><p data-sgk-scope-copy></p></div>
+					<div class="sgk-field-group" data-sgk-rights-intro><p class="sgk-scope-copy"></p></div>
 				</section>
 
 				<section class="sgk-step-section" data-sgk-step="4" data-sgk-step-shell="rights" data-sgk-dependent-step hidden>
@@ -95,9 +106,26 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<div class="sgk-field-group" data-sgk-block="medium" hidden><label class="sgk-field-label"><?php esc_html_e( 'Auf welchem Kanal?', 'sprecher-gagenrechner' ); ?></label><div data-sgk-medium-pills></div></div>
 					</div>
 					<div class="sgk-field-group" data-sgk-block="addon_counts" hidden>
-						<input type="number" name="additional_year" data-sgk-stepper-input="additional_year" />
-						<input type="number" name="additional_territory" data-sgk-stepper-input="additional_territory" />
-						<input type="number" name="additional_motif" data-sgk-stepper-input="additional_motif" />
+						<label class="sgk-field-label"><?php esc_html_e( 'Weitere Jahre dazu', 'sprecher-gagenrechner' ); ?></label>
+						<div class="sgk-stepper-container" data-sgk-stepper="additional_year">
+							<button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down" aria-label="<?php esc_attr_e( 'Ein Jahr weniger', 'sprecher-gagenrechner' ); ?>">−</button>
+							<input type="number" name="additional_year" data-sgk-stepper-input="additional_year" min="0" step="1" />
+							<button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up" aria-label="<?php esc_attr_e( 'Ein Jahr mehr', 'sprecher-gagenrechner' ); ?>">+</button>
+						</div>
+
+						<label class="sgk-field-label"><?php esc_html_e( 'Weitere Regionen dazu', 'sprecher-gagenrechner' ); ?></label>
+						<div class="sgk-stepper-container" data-sgk-stepper="additional_territory">
+							<button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down" aria-label="<?php esc_attr_e( 'Eine Region weniger', 'sprecher-gagenrechner' ); ?>">−</button>
+							<input type="number" name="additional_territory" data-sgk-stepper-input="additional_territory" min="0" step="1" />
+							<button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up" aria-label="<?php esc_attr_e( 'Eine Region mehr', 'sprecher-gagenrechner' ); ?>">+</button>
+						</div>
+
+						<label class="sgk-field-label"><?php esc_html_e( 'Weitere Versionen dazu', 'sprecher-gagenrechner' ); ?></label>
+						<div class="sgk-stepper-container" data-sgk-stepper="additional_motif">
+							<button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down" aria-label="<?php esc_attr_e( 'Eine Version weniger', 'sprecher-gagenrechner' ); ?>">−</button>
+							<input type="number" name="additional_motif" data-sgk-stepper-input="additional_motif" min="0" step="1" />
+							<button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up" aria-label="<?php esc_attr_e( 'Eine Version mehr', 'sprecher-gagenrechner' ); ?>">+</button>
+						</div>
 					</div>
 					<div class="sgk-field-group" data-sgk-block="rights_toggles" hidden data-sgk-rights-toggles>
 						<label class="sgk-toggle-item"><input type="checkbox" name="archivgage" value="1" /><span class="sgk-toggle-label"><?php esc_html_e( 'Später nochmal verwenden (Archiv)', 'sprecher-gagenrechner' ); ?></span></label>
@@ -119,14 +147,22 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 					</div>
 				</section>
 
-				<section class="sgk-step-section" data-sgk-expert-shell>
-					<div data-sgk-case-context></div>
+				<!-- Case Context Banner -->
+				<div class="sgk-case-context" data-sgk-case-context hidden></div>
+
+				<!-- Guidance Panel -->
+				<section class="sgk-guidance-panel" data-sgk-expert-shell>
 					<div data-sgk-rights-summary></div>
 					<div data-sgk-journey-summary></div>
-					<div data-sgk-expert-badges></div>
-					<p data-sgk-validation-status class="src-actions-hint"></p>
-					<button type="button" class="sgk-submit" data-sgk-submit><?php esc_html_e( 'Angebot als PDF erstellen', 'sprecher-gagenrechner' ); ?></button>
+					<div class="sgk-expert-badges" data-sgk-expert-badges></div>
+					<div data-sgk-scope-copy class="sgk-scope-copy"></div>
 				</section>
+
+				<!-- Validation + Submit -->
+				<div class="sgk-actions-bar">
+					<p class="sgk-validation-status" data-sgk-validation-status></p>
+					<button type="submit" class="sgk-btn-submit" data-sgk-submit disabled><?php esc_html_e( 'Angebot erstellen', 'sprecher-gagenrechner' ); ?></button>
+				</div>
 			</form>
 		</aside>
 

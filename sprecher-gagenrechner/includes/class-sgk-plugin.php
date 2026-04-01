@@ -111,7 +111,7 @@ class SGK_Plugin {
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/css/frontend.css',
 			array( 'sgk-fontawesome-local' ),
-			'1.0.0'
+			'1.0.1'
 		);
 
 
@@ -119,7 +119,7 @@ class SGK_Plugin {
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/js/frontend.js',
 			array(),
-			'1.0.0',
+			'1.0.1',
 			true
 		);
 
