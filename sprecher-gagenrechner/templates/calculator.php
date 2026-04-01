@@ -433,6 +433,7 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 		<!-- RIGHT COLUMN: Result Panel (sticky) -->
 		<aside class="sgk-result-column">
 			<div class="sgk-result-panel" data-sgk-result>
+				<div class="src-redirect-banner" data-sgk-redirect-banner hidden></div>
 				<div class="sgk-default-state">
 					<div class="sgk-default-price-label"><?php esc_html_e( 'Empfohlene Gage (Netto)', 'sprecher-gagenrechner' ); ?></div>
 					<div class="sgk-default-price-value">0,00 €</div>

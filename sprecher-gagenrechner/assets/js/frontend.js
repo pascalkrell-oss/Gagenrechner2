@@ -502,12 +502,21 @@
 		});
 		return simplified.slice(0, 7);
 	}
+	function normalizeQuantityLabel(label) {
+		var text = String(label || '').trim();
+		if (!text) { return ''; }
+		return text
+			.replace(/(\d)([A-Za-zÄÖÜäöü])/g, '$1 $2')
+			.replace(/([A-Za-zÄÖÜäöü])(\d)/g, '$1 $2')
+			.replace(/\s+/g, ' ')
+			.trim();
+	}
 	function renderBreakdownRows(items) {
 		if (!items.length) { return '<div class="src-result-note">Die Aufschlüsselung erscheint nach der vollständigen Berechnung.</div>'; }
 		return items.map(function (item) {
 			var amountValue = parseCurrencyToNumber(item.amount);
 			return '<div class="src-breakdown-row">' +
-				'<div class="src-breakdown-main"><strong>' + htmlEscape(item.label) + '</strong>' + (item.note ? '<span>' + htmlEscape(item.note) + '</span>' : '') + '</div>' +
+				'<div class="src-breakdown-main"><strong>' + htmlEscape(item.label) + '</strong>' + (item.note ? '<span>' + htmlEscape(normalizeQuantityLabel(item.note)) + '</span>' : '') + '</div>' +
 				'<div class="src-breakdown-amount src-count-animate' + (item.is_credit ? ' is-credit' : '') + (item.is_minimum ? ' is-minimum' : '') + '"' + (amountValue !== null ? ' data-sgk-count-value="' + htmlEscape(amountValue) + '"' : '') + '>' + htmlEscape(item.amount) + '</div>' +
 			'</div>';
 		}).join('');
@@ -517,7 +526,7 @@
 		return '<div class="src-package-card-stack">' + alternatives.slice(0, 3).map(function (item, index) {
 			var amount = item.formatted_totals ? (item.formatted_totals.mid || item.formatted_totals.low_mid_high || '—') : '—';
 			var amountValue = parseCurrencyToNumber(amount);
-			var packageLabel = item.label || ('Paketoption ' + (index + 1));
+			var packageLabel = normalizeQuantityLabel(item.label || ('Paketoption ' + (index + 1)));
 			return '<article class="src-package-card">' +
 				'<div class="src-package-card-top"><strong>' + htmlEscape(packageLabel) + '</strong><span class="src-package-card-price src-count-animate"' + (amountValue !== null ? ' data-sgk-count-value="' + htmlEscape(amountValue) + '"' : '') + '>' + htmlEscape(amount) + '</span></div>' +
 				'<p>' + htmlEscape('Alternative für erweiterten Einsatz oder abweichende Projektkonstellationen.') + '</p>' +
@@ -680,6 +689,7 @@
 			app.__sgkState.ui = ui;
 			app.__sgkState.normalizedPayload = normalized;
 			app.__sgkState.validation = validation;
+			updateProgressIndicator();
 		}
 		function currentState() { return { payload: app.__sgkLastPayload, formData: clone(app.__sgkState.normalizedPayload || serializeForm(form)) }; }
 		function setModalState(isOpen) { var dialog = modal.querySelector('[role="dialog"]'); var closeButton = modal.querySelector('[data-sgk-offer-close]'); modal.hidden = !isOpen; modal.classList.toggle('is-open', isOpen); modal.setAttribute('aria-hidden', isOpen ? 'false' : 'true'); document.body.classList.toggle('sgk-modal-open', isOpen); if (isOpen) { lastFocusedElement = document.activeElement; window.requestAnimationFrame(function () { if (dialog) { dialog.focus(); } if (closeButton) { closeButton.focus(); } }); return; } if (lastFocusedElement && typeof lastFocusedElement.focus === 'function' && document.contains(lastFocusedElement)) { lastFocusedElement.focus(); } lastFocusedElement = null; }
@@ -689,7 +699,7 @@
 		function requestCalculation(reason) {
 			var state = app.__sgkState;
 			if (!state.normalizedPayload || !state.normalizedPayload.case_key) { resultContainer.innerHTML = DEFAULT_RESULT_MESSAGE; return; }
-			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.classList.remove('is-updating'); resultContainer.innerHTML = '<div class="src-result-state src-result-state--progress"><span class="src-result-state-label">Status</span><strong>In Vorbereitung</strong><p>Projekt: ' + htmlEscape(summarizeSelection(state.normalizedPayload.case_key)) + '</p><p>' + htmlEscape(state.validation.message) + '</p></div>'; return; }
+			if (!state.validation.valid) { updateRedirectBanner(app, null); app.__sgkLastPayload = null; resultContainer.classList.remove('is-updating'); resultContainer.innerHTML = '<div class="src-result-state src-result-state--progress"><span class="src-result-state-label">Status</span><strong>In Vorbereitung</strong><span class="src-live-dot" aria-hidden="true"></span><p>Projekt: ' + htmlEscape(summarizeSelection(state.normalizedPayload.case_key)) + '</p><p>' + htmlEscape(state.validation.message) + '</p></div>'; updateProgressIndicator(); return; }
 			abortPendingRequest();
 			requestSequence += 1;
 			state.activeRequestId = requestSequence;
@@ -716,6 +726,7 @@
 					updateExpertBadges(app, json.ui_state || {});
 					updateRedirectBanner(app, json);
 					refreshSavedList(resultContainer, cases);
+					updateProgressIndicator();
 				})
 				.catch(function (error) {
 					if (error && error.name === 'AbortError') { return; }
@@ -751,6 +762,7 @@
 			var accordion = event.target.closest('[data-sgk-accordion-trigger]');
 			var foldable = event.target.closest('[data-sgk-foldable-trigger]');
 			var stepButton = event.target.closest('[data-sgk-step]');
+			var stepperButton = event.target.closest('[data-sgk-stepper-direction]');
 			if (segment) { var control = segment.parentElement; var select = control.hasAttribute('data-sgk-variant-control') ? fieldNode(form, 'case_variant') : fieldNode(form, 'usage_type'); if (select) { select.value = segment.getAttribute('data-sgk-segment-value'); syncSegmentedControl(control, select.value); syncUI(); requestCalculation('segment'); } return; }
 			if (accordion) {
 				var item = accordion.closest('.src-accordion-item');
@@ -773,7 +785,8 @@
 				return;
 			}
 			if (foldable) { foldable.closest('.src-foldable-panel').classList.toggle('is-open'); return; }
-			if (stepButton) { var stepper = stepButton.closest('[data-sgk-stepper]'); var input = stepper && stepper.querySelector('input'); if (!input) { return; } var step = parseFloat(input.getAttribute('step') || '1'); var min = parseFloat(input.getAttribute('min') || '0'); var current = parseFloat(input.value || '0'); if (isNaN(current)) { current = min || 0; } current += stepButton.getAttribute('data-sgk-step') === 'up' ? step : -step; if (!isNaN(min)) { current = Math.max(min, current); } input.value = String(Math.round(current * 100) / 100); input.dispatchEvent(new Event('input', { bubbles: true })); }
+			if (stepperButton) { var stepper = stepperButton.closest('[data-sgk-stepper]'); var input = stepper && stepper.querySelector('input'); if (!input) { return; } var step = parseFloat(input.getAttribute('step') || '1'); var min = parseFloat(input.getAttribute('min') || '0'); var current = parseFloat(input.value || '0'); if (isNaN(current)) { current = min || 0; } current += stepperButton.getAttribute('data-sgk-stepper-direction') === 'up' ? step : -step; if (!isNaN(min)) { current = Math.max(min, current); } input.value = String(Math.round(current * 100) / 100); input.dispatchEvent(new Event('input', { bubbles: true })); return; }
+			if (stepButton) { return; }
 		});
 		form.addEventListener('change', function () { syncUI(); scheduleCalculation('change', 160); });
 		form.addEventListener('input', function () { syncUI(); scheduleCalculation('input', 260); });
@@ -1081,20 +1094,30 @@
 
 		/* Progress Indicator Updates */
 		function updateProgressIndicator() {
-			var caseKey = fieldNode(form, 'case_key').value;
-			var variantKey = fieldNode(form, 'case_variant').value;
+			var state = app.__sgkState || {};
+			var normalized = state.normalizedPayload || serializeForm(form);
+			var ui = state.ui || deriveUiState(normalized, cases);
+			var caseKey = normalized.case_key || '';
+			var variantKey = normalized.case_variant || '';
+			var hasResult = !!(app.__sgkLastPayload && app.__sgkLastPayload.result && app.__sgkLastPayload.result.totals);
 			var config = CASE_UI[caseKey];
 			var step1Complete = !!caseKey;
-			var step2Complete = step1Complete && (!config || !config.variantOptions || !!variantKey);
-			var step3Complete = step2Complete; // Complexity: when first parameter is filled
-			var step4Complete = step3Complete; // Complexity: when optional extensions are added
-			app.querySelectorAll('[data-sgk-progress]').forEach(function (dot, index) {
-				var stepNum = parseInt(dot.getAttribute('data-sgk-progress'));
+			var step2Complete = step1Complete && (!config || !config.variantOptions || !config.variantOptions.length || !!variantKey);
+			var rightsRequired = ['territory', 'duration_term', 'medium'];
+			var step3Complete = step2Complete && rightsRequired.every(function (field) {
+				if (ui.visibleBlocks.indexOf(field) === -1) { return true; }
+				return !!normalized[field];
+			});
+			var step4Complete = step3Complete && hasResult;
+			var activeStep = !step1Complete ? 1 : (!step2Complete ? 2 : (!step3Complete ? 3 : (!step4Complete ? 4 : 4)));
+			app.querySelectorAll('[data-sgk-progress]').forEach(function (dot) {
+				var stepNum = parseInt(dot.getAttribute('data-sgk-progress'), 10);
 				dot.classList.remove('is-active', 'is-complete');
 				if (stepNum === 1 && step1Complete) { dot.classList.add('is-complete'); }
 				if (stepNum === 2 && step2Complete) { dot.classList.add('is-complete'); }
 				if (stepNum === 3 && step3Complete) { dot.classList.add('is-complete'); }
 				if (stepNum === 4 && step4Complete) { dot.classList.add('is-complete'); }
+				if (stepNum === activeStep && !dot.classList.contains('is-complete')) { dot.classList.add('is-active'); }
 			});
 		}
 
