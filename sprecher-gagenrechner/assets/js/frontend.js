@@ -218,7 +218,7 @@
 	}
 	function buildVariantButtons(form, options) { var control = form.querySelector('[data-sgk-variant-control]'); if (!control) { return; } control.innerHTML = options.map(function (item, index) { return '<button type="button" class="src-segment-btn" data-sgk-segment-value="' + htmlEscape(item[0]) + '" title="' + htmlEscape(item[2] || '') + '">' + htmlEscape(item[1] || ('Variante ' + (index + 1))) + '</button>'; }).join(''); }
 	function syncSegmentedControl(control, value) { if (!control) { return; } control.querySelectorAll('[data-sgk-segment-value]').forEach(function (button) { button.classList.toggle('is-active', button.getAttribute('data-sgk-segment-value') === value); }); }
-	function updateCaseContext(app, selectedCase, cases) { var node = app.querySelector('[data-sgk-case-context]'); app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) { button.classList.toggle('is-active', button.getAttribute('data-sgk-quick-case') === selectedCase); }); if (!node) { return; } if (!selectedCase) { node.hidden = true; node.innerHTML = ''; return; } var effectiveCase = effectiveCaseKey(cases, selectedCase); var caseData = cases[effectiveCase] || {}; node.hidden = false; node.innerHTML = '<strong>' + htmlEscape(caseData.label || labelFromKey(selectedCase)) + '</strong><p>' + htmlEscape(caseData.description || 'Die Eingaben wurden passend zu deiner Auswahl zusammengestellt.') + '</p>'; }
+	function updateCaseContext(app, selectedCase, cases) { var node = app.querySelector('[data-sgk-case-context]'); app.querySelectorAll('[data-sgk-quick-case]').forEach(function (button) { button.classList.toggle('is-active', button.getAttribute('data-sgk-quick-case') === selectedCase); }); if (!node) { return; } if (!selectedCase) { node.hidden = true; node.innerHTML = ''; return; } var effectiveCase = effectiveCaseKey(cases, selectedCase); var caseData = cases[effectiveCase] || {}; node.hidden = false; node.innerHTML = '<div class="sgk-case-context-card"><p class="sgk-case-context-eyebrow">Projektkontext</p><h3 class="sgk-case-context-title">' + htmlEscape(caseData.label || labelFromKey(selectedCase)) + '</h3><p class="sgk-case-context-description">' + htmlEscape(caseData.description || 'Die Eingaben wurden passend zu deiner Auswahl zusammengestellt.') + '</p></div>'; }
 	function updateExpertBadges(app, uiState) { var container = app.querySelector('[data-sgk-expert-badges]'); var flags = (uiState && uiState.available_expert_options) || []; if (!container) { return; } container.innerHTML = !flags.length ? '<span class="src-inline-badge is-muted">Noch keine zusätzlichen Optionen aktiv</span>' : flags.map(function (flag) { return '<span class="src-inline-badge">' + htmlEscape(labelFromKey(flag)) + '</span>'; }).join(''); }
 	function refreshSavedList(container, cases) { var select = container.querySelector('[data-sgk-saved-list]'); if (!select) { return; } var entries = getSavedCalculations(cases); select.innerHTML = '<option value="">Bitte auswählen</option>' + entries.map(function (entry) { return '<option value="' + htmlEscape(entry.id) + '">' + htmlEscape(buildSavedLabel(entry)) + '</option>'; }).join(''); }
 	function updateRedirectBanner(app, payload) { var banner = app.querySelector('[data-sgk-redirect-banner]'); if (!banner) { return; } var uiState = (payload && payload.ui_state) || {}; var result = (payload && payload.result) || {}; var warnings = Array.isArray(result.warnings) ? result.warnings : []; var message = ''; if (uiState.selected_case && uiState.resolved_case && uiState.selected_case !== uiState.resolved_case) { message = 'Smart Match: Automatisch zugeordnet – ' + labelFromKey(uiState.resolved_case) + '.'; } else if (warnings.length) { message = 'Smart Match: ' + warnings.join(' · '); } if (!message) { banner.hidden = true; banner.innerHTML = ''; return; } banner.hidden = false; banner.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i><div><strong>Smart Match: Automatisch zugeordnet</strong><p>' + htmlEscape(message) + '</p></div>'; }
@@ -796,7 +796,7 @@
 				return;
 			}
 			if (foldable) { foldable.closest('.src-foldable-panel').classList.toggle('is-open'); return; }
-			if (stepperButton) { var stepper = stepperButton.closest('[data-sgk-stepper]'); var input = stepper && stepper.querySelector('input'); if (!input) { return; } var step = parseFloat(input.getAttribute('step') || '1'); var min = parseFloat(input.getAttribute('min') || '0'); var current = parseFloat(input.value || '0'); if (isNaN(current)) { current = min || 0; } current += stepperButton.getAttribute('data-sgk-stepper-direction') === 'up' ? step : -step; if (!isNaN(min)) { current = Math.max(min, current); } input.value = String(Math.round(current * 100) / 100); input.dispatchEvent(new Event('input', { bubbles: true })); return; }
+			if (stepperButton) { var stepper = stepperButton.closest('[data-sgk-stepper]'); var input = stepper && stepper.querySelector('input'); if (!input) { return; } var step = parseFloat(input.getAttribute('step') || '1'); var min = parseFloat(input.getAttribute('min') || '0'); var max = parseFloat(input.getAttribute('max')); var current = parseFloat(input.value || '0'); if (isNaN(current)) { current = min || 0; } current += stepperButton.getAttribute('data-sgk-stepper-direction') === 'up' ? step : -step; if (!isNaN(min)) { current = Math.max(min, current); } if (!isNaN(max)) { current = Math.min(max, current); } input.value = String(Math.round(current * 100) / 100); input.dispatchEvent(new Event('input', { bubbles: true })); return; }
 			if (stepButton) { return; }
 		});
 		form.addEventListener('change', function () { syncUI(); scheduleCalculation('change', 160); });
@@ -1073,35 +1073,13 @@
 				var value = parseFloat(slider.value || 0);
 				var min = parseFloat(slider.getAttribute('min') || 1);
 				var max = parseFloat(slider.getAttribute('max') || 100);
-				var percentage = ((value - min) / (max - min)) * 100;
-				slider.style.setProperty('--slider-percentage', percentage + '%');
-				var displayValue = value;
-				if (fieldName === 'duration_minutes') {
-					if (value === 1) { displayValue = '1 Minute'; }
-					else { displayValue = displayValue.toString().replace('.', ',') + ' Minuten'; }
+				if (!isNaN(min) && !isNaN(max) && max > min) {
+					var percentage = ((value - min) / (max - min)) * 100;
+					slider.style.setProperty('--slider-percentage', percentage + '%');
 				}
-				displayNode.textContent = displayValue;
+				displayNode.textContent = value;
 			});
 		}
-
-		/* Stepper Handlers */
-		app.querySelectorAll('[data-sgk-stepper]').forEach(function (stepper) {
-			var minusBtn = stepper.querySelector('[data-sgk-stepper-direction="down"]');
-			var plusBtn = stepper.querySelector('[data-sgk-stepper-direction="up"]');
-			var input = stepper.querySelector('input[data-sgk-stepper-input]');
-			if (!minusBtn || !plusBtn || !input) { return; }
-			function updateValue(direction) {
-				var step = parseFloat(input.getAttribute('step') || '1');
-				var min = parseFloat(input.getAttribute('min') || '0');
-				var current = parseFloat(input.value || min);
-				current += direction === 'up' ? step : -step;
-				current = Math.max(min, current);
-				input.value = String(Math.round(current * 100) / 100);
-				input.dispatchEvent(new Event('input', { bubbles: true }));
-			}
-			minusBtn.addEventListener('click', function () { updateValue('down'); });
-			plusBtn.addEventListener('click', function () { updateValue('up'); });
-		});
 
 		/* Progress Indicator Updates */
 		function updateProgressIndicator() {
@@ -1169,12 +1147,6 @@
 		/* Alias for rebuildFieldVisibility */
 		rebuildFieldVisibility = showHideStepSections;
 
-		/* Range slider input event for live display */
-		app.querySelectorAll('[data-sgk-range]').forEach(function (slider) {
-			slider.addEventListener('input', function () {
-				updateRangeDisplays();
-			});
-		});
 
 		/* Initialize UI */
 		rebuildVariantPills();
