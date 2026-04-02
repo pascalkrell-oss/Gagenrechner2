@@ -102,7 +102,7 @@ class SGK_Plugin {
 	public function register_assets() {
 		wp_register_style(
 			'sgk-fontawesome-local',
-			'/wp-content/assets/fontawesome/css/all.min.css',
+			get_stylesheet_directory_uri() . '/assets/fontawesome/css/all.min.css',
 			array(),
 			'6.5.2'
 		);

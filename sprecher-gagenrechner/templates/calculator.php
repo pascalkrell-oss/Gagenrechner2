@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $cases      = isset( $view_data['cases'] ) ? $view_data['cases'] : array();
 $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array();
-$demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : array();
 ?>
 <div class="sgk-app" data-sgk-app data-sgk-cases="<?php echo esc_attr( wp_json_encode( $cases ) ); ?>" data-sgk-ui-state="<?php echo esc_attr( wp_json_encode( $ui_state ) ); ?>">
 	<header class="sgk-top-toolbar" aria-label="<?php esc_attr_e( 'Werkzeugleiste', 'sprecher-gagenrechner' ); ?>">
@@ -26,18 +25,6 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 			<button type="button" class="sgk-toolbar-btn sgk-toolbar-btn--secondary" data-sgk-reset-calculator><i class="fa-solid fa-arrow-rotate-left" aria-hidden="true"></i><span><?php esc_html_e( 'Reset', 'sprecher-gagenrechner' ); ?></span></button>
 		</div>
 	</header>
-
-	<section class="sgk-intro-panel">
-		<div>
-			<h1><?php esc_html_e( 'Sprecher Gagenrechner', 'sprecher-gagenrechner' ); ?></h1>
-			<p><?php esc_html_e( 'Konfiguriere Dein Projekt, prüfe Nutzungsrechte und setze ein belastbares finales Angebot.', 'sprecher-gagenrechner' ); ?></p>
-		</div>
-		<div class="sgk-intro-chips">
-			<span><?php esc_html_e( 'Live Kalkulation', 'sprecher-gagenrechner' ); ?></span>
-			<span><?php esc_html_e( 'Rechte-Kompass', 'sprecher-gagenrechner' ); ?></span>
-			<span><?php esc_html_e( 'Angebots-Export', 'sprecher-gagenrechner' ); ?></span>
-		</div>
-	</section>
 
 	<div class="sgk-main-container">
 		<aside class="sgk-setup-column">
@@ -71,18 +58,6 @@ $demo_cases = isset( $view_data['demo_cases'] ) ? $view_data['demo_cases'] : arr
 						<button type="button" class="sgk-project-card" data-sgk-case="audiodeskription"><span class="sgk-card-icon"><i class="fa-solid fa-audio-description" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Audiodeskription', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Barrierefreie Auswertung', 'sprecher-gagenrechner' ); ?></small></span></button>
 						<button type="button" class="sgk-project-card" data-sgk-case="kleinraeumig"><span class="sgk-card-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Kleinräumige Nutzung', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Lokale bis regionale Einsätze', 'sprecher-gagenrechner' ); ?></small></span></button>
 						<button type="button" class="sgk-project-card" data-sgk-case="session_fee"><span class="sgk-card-icon"><i class="fa-solid fa-stopwatch" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Session Fee', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Reine Studiozeit', 'sprecher-gagenrechner' ); ?></small></span></button>
-					</div>
-					<div class="sgk-quick-cases-shell">
-						<div class="sgk-quick-cases-head">
-							<span class="sgk-quick-cases-title"><?php esc_html_e( 'Schnellstarts', 'sprecher-gagenrechner' ); ?></span>
-							<small><?php esc_html_e( 'Vorgefertigte Beispiel-Fälle', 'sprecher-gagenrechner' ); ?></small>
-						</div>
-						<div class="sgk-quick-cases">
-						<?php foreach ( $demo_cases as $demo_case ) : ?>
-							<?php $demo_label = is_array( $demo_case ) && isset( $demo_case['label'] ) ? $demo_case['label'] : (string) $demo_case; $demo_input = is_array( $demo_case ) && isset( $demo_case['input'] ) && is_array( $demo_case['input'] ) ? $demo_case['input'] : array( 'case_key' => (string) $demo_case ); $demo_case_key = isset( $demo_input['case_key'] ) ? (string) $demo_input['case_key'] : ''; ?>
-							<button type="button" class="sgk-quick-case" data-sgk-demo="<?php echo esc_attr( wp_json_encode( $demo_input ) ); ?>" data-sgk-quick-case="<?php echo esc_attr( $demo_case_key ); ?>"><?php echo esc_html( $demo_label ); ?></button>
-						<?php endforeach; ?>
-						</div>
 					</div>
 				</section>
 
