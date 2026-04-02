@@ -63,13 +63,24 @@ $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array()
 
 				<section class="sgk-step-section" data-sgk-step="2" data-sgk-dependent-step hidden>
 					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '2. Variante', 'sprecher-gagenrechner' ); ?></h2></div>
-					<div class="sgk-field-group" data-sgk-block="variant"><label class="sgk-field-label"><?php esc_html_e( 'Verfügbare Varianten', 'sprecher-gagenrechner' ); ?></label><div class="sgk-variants-control" data-sgk-variant-pills data-sgk-variant-control></div><p class="sgk-variant-help" data-sgk-variant-help data-sgk-variant-hint></p></div>
+					<div class="sgk-field-group" data-sgk-block="variant">
+						<div class="sgk-variant-panel">
+							<div class="sgk-variant-panel-head">
+								<label class="sgk-field-label"><?php esc_html_e( 'Verfügbare Varianten', 'sprecher-gagenrechner' ); ?></label>
+								<p class="sgk-variant-intro"><?php esc_html_e( 'Wähle die passende Ausspiel- oder Projektvariante für Dein Vorhaben.', 'sprecher-gagenrechner' ); ?></p>
+							</div>
+							<div class="sgk-variant-panel-body">
+								<div class="sgk-variants-control" data-sgk-variant-pills data-sgk-variant-control></div>
+								<p class="sgk-variant-help" data-sgk-variant-help data-sgk-variant-hint></p>
+							</div>
+						</div>
+					</div>
 				</section>
 
 				<section class="sgk-step-section" data-sgk-step="3" data-sgk-step-shell="usage" data-sgk-dependent-step hidden>
 					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '3–9. Nutzung, Rechte & Umfang', 'sprecher-gagenrechner' ); ?></h2><p class="sgk-step-subtitle"><?php esc_html_e( 'Segmentierte Rechteauswahl, Counter und Zusatzoptionen', 'sprecher-gagenrechner' ); ?></p></div>
 					<div class="sgk-field-group" data-sgk-block="usage_type" hidden><label class="sgk-field-label"><?php esc_html_e( 'Nutzungsart', 'sprecher-gagenrechner' ); ?></label><div class="sgk-usage-pills" data-sgk-usage-pills data-sgk-usage-type-control></div></div>
-					<div class="sgk-field-group" data-sgk-block="duration_minutes" hidden><label class="sgk-field-label"><?php esc_html_e( 'Minuten', 'sprecher-gagenrechner' ); ?></label><input type="range" name="duration_minutes" min="1" max="120" step="0.5" data-sgk-range="duration_minutes" /><div class="sgk-range-value" data-sgk-range-display="duration_minutes"></div></div>
+					<div class="sgk-field-group" data-sgk-block="duration_minutes" hidden><label class="sgk-field-label"><?php esc_html_e( 'Minuten', 'sprecher-gagenrechner' ); ?></label><div class="sgk-stepper-container" data-sgk-stepper="duration_minutes"><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="down">−</button><input type="number" name="duration_minutes" min="1" max="120" step="0.5" data-sgk-stepper-input="duration_minutes" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper-direction="up">+</button></div></div>
 					<div class="sgk-field-group" data-sgk-block="net_minutes" hidden><label class="sgk-field-label"><?php esc_html_e( 'Sendeminuten (netto)', 'sprecher-gagenrechner' ); ?></label><div class="sgk-stepper-container"><button type="button" class="sgk-stepper-btn" data-sgk-stepper="net_minutes" data-sgk-stepper-direction="down">−</button><input type="number" name="net_minutes" data-sgk-stepper-input="net_minutes" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper="net_minutes" data-sgk-stepper-direction="up">+</button></div></div>
 					<div class="sgk-field-group" data-sgk-block="module_count" hidden><label class="sgk-field-label"><?php esc_html_e( 'Module', 'sprecher-gagenrechner' ); ?></label><div class="sgk-stepper-container"><button type="button" class="sgk-stepper-btn" data-sgk-stepper="module_count" data-sgk-stepper-direction="down">−</button><input type="number" name="module_count" data-sgk-stepper-input="module_count" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper="module_count" data-sgk-stepper-direction="up">+</button></div></div>
 					<div class="sgk-field-group" data-sgk-block="fah" hidden><label class="sgk-field-label"><?php esc_html_e( 'Hörbuchstunden', 'sprecher-gagenrechner' ); ?></label><div class="sgk-stepper-container"><button type="button" class="sgk-stepper-btn" data-sgk-stepper="fah" data-sgk-stepper-direction="down">−</button><input type="number" name="fah" data-sgk-stepper-input="fah" /><button type="button" class="sgk-stepper-btn" data-sgk-stepper="fah" data-sgk-stepper-direction="up">+</button></div></div>
