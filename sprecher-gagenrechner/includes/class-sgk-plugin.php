@@ -100,17 +100,36 @@ class SGK_Plugin {
 	 * @return void
 	 */
 	public function register_assets() {
-		wp_register_style(
-			'sgk-fontawesome-local',
-			get_stylesheet_directory_uri() . '/assets/fontawesome/css/all.min.css',
-			array(),
-			'6.5.2'
-		);
+		$fontawesome_css_path = get_stylesheet_directory() . '/assets/fontawesome/css/all.min.css';
+		$fontawesome_css_url  = '';
+
+		if ( file_exists( $fontawesome_css_path ) ) {
+			$fontawesome_css_url = get_stylesheet_directory_uri() . '/assets/fontawesome/css/all.min.css';
+		} else {
+			$fontawesome_css_path = get_template_directory() . '/assets/fontawesome/css/all.min.css';
+
+			if ( file_exists( $fontawesome_css_path ) ) {
+				$fontawesome_css_url = get_template_directory_uri() . '/assets/fontawesome/css/all.min.css';
+			}
+		}
+
+		$sgk_frontend_deps = array();
+
+		if ( ! empty( $fontawesome_css_url ) ) {
+			wp_register_style(
+				'sgk-fontawesome-local',
+				$fontawesome_css_url,
+				array(),
+				filemtime( $fontawesome_css_path )
+			);
+
+			$sgk_frontend_deps[] = 'sgk-fontawesome-local';
+		}
 
 		wp_register_style(
 			'sgk-frontend',
 			SGK_PLUGIN_URL . 'assets/css/frontend.css',
-			array( 'sgk-fontawesome-local' ),
+			$sgk_frontend_deps,
 			'1.0.1'
 		);
 
