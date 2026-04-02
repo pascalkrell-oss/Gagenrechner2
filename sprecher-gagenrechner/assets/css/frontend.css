@@ -19,7 +19,20 @@
 * { box-sizing: border-box; }
 
 .sgk-app,
-.sgk-app * { font-family: Rubik, sans-serif; }
+.sgk-app button,
+.sgk-app input,
+.sgk-app select,
+.sgk-app textarea,
+.sgk-app label { font-family: Rubik, sans-serif; }
+
+.sgk-app .fa-brands { font-family: "Font Awesome 7 Brands" !important; }
+
+.sgk-app .fa-solid,
+.sgk-app .fa,
+.sgk-app [class^="fa-"],
+.sgk-app [class*=" fa-"] { font-family: "Font Awesome 7 Free" !important; font-weight: 900; }
+
+.sgk-app .fa-regular { font-family: "Font Awesome 7 Free" !important; font-weight: 400; }
 
 .sgk-app {
   max-width: 1340px;
