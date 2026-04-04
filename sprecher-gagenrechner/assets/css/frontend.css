@@ -353,9 +353,120 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-
 .src-modal-panel { padding: 18px; }
 .src-modal-footer { margin-top: 12px; display: flex; justify-content: flex-end; gap: 8px; }
 
-.sgk-progress-indicator { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
-.sgk-progress-dot { width: 10px; height: 10px; border-radius: 999px; background: rgba(15, 20, 26, .16); }
-.sgk-progress-dot.is-complete { background: var(--primary); }
+.src-result-card,
+.src-storage-panel,
+.src-manual-offer,
+.src-result-accordion {
+  border-radius: var(--radius-lg);
+}
+.src-sidebar-card {
+  border: 1px solid var(--border-soft);
+  background: #fff;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.src-sidebar-card-head {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(15, 20, 26, .07);
+  background: #fbfdff;
+}
+.src-sidebar-card-title { margin: 0; font-size: 14px; font-weight: 600; }
+.src-sidebar-card-body { padding: 15px 16px; display: grid; gap: 12px; }
+.src-sidebar-card-section { padding-top: 10px; border-top: 1px dashed rgba(15, 20, 26, .12); display: grid; gap: 8px; }
+.src-sidebar-card--soft .src-sidebar-card-head { background: #f8fbff; }
+.src-sidebar-card--compact .src-sidebar-card-body { gap: 10px; }
+
+.src-result-card--price { padding: 18px; box-shadow: 0 14px 34px rgba(8, 13, 19, .24); }
+.src-price-panel-head { margin-bottom: 12px; align-items: center; }
+.src-live-badge--panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(255, 255, 255, .24);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  font-weight: 600;
+}
+.src-live-dot {
+  margin: 0;
+  width: 7px;
+  height: 7px;
+  background: #45b6ff;
+  box-shadow: 0 0 0 0 rgba(69, 182, 255, .4);
+}
+.src-live-dot--pulse { animation: sgkPulseSoft 2.2s ease-in-out infinite; }
+@keyframes sgkPulseSoft {
+  0%,100% { transform: scale(1); opacity: .82; box-shadow: 0 0 0 0 rgba(69, 182, 255, .28); }
+  50% { transform: scale(1.14); opacity: 1; box-shadow: 0 0 0 6px rgba(69, 182, 255, 0); }
+}
+.src-price-highlight-card {
+  border-radius: 16px;
+  background: #fff;
+  color: #0f141a;
+  padding: 14px;
+  display: grid;
+  gap: 4px;
+}
+.src-price-highlight-value { font-size: 34px; line-height: 1.05; font-weight: 600; color: #0a2236; }
+.src-price-highlight-label { font-size: 12px; color: rgba(10, 34, 54, .64); letter-spacing: .06em; text-transform: uppercase; }
+.src-price-range-card { border-radius: 14px; padding: 10px 12px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); }
+.src-price-range-card .src-price-range-row { justify-content: space-between; }
+.src-price-range-card .src-price-range-row span { color: rgba(255, 255, 255, .72); }
+.src-price-range-card .src-price-range-row strong { color: #fff; }
+.src-price-range-meta { color: rgba(255, 255, 255, .72); font-size: 12px; }
+.src-price-range-values { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+
+.src-breakdown-row { border-top: 1px dashed rgba(15, 20, 26, .12); padding: 9px 0; }
+.src-breakdown-row span { color: rgba(15, 20, 26, .72); font-size: 13px; }
+.src-breakdown-row strong { font-size: 13px; color: #0f141a; }
+
+.src-manual-offer-row { grid-template-columns: 1fr; gap: 10px; }
+.src-manual-offer-range { font-size: 12px; color: rgba(15, 20, 26, .66); }
+.src-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.src-summary-cell { border: 1px solid rgba(15, 20, 26, .08); border-radius: 12px; padding: 9px 10px; background: #fcfdff; min-width: 0; }
+.src-summary-cell span { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: rgba(15, 20, 26, .55); }
+.src-summary-cell strong { display: block; margin-top: 4px; font-size: 13px; overflow-wrap: anywhere; }
+.src-summary-stack { display: grid; gap: 8px; }
+.src-summary-stack p { margin: 0; padding: 10px 12px; border: 1px solid rgba(15, 20, 26, .08); border-radius: 12px; background: #fbfdff; color: rgba(15, 20, 26, .76); line-height: 1.5; }
+.src-sidebar-cta { width: 100%; min-height: 48px; border-radius: 14px; }
+
+.sgk-progress-indicator,
+.sgk-progress-dot { display: none !important; }
+.sgk-bottom-progress {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  transform: translate(-50%, 18px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .24s ease, transform .24s ease;
+  z-index: 90;
+  width: min(760px, calc(100% - 24px));
+}
+.sgk-bottom-progress.is-visible { opacity: 1; transform: translate(-50%, 0); }
+.sgk-bottom-progress-track {
+  border: 1px solid rgba(15, 20, 26, .12);
+  background: rgba(255, 255, 255, .96);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  padding: 10px 12px 12px;
+}
+.sgk-bottom-progress-bar { height: 4px; background: rgba(15, 20, 26, .12); border-radius: 999px; overflow: hidden; margin-bottom: 10px; }
+.sgk-bottom-progress-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #1a93ee, #0066b3); transition: width .28s ease; }
+.sgk-bottom-progress-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.sgk-bottom-progress-step {
+  text-align: center;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 20, 26, .08);
+  background: #f8fbff;
+  padding: 6px 4px;
+  color: rgba(15, 20, 26, .54);
+}
+.sgk-bottom-progress-step.is-active { border-color: rgba(26, 147, 238, .45); color: #0b5b96; background: rgba(26, 147, 238, .09); }
+.sgk-bottom-progress-step.is-complete { border-color: rgba(26, 147, 238, .28); background: rgba(26, 147, 238, .13); color: #0a4e82; }
+.sgk-bottom-progress-label { font-size: 11px; letter-spacing: .03em; text-transform: uppercase; }
 
 .sgk-hidden, [hidden] { display: none !important; }
 
@@ -373,4 +484,9 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-
   .src-storage-actions { grid-template-columns: 1fr; }
   .src-modal-grid { grid-template-columns: 1fr; }
   .src-rights-summary-row span, .src-tower-journey-item span { flex-basis: 42%; }
+  .src-price-highlight-value { font-size: 28px; }
+  .src-summary-grid { grid-template-columns: 1fr; }
+  .sgk-bottom-progress { width: calc(100% - 16px); bottom: 8px; }
+  .sgk-bottom-progress-track { padding: 8px 8px 10px; }
+  .sgk-bottom-progress-label { font-size: 10px; }
 }

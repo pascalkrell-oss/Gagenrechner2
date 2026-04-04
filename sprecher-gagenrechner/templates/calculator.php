@@ -155,8 +155,19 @@ $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array()
 				</div>
 			</div>
 			<select data-sgk-saved-list hidden><option value=""></option></select><div data-sgk-storage-status hidden></div>
-			<div class="sgk-progress-indicator"><div class="sgk-progress-dot" data-sgk-progress="1"></div><div class="sgk-progress-dot" data-sgk-progress="2"></div><div class="sgk-progress-dot" data-sgk-progress="3"></div><div class="sgk-progress-dot" data-sgk-progress="4"></div></div>
 		</aside>
+	</div>
+
+	<div class="sgk-bottom-progress" data-sgk-bottom-progress aria-live="polite">
+		<div class="sgk-bottom-progress-track">
+			<div class="sgk-bottom-progress-bar"><span data-sgk-progress-fill></span></div>
+			<div class="sgk-bottom-progress-steps">
+				<div class="sgk-bottom-progress-step" data-sgk-progress-step="1"><span class="sgk-bottom-progress-label">Projekt</span></div>
+				<div class="sgk-bottom-progress-step" data-sgk-progress-step="2"><span class="sgk-bottom-progress-label">Details</span></div>
+				<div class="sgk-bottom-progress-step" data-sgk-progress-step="3"><span class="sgk-bottom-progress-label">Preis</span></div>
+				<div class="sgk-bottom-progress-step" data-sgk-progress-step="4"><span class="sgk-bottom-progress-label">Angebot</span></div>
+			</div>
+		</div>
 	</div>
 
 	<div class="src-modal-backdrop" data-sgk-offer-modal hidden aria-hidden="true">
