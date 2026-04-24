@@ -15,10 +15,16 @@ $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array()
 <div class="sgk-app" data-sgk-app data-sgk-cases="<?php echo esc_attr( wp_json_encode( $cases ) ); ?>" data-sgk-ui-state="<?php echo esc_attr( wp_json_encode( $ui_state ) ); ?>">
 	<header class="sgk-top-toolbar" aria-label="<?php esc_attr_e( 'Werkzeugleiste', 'sprecher-gagenrechner' ); ?>">
 		<div class="sgk-toolbar-brand">
+			<span class="sgk-toolbar-logo" aria-hidden="true"><i class="fa-solid fa-wave-square"></i></span>
 			<strong><?php esc_html_e( 'Sprecher Gagenrechner', 'sprecher-gagenrechner' ); ?></strong>
-			<span><?php esc_html_e( 'Premium Pricing Control für Voiceover-Angebote', 'sprecher-gagenrechner' ); ?></span>
+			<span><?php esc_html_e( 'Berechne Dein Sprecherhonorar', 'sprecher-gagenrechner' ); ?></span>
 		</div>
 		<div class="sgk-toolbar-right">
+			<div class="sgk-currency-chips" role="group" aria-label="<?php esc_attr_e( 'Währung', 'sprecher-gagenrechner' ); ?>">
+				<button type="button" class="sgk-currency-chip is-active" data-sgk-currency="EUR">EUR</button>
+				<button type="button" class="sgk-currency-chip" data-sgk-currency="CHF">CHF</button>
+				<button type="button" class="sgk-currency-chip" data-sgk-currency="USD">USD</button>
+			</div>
 			<button type="button" class="sgk-toolbar-btn" data-sgk-action="save"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i><span><?php esc_html_e( 'Speichern', 'sprecher-gagenrechner' ); ?></span></button>
 			<button type="button" class="sgk-toolbar-btn" data-sgk-action="load"><i class="fa-solid fa-folder-open" aria-hidden="true"></i><span><?php esc_html_e( 'Laden', 'sprecher-gagenrechner' ); ?></span></button>
 			<button type="button" class="sgk-toolbar-btn" data-sgk-guide><i class="fa-solid fa-book-open" aria-hidden="true"></i><span><?php esc_html_e( 'Anleitung', 'sprecher-gagenrechner' ); ?></span></button>
@@ -44,7 +50,7 @@ $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array()
 				<input type="hidden" name="layout_fee" value="0" />
 
 				<section class="sgk-step-section" data-sgk-step="1">
-					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '1. Projektart', 'sprecher-gagenrechner' ); ?></h2><p class="sgk-step-subtitle"><?php esc_html_e( 'Wähle die passende Projektkategorie', 'sprecher-gagenrechner' ); ?></p></div>
+					<div class="sgk-step-header"><h2 class="sgk-step-title"><?php esc_html_e( '1. Format / Projekt', 'sprecher-gagenrechner' ); ?></h2><p class="sgk-step-subtitle"><?php esc_html_e( 'Wähle die passende Projektkategorie', 'sprecher-gagenrechner' ); ?></p></div>
 					<div class="sgk-project-grid" data-sgk-project-grid>
 						<button type="button" class="sgk-project-card" data-sgk-case="werbung_mit_bild"><span class="sgk-card-icon"><i class="fa-solid fa-photo-film" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Werbung mit Bild', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'TV, Online Video, Kino', 'sprecher-gagenrechner' ); ?></small></span></button>
 						<button type="button" class="sgk-project-card" data-sgk-case="werbung_ohne_bild"><span class="sgk-card-icon"><i class="fa-solid fa-volume-high" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Werbung ohne Bild', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Radio, Audio Ads', 'sprecher-gagenrechner' ); ?></small></span></button>
@@ -59,6 +65,7 @@ $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array()
 						<button type="button" class="sgk-project-card" data-sgk-case="kleinraeumig"><span class="sgk-card-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Kleinräumige Nutzung', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Lokale bis regionale Einsätze', 'sprecher-gagenrechner' ); ?></small></span></button>
 						<button type="button" class="sgk-project-card" data-sgk-case="session_fee"><span class="sgk-card-icon"><i class="fa-solid fa-stopwatch" aria-hidden="true"></i></span><span class="sgk-card-text"><strong><?php esc_html_e( 'Session Fee', 'sprecher-gagenrechner' ); ?></strong><small><?php esc_html_e( 'Reine Studiozeit', 'sprecher-gagenrechner' ); ?></small></span></button>
 					</div>
+					<div class="sgk-smart-hint"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><span><?php esc_html_e( 'Unser System ordnet Deine Auswahl automatisch der passenden Nutzungs- und Lizenzlogik zu.', 'sprecher-gagenrechner' ); ?></span></div>
 				</section>
 
 				<section class="sgk-step-section" data-sgk-step="2" data-sgk-dependent-step hidden>
@@ -162,17 +169,17 @@ $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array()
 		<div class="sgk-bottom-progress-track">
 			<div class="sgk-bottom-progress-bar"><span data-sgk-progress-fill></span></div>
 			<div class="sgk-bottom-progress-steps">
-				<div class="sgk-bottom-progress-step" data-sgk-progress-step="1"><span class="sgk-bottom-progress-label">Projekt</span></div>
-				<div class="sgk-bottom-progress-step" data-sgk-progress-step="2"><span class="sgk-bottom-progress-label">Details</span></div>
-				<div class="sgk-bottom-progress-step" data-sgk-progress-step="3"><span class="sgk-bottom-progress-label">Preis</span></div>
-				<div class="sgk-bottom-progress-step" data-sgk-progress-step="4"><span class="sgk-bottom-progress-label">Angebot</span></div>
+				<div class="sgk-bottom-progress-step" data-sgk-progress-step="1"><span class="sgk-bottom-progress-index">1</span><span class="sgk-bottom-progress-label">Projekt</span><small>Format &amp; Art des Projekts</small></div>
+				<div class="sgk-bottom-progress-step" data-sgk-progress-step="2"><span class="sgk-bottom-progress-index">2</span><span class="sgk-bottom-progress-label">Details</span><small>Umfang &amp; Rechte</small></div>
+				<div class="sgk-bottom-progress-step" data-sgk-progress-step="3"><span class="sgk-bottom-progress-index">3</span><span class="sgk-bottom-progress-label">Preis</span><small>Ergebnis &amp; Kalkulation</small></div>
+				<div class="sgk-bottom-progress-step" data-sgk-progress-step="4"><span class="sgk-bottom-progress-index">4</span><span class="sgk-bottom-progress-label">Angebot</span><small>Angebot erstellen &amp; PDF</small></div>
 			</div>
 		</div>
 	</div>
 
 	<div class="src-modal-backdrop" data-sgk-offer-modal hidden aria-hidden="true">
 		<div class="src-modal-content" role="dialog" aria-modal="true" aria-labelledby="sgk-offer-modal-title" tabindex="-1">
-			<div class="src-modal-header"><h3 id="sgk-offer-modal-title"><?php esc_html_e( 'Angebot konfigurieren', 'sprecher-gagenrechner' ); ?></h3><button type="button" class="src-btn-secondary" data-sgk-offer-close><?php esc_html_e( 'Schließen', 'sprecher-gagenrechner' ); ?></button></div>
+			<div class="src-modal-header"><h3 id="sgk-offer-modal-title"><?php esc_html_e( 'Angebot konfigurieren', 'sprecher-gagenrechner' ); ?></h3><button type="button" class="src-btn-icon" data-sgk-offer-close aria-label="<?php esc_attr_e( 'Modal schließen', 'sprecher-gagenrechner' ); ?>"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>
 			<div class="src-modal-body src-modal-grid">
 				<section class="src-modal-panel">
 					<label class="sgk-field-label"><?php esc_html_e( 'Angebotsnummer', 'sprecher-gagenrechner' ); ?></label><input type="text" class="src-input-text" data-sgk-offer-meta="offer_number" placeholder="ANG-2026-001" />
@@ -188,7 +195,7 @@ $ui_state   = isset( $view_data['ui_state'] ) ? $view_data['ui_state'] : array()
 				</section>
 				<section class="src-modal-panel"><div class="src-offer-preview-shell" data-sgk-offer-preview></div></section>
 			</div>
-			<div class="src-modal-footer"><button type="button" class="src-btn-secondary" data-sgk-offer-action="copy-mail"><?php esc_html_e( 'Kopieren', 'sprecher-gagenrechner' ); ?></button><button type="button" class="src-btn-primary" data-sgk-offer-action="print"><?php esc_html_e( 'PDF Export', 'sprecher-gagenrechner' ); ?></button></div>
+			<div class="src-modal-footer"><button type="button" class="src-btn-secondary" data-sgk-offer-close><?php esc_html_e( 'Abbrechen', 'sprecher-gagenrechner' ); ?></button><button type="button" class="src-btn-primary" data-sgk-offer-action="print"><?php esc_html_e( 'PDF erstellen', 'sprecher-gagenrechner' ); ?></button></div>
 		</div>
 	</div>
 </div>
