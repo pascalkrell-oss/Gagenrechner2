@@ -100,9 +100,15 @@ class SGK_Plugin {
 	 * @return void
 	 */
 	public function register_assets() {
+		$fontawesome_relative_path = 'assets/fontawesome/css/all.min.css';
+		$fontawesome_plugin_file   = SGK_PLUGIN_DIR . $fontawesome_relative_path;
+		$fontawesome_url           = file_exists( $fontawesome_plugin_file )
+			? SGK_PLUGIN_URL . $fontawesome_relative_path
+			: home_url( '/assets/fontawesome/css/all.min.css' );
+
 		wp_register_style(
 			'sgk-fontawesome-local',
-			home_url( '/assets/fontawesome/css/all.min.css' ),
+			$fontawesome_url,
 			array(),
 			'6.5.2'
 		);
